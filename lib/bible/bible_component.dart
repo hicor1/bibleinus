@@ -125,7 +125,7 @@ Future<void> IsMoveDialog(context, result, index) async {
 }
 
 // 설정 안내창띄우기 ( 메인 페이지 전용, 즐겨찾기 페이지는 성경 선택부분만 별도 관리해준다 ! )
-void openPopup(context, IsMain) {
+void openPopup(context) {
   Alert(
       context: context,
       // 팝업창 스타일 조정
@@ -171,10 +171,10 @@ void openPopup(context, IsMain) {
                                 border: const BorderSide(color: Colors.black12, width: 1),
                                 dropdownButtonColor: Colors.white,
                                 /* 메인페이지와 즐겨찾기 페이지의 성경선택 변수를 따로 가져가자 ㄱㄱ*/
-                                value: IsMain==true ? BibleCtr.Bible_choiced : BibleCtr.FreeSearch_Bible_choiced,
+                                value:BibleCtr.Bible_choiced,
                                 onChanged: (newValue) {
                                   /* 선택된 성경 업데이트 */
-                                  BibleCtr.Bible_choice(newValue, IsMain);
+                                  BibleCtr.Bible_choice(newValue);
                                 },
                                 items: BibleCtr.Bible_list.map(
                                         (value) => DropdownMenuItem(
@@ -372,7 +372,7 @@ void AddFavorite(context) {
                                   Flexible(
                                     // 색 코드에서 선택한 색상으로 배경색 변경해준다, 단 0번의 경우는 무색처리한다.
                                     child: DecoratedBox(
-                                      decoration: BoxDecoration(color: BibleCtr.ColorCode[BibleCtr.ColorCode_choiced_index].withOpacity(BibleCtr.ColorCode_choiced_index == 0 ? 0.0 : 0.5)),
+                                      decoration: BoxDecoration(color: BibleCtr.ColorCode_choiced_index == 0 ? Colors.transparent : BibleCtr.ColorCode[BibleCtr.ColorCode_choiced_index]),
                                       child: Text("${result[BibleCtr.Bible_choiced]}",
                                         maxLines:1, overflow: TextOverflow.ellipsis, // 공간을 넘는 글자는 쩜쩜쩜(...)으로 표기한다.
                                         style: TextStyle(fontSize: GeneralCtr.Textsize, height: GeneralCtr.Textheight)

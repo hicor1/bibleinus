@@ -32,6 +32,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Echo',
       home: RootPage(),
+      // 로딩페이지 정의
       builder: EasyLoading.init(),
     );
   }

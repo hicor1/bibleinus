@@ -109,7 +109,7 @@ class MainWidget extends StatelessWidget {
                             child: IconButton(
                               onPressed: () {
                                 /* 셋팅화면 띄워주기 */
-                                openPopup(context, false);
+                                openPopup(context);
                               },
                               icon: Icon(Typicons.cog_outline, size: 25.0, color: Colors.black.withOpacity(0.6)),
                             ),
@@ -257,13 +257,12 @@ class FreeSearchResult extends StatelessWidget {
                                               CrossAxisAlignment.start,
                                           children: [
                                             Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: [
                                                 Text(
                                                     "${result['국문']} (${result['영문']}): ${result['cnum']}장 ${result['vnum']}절",
                                                     style: TextStyle(
-                                                        fontSize: GeneralCtr.Textsize*0.7,
+                                                        fontSize: GeneralCtr.Textsize*0.8,
                                                         color: Colors.grey)),
                                                 /* 해당구절로 이동할지 물어보는 버튼 삽입 */
                                                 IconButton(
@@ -285,7 +284,7 @@ class FreeSearchResult extends StatelessWidget {
                                             ),
                                             /* 검색결과에 하이라이트 입히기 */
                                             SubstringHighlight(
-                                              text: result[BibleCtr.FreeSearch_Bible_choiced].toString(),
+                                              text: result[BibleCtr.Bible_choiced].toString(),
                                               term: BibleCtr.textController.text,
                                               // 강조할 텍스트
                                               textStyle: TextStyle(

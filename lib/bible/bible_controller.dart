@@ -30,9 +30,9 @@ class BibleController extends GetxController {
     prefs.setInt('BookCode_choiced', BookCode_choiced);
     prefs.setInt('Chapter_choiced', Chapter_choiced);
     prefs.setString('Bible_choiced', Bible_choiced);
-    prefs.setString('FreeSearch_Bible_choiced', FreeSearch_Bible_choiced);
     prefs.setStringList('FreeSearch_history_bible', FreeSearch_history_bible);
     prefs.setStringList('FreeSearch_history_query', FreeSearch_history_query);
+
   }
 
   /* SharedPrefs 불러오기(load) */
@@ -46,7 +46,6 @@ class BibleController extends GetxController {
     BookCode_choiced          = prefs.getInt('BookCode_choiced') == null ? BookCode_choiced : prefs.getInt('BookCode_choiced')!;
     Chapter_choiced           = prefs.getInt('Chapter_choiced') == null ? Chapter_choiced : prefs.getInt('Chapter_choiced')!;
     Bible_choiced             = prefs.getString('Bible_choiced') == null ? Bible_choiced : prefs.getString('Bible_choiced')!;
-    FreeSearch_Bible_choiced  = prefs.getString('FreeSearch_Bible_choiced') == null ? FreeSearch_Bible_choiced : prefs.getString('FreeSearch_Bible_choiced')!;
     FreeSearch_history_bible  = prefs.getStringList('FreeSearch_history_bible') == null ? FreeSearch_history_bible : prefs.getStringList('FreeSearch_history_bible')!;
     FreeSearch_history_query  = prefs.getStringList('FreeSearch_history_query') == null ? FreeSearch_history_query : prefs.getStringList('FreeSearch_history_query')!;
     update(); // 상태업데이트 내용이 반영되어 로딩이 끝났음을 알려줘야함 ㄱㄱ
@@ -91,16 +90,23 @@ class BibleController extends GetxController {
   var FreeSearchResult_filtered = []; // 자유검색결과 필터링된 결과
   var FreeSearchResultCount   = []; // 자유검색결과 각 권마다 몇개가 있는지 담을 공간
   var FreeSearchSelected_bcode = 1; // 자유검색결과 선택된 북코드
-  var FreeSearch_Bible_choiced  = '개역개정';
   List<String> FreeSearch_history_bible  = []; // 최근검색 성경이름
   List<String> FreeSearch_history_query  = []; // 최근검색 쿼리문
 
   var FAB_opacity = 0.0; // 메인페이지 플로팅액션버튼 투명도
 
-  var ColorCode = [Color(0xFFBFBFBF), Color(0xFF0040FF), Color(0xFF64FE2E),Color(0xFFD0A9F5),Color(0xFF088A29),Color(0xFFF781D8)]; // 플로팅 액션버튼 -> 즐겨찾기 색깔표
+  var ColorCode = [Color(0xFFBFBFBF), // 젤 처음은 흑백 칼라
+    Color(0xFFffd700).withOpacity(0.8),
+    Color(0xFF00bfff).withOpacity(0.8),
+    Color(0xFF32cd32).withOpacity(0.8),
+    Color(0xff9966ff).withOpacity(0.8),
+    Color(0xFFF781D8).withOpacity(0.8),
+  ]; // 플로팅 액션버튼 -> 즐겨찾기 색깔표
   var ColorCode_choiced_index = 0; // 플로팅 액션버튼 -> 선택된 즐겨찾기 색깔표
 
-  var Favorite_choiced_color_list = []; // 즐겨찾기 페이지에서 선택된 칼라코드 인덱스
+  var Favorite_choiced_color_list = []; // 즐겨찾기 페이지 _  선택된 칼라코드 인덱스
+  var Favorite_list = []; // 즐겨찾기 페이지 _ 조건에 맞는 즐겨찾기 불러오기
+  var Favorite_timediffer_list = []; // 즐겨찾기 페이지 _ 시간산출결고 담기
 
 
   //<함수>성경(book)리스트 받아오기
@@ -194,7 +200,10 @@ class BibleController extends GetxController {
 
   // <함수> 손으로 클릭한 성경구절 각각의 정보 받아오기
   Future<void> GetClickedVerses() async {
+    /* DB에서 정보 받아오기 */
     ContentsDataList_clicked = await BibleRepository.GetClickedVerses(ContentsIdList_clicked, Bible_choiced);
+    /* 팝업 띄우기 전에 선택된 칼라코드 가장 위쪽에 있는  색깔로 업뎃해주기 */
+    ColorCode_choice(ContentsDataList_clicked[0]["highlight_color_index"]);
     update();
   }
 
@@ -246,7 +255,7 @@ class BibleController extends GetxController {
     /* 선택된 권 번호 업데이트 */
     FreeSearchQuery = query;
     /* 검색 히스토리 저장 */
-    FreeSearch_history_update(FreeSearch_Bible_choiced, query);
+    FreeSearch_history_update(Bible_choiced, query);
   }
   // <함수> 자유검색 히스토리 저장
   void FreeSearch_history_update(bible, query){
@@ -269,9 +278,9 @@ class BibleController extends GetxController {
     //0. 로딩시작 화면 띄우기
     EasyLoading.show(status: 'loading...');
     //1. DB에서 전체 데이터 받아오기 //
-    FreeSearchResult      = await BibleRepository.FreeSearchList(FreeSearch_Bible_choiced, FreeSearchQuery);
+    FreeSearchResult      = await BibleRepository.FreeSearchList(Bible_choiced, FreeSearchQuery);
     //2. DB에서 각각의 성경이 몇개씩인지 받아오기 //
-    FreeSearchResultCount = await BibleRepository.FreeSearchResultCount(FreeSearch_Bible_choiced, FreeSearchQuery);
+    FreeSearchResultCount = await BibleRepository.FreeSearchResultCount(Bible_choiced, FreeSearchQuery);
 
     //3. 가장 검색결과가 많은 권을 초기값으로 지정 //
     if(FreeSearchResultCount.length>=1){
@@ -309,7 +318,7 @@ class BibleController extends GetxController {
   // <함수> 자유검색에서 "구절로 이동" 클릭 BookCode_choiced, Chapter_choiced
   void MoveToContents(result){
     /* 성경 종류 업데이트 */
-    Bible_choiced = FreeSearch_Bible_choiced;
+    Bible_choiced = Bible_choiced;
     /* 권 이름 업데이트 */
     Book_choiced     = result['국문'];
     /* 권 코드 업데이트 */
@@ -330,15 +339,11 @@ class BibleController extends GetxController {
   }
 
   // <함수> 옵션팝업 성경(Bible) 선택
-  void Bible_choice(bible, IsMain){
-    /* 메인페이지와 검색페이지가 성경을 다르게 관리하므로 구분 */
-    if(IsMain){
-      Bible_choiced = bible;/* 선택된 성경 업데이트 */
-      Getcontents(); /* 컨텐츠 업데이트 */
-    }else{
-      FreeSearch_Bible_choiced = bible; /* 선택된 성경 업데이트 */
-      FreeSearch_init();
-    }
+  void Bible_choice(bible){
+    Bible_choiced = bible;/* 선택된 성경 업데이트 */
+    Getcontents(); /* 메인 성경 컨텐츠 업데이트 */
+    FreeSearch_init(); // 자유검색 초기화
+    GetFavorite_list(); // 즐겨찾기 업데이트
     update();
   }
 
@@ -350,9 +355,11 @@ class BibleController extends GetxController {
     // 1. 쿼리에 필요한 변수 수정
     textController.text      = FreeSearch_history_query[index]; // 보여지는 쿼리 수정
     FreeSearchQuery          = FreeSearch_history_query[index]; // 실제 검색에 쓸 쿼리문 수정
-    FreeSearch_Bible_choiced = FreeSearch_history_bible[index]; // 선택된 성경 수정
+    Bible_choiced = FreeSearch_history_bible[index]; // 선택된 성경 수정
     // 2. 쿼리 실행
     GetFreeSearchList();
+    /* 메인 성경 컨텐츠 업데이트 */
+    Getcontents();
     update();
   }
 
@@ -368,19 +375,84 @@ class BibleController extends GetxController {
     update();
   }
 
+
   //<함수> 즐겨찾기 색깔 저장
   Future<void> ColorCode_DB_save() async {
     // DB에 덮어쓰기
     await BibleRepository.ColorCode_save(ContentsIdList_clicked, ColorCode_choiced_index);
     // 메인구절 재조회
     Getcontents();
-
+    // 즐겨찾기 목록 재조회
+    GetFavorite_list();
     // 플로팅 액션버튼 초기화
     ContentsIdList_clicked = [];// 선택한 구절 초기화
     fabKey.currentState!.close();
     Change_FAB_opacity(0.0); // 플로팅 액션버튼 숨기기
     update();
   }
+
+  // <함수> 즐겨찾기페이지 _ 사람이 클릭한 색깔 리스트 업데이트 ( Favorite_choiced_color_list )
+  void Favorite_choiced_color_list_update(int index){
+    // 0번 칼라코드 인덱스(X)를 클릭한 경우, 리스트 초기화
+    if(index == 0){
+      Favorite_choiced_color_list = [];
+    // 0번이 아닌 칼라코드 인경우, 아래와 같이 처리한다 ㄱㄱ
+    }else{
+      // 1. 클릭한 칼라 인덱스가 있는지 확인하고 있으면 제외, 없으면 추가 해준다.
+      if (Favorite_choiced_color_list.contains(index)){
+        Favorite_choiced_color_list.remove(index);//1. 이미 클릭한 구절인 경우, 리스트에서 제외
+      }else{
+        Favorite_choiced_color_list.add(index);//2. 클릭하지 않은 구절인 경우, 리스트에 삽입
+      }
+    }
+    update();
+  }
+
+  // <함수> 즐겨찾기페이지 _ 즐겨찾기 불러오기 _ 특정 칼라코드에 따른 즐겨찾기 리스트 가져오기
+  Future<void> GetFavorite_list() async {
+    // 로딩화면 띄우기
+    EasyLoading.show(status: 'loading...');
+
+    // DB 조회하기
+    Favorite_list = await BibleRepository.Favorite_list_load_specific(Bible_choiced, Favorite_choiced_color_list);
+
+    /* 현재와의 시간차이 구하기 ( 방금_1분이내, xx시간전, xx일전, xx달전, xx년전 으로 구분 ) */
+    // 현재 시간
+    var _toDay = DateTime.now();
+    // 결과 담을 공간 초기화
+    Favorite_timediffer_list = [];
+    // for로 모든 항목에 대한 시간 계산
+    for(int i = 0; i < Favorite_list.length; i++){
+      var date = Favorite_list[i]['bookmark_updated_at'];
+      // 1. 시간 산출결과 임시 저장공간
+      var temp = "";
+      // 2. 시간차이 계산 ( 분 기준으로 )
+      int time_difference = int.parse(_toDay.difference(DateTime.parse(date)).inMinutes.toString());
+      // 3. 조건에 맞게 시간 재지정
+      if(time_difference<=0){temp = "방금 전";} // 1분 미만
+      else if (0 < time_difference &&  time_difference < 60){temp = "${time_difference}분 전";} // 1시간 미만
+      else if (60 < time_difference &&  time_difference < 60*24){temp = "${(time_difference/60).round()}시간 전";} // 1일 미만
+      else if (60*24 < time_difference &&  time_difference < 60*24*30){temp = "${(time_difference/(60*24)).round()}일 전";} // 1달 미만
+      else if (60*24*30 < time_difference &&  time_difference < 60*24*30*12){temp = "${(time_difference/(60*24*30)).round()}달 전";} // 1년 미만
+      else if (60*24*30*12 < time_difference){temp = "${(time_difference/(60*24*30*12)).round()}년 전";} // 1년 초과
+      // 4. 결과 담기
+      Favorite_timediffer_list.add(temp);
+    }
+    // 로딩화면 종료
+    EasyLoading.dismiss();
+    update();
+  }
+
+  // <함수> 즐겨찾기페이지 _ 구절에 대한 색변경 버튼 이벤트
+  Future<void> Favorite_color_change(int _id) async {
+    // 즐겨찾기 팝업창에 보여줘야하므로 클릭된 구절 정보로 업데이트
+    ContentsIdList_clicked = [_id];
+    // 위에 클릭 된 구절 정보로 DB에서 데이터 받아오기
+    GetClickedVerses();
+    update();
+  }
+
+
 
 
 

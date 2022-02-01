@@ -94,7 +94,7 @@ class BibleRepository {
     var db = await BibleDatabase.getDb();
     var Query =
       """
-      SELECT _id, bcode, cnum, vnum, $BibleName
+      SELECT _id, bcode, cnum, vnum, $BibleName, highlight_color_index
       FROM VERSES
       WHERE _id IN $ContentsIdList_clicked
       """;
@@ -110,7 +110,9 @@ class BibleRepository {
     var Query =
       """
         UPDATE verses
-        SET highlight_color_index = $color_index
+        SET 
+          highlight_color_index = $color_index,
+          bookmark_updated_at = '${DateTime.now().toString()}'
         WHERE _id IN $ContentsIdList_clicked
       """;
     // WHERE IN 검색을 위해 리스트를 대입하고, 리스트 괄호를 변경해준다 ([] => ())
@@ -118,6 +120,35 @@ class BibleRepository {
     var result =  db.rawQuery(Query);
     return result;
   }
+
+  // 즐겨찾기 페이지 _ 즐겨찾기 추가된 녀석들 가져오기 ( 칼라코드가 0이 아닌 녀석들은 전부 가져온다 ㄱㄱ )
+  static Future<List<Map<String, dynamic>>> Favorite_list_load_specific(String BibleName, List Favorite_choiced_color_list) async {
+    var db = await BibleDatabase.getDb();
+    var Query =
+    """
+      SELECT verses._id, verses.bcode, cnum, vnum, $BibleName, bookmark_updated_at, 국문, 영문, highlight_color_index
+      FROM 
+      (
+        SELECT _id, bcode, cnum, vnum, bookmark_updated_at, $BibleName, highlight_color_index
+        FROM verses 
+      ) AS verses
+      INNER JOIN bibles
+      ON verses.bcode = bibles.bcode
+      WHERE highlight_color_index IN $Favorite_choiced_color_list
+      ORDER by bookmark_updated_at DESC
+      """;
+    // WHERE IN 검색을 위해 리스트를 대입하고, 리스트 괄호를 변경해준다 ([] => ())
+    Query = Query.replaceAll("[", "(").replaceAll("]", ")");
+    var result =  db.rawQuery(Query);
+    return result;
+  }
+
+
+
+
+
+
+
 
 
 

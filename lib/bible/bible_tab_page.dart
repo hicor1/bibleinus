@@ -94,7 +94,7 @@ class Mainwidget extends StatelessWidget {
                       child: IconButton(
                         onPressed: (){
                           // 버튼 동작
-                          openPopup(context, true);
+                          openPopup(context);
                         },
                         icon: Icon(Typicons.cog_outline, size: 25.0, color: GeneralCtr.BlueColor,),
                       ),
@@ -118,7 +118,7 @@ class Mainwidget extends StatelessWidget {
                         tabs: [
                           Tab(child: Text('성경읽기')),
                           Tab(child: Text('즐겨찾기')),
-                          Tab(child: Text('목상')),
+                          Tab(child: Text('메모')),
                         ],
                       ),
                     ),

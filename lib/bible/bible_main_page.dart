@@ -66,7 +66,7 @@ class MainWidget extends StatelessWidget {
                     // 선택한 텍스트는 강조해주기
                     style: TextStyle(
                       // 선택된 컬러 코드 인덱스에 따라서 색 부여 단, 0번일 경우 색 없음처리
-                      backgroundColor: BibleCtr.ColorCode[result[i]['highlight_color_index']].withOpacity(result[i]['highlight_color_index'] == 0 ? 0.0 : 0.5),
+                      backgroundColor: result[i]['highlight_color_index'] == 0 ? Colors.transparent : BibleCtr.ColorCode[result[i]['highlight_color_index']],
                       fontSize: GeneralCtr.Textsize,
                       height: GeneralCtr.Textheight,
                       decoration: IsClicked == true ? TextDecoration.underline : null,
