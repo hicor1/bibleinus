@@ -11,6 +11,7 @@ import 'package:getwidget/getwidget.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:getwidget/getwidget.dart';
 
 
 // Gex컨트롤러 객체 초기화
@@ -366,6 +367,7 @@ void AddFavorite(context) {
                             itemBuilder: (context, index) {
                               var result = BibleCtr.ContentsDataList_clicked[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
                               return Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text("${result['cnum']}:${result['vnum']} | ", style: TextStyle(color: Colors.grey, fontSize: GeneralCtr.Textsize)),
                                   // 구절의 길이가 너무 길 경우, "...."으로 표현해준다.
@@ -374,7 +376,7 @@ void AddFavorite(context) {
                                     child: DecoratedBox(
                                       decoration: BoxDecoration(color: BibleCtr.ColorCode_choiced_index == 0 ? Colors.transparent : BibleCtr.ColorCode[BibleCtr.ColorCode_choiced_index]),
                                       child: Text("${result[BibleCtr.Bible_choiced]}",
-                                        maxLines:1, overflow: TextOverflow.ellipsis, // 공간을 넘는 글자는 쩜쩜쩜(...)으로 표기한다.
+                                        maxLines:2, overflow: TextOverflow.ellipsis, // 공간을 넘는 글자는 쩜쩜쩜(...)으로 표기한다.
                                         style: TextStyle(fontSize: GeneralCtr.Textsize, height: GeneralCtr.Textheight)
                                       ),
                                     ),
@@ -438,6 +440,103 @@ void AddFavorite(context) {
             //이전화면으로 돌아가기
             Navigator.pop(context);
             },
+          child: Text("확인", style: TextStyle(color: Colors.white, fontSize: 20)),
+        ),
+      ]).show();
+}
+
+
+/*  메모하기 팝업 _ from. 플로팅 액션 버튼 */
+void AddMemo(context) {
+  Alert(
+      context: context,
+      // 팝업창 스타일 조정
+      style: AlertStyle(
+        titleStyle: TextStyle(fontSize: 0, fontWeight: FontWeight.bold),
+        animationDuration: Duration(milliseconds: 200),
+        alertBorder: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+          side: BorderSide(color: Colors.grey, width: 3),
+        ),
+      ),
+      title: "",
+      content: Column(
+        children: <Widget>[
+          /* 0. 성경 선택 (BibleController에 집어넣기)*/
+          GetBuilder<BibleController>(
+              init: BibleController(),
+              builder: (_){
+                return Column(
+                  children: [
+                    Row(
+                      children: [
+                        Text("메모하기", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, height: 3),)
+                      ],
+                    ),
+                    // 1. 선택된 구절 리스트
+                    Container(
+                      height: 200,
+                      width: MediaQuery.of(context).size.width, // 요건 필수
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.withOpacity(0.4), width: 2),
+                          borderRadius: BorderRadius.circular(15)
+                      ),
+                      padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                      //height: 130,
+                      child: Scrollbar(
+                        //isAlwaysShown: true,   //화면에 항상 스크롤바가 나오도록 한다
+                        child: ListView.builder(
+                            scrollDirection: Axis.vertical, // 수직(vertical)  수평(horizontal) 배열 선택
+                            //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
+                            itemCount: BibleCtr.ContentsDataList_clicked.length,
+                            itemBuilder: (context, index) {
+                              var result = BibleCtr.ContentsDataList_clicked[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
+                              return Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text("${result['cnum']}:${result['vnum']} | ", style: TextStyle(color: Colors.grey, fontSize: GeneralCtr.Textsize)),
+                                  // 구절의 길이가 너무 길 경우, "...."으로 표현해준다.
+                                  Flexible(
+                                    // 색 코드에서 선택한 색상으로 배경색 변경해준다, 단 0번의 경우는 무색처리한다.
+                                    child: DecoratedBox(
+                                      decoration: BoxDecoration(color: BibleCtr.ColorCode_choiced_index == 0 ? Colors.transparent : BibleCtr.ColorCode[BibleCtr.ColorCode_choiced_index]),
+                                      child: Text("${result[BibleCtr.Bible_choiced]}",
+                                          maxLines:2, overflow: TextOverflow.ellipsis, // 공간을 넘는 글자는 쩜쩜쩜(...)으로 표기한다.
+                                          style: TextStyle(fontSize: GeneralCtr.Textsize, height: GeneralCtr.Textheight)
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              );
+                            }
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    TextField(
+                        controller: BibleCtr.MemotextController, // 텍스트값을 가져오기 위해 컨트롤러 할당
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(),
+                          labelText: '메모(memo)',
+                        )
+                    )
+                  ],
+                );
+              }
+          ),
+          SizedBox(height: 30),
+
+        ],
+      ),
+      buttons: [
+        DialogButton(
+          onPressed: () {
+            // 메모내용 DB에 신규 저장하기(INSERT)
+            BibleCtr.Memo_DB_save(BibleCtr.MemotextController.text);
+
+            //이전화면으로 돌아가기
+            Navigator.pop(context);
+          },
           child: Text("확인", style: TextStyle(color: Colors.white, fontSize: 20)),
         ),
       ]).show();

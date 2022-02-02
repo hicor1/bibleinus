@@ -94,9 +94,15 @@ class BibleRepository {
     var db = await BibleDatabase.getDb();
     var Query =
       """
-      SELECT _id, bcode, cnum, vnum, $BibleName, highlight_color_index
-      FROM VERSES
-      WHERE _id IN $ContentsIdList_clicked
+      SELECT verses._id, verses.bcode, cnum, vnum, $BibleName, highlight_color_index, 국문, 영문
+       FROM 
+      (
+        SELECT _id, bcode, cnum, vnum, bookmark_updated_at, $BibleName, highlight_color_index
+        FROM verses 
+      ) AS verses
+      INNER JOIN bibles
+      ON verses.bcode = bibles.bcode
+      WHERE verses._id IN $ContentsIdList_clicked
       """;
     // WHERE IN 검색을 위해 리스트를 대입하고, 리스트 괄호를 변경해준다 ([] => ())
     Query = Query.replaceAll("[", "(").replaceAll("]", ")");
@@ -139,6 +145,32 @@ class BibleRepository {
       """;
     // WHERE IN 검색을 위해 리스트를 대입하고, 리스트 괄호를 변경해준다 ([] => ())
     Query = Query.replaceAll("[", "(").replaceAll("]", ")");
+    var result =  db.rawQuery(Query);
+    return result;
+  }
+
+
+  // 메모 DB 추가 하기(INSERT)
+  static Future<List<Map<String, dynamic>>> Memo_save(ContentsIdList_clicked, memo) async {
+    var db = await BibleDatabase.getDb();
+    var Query =
+      """
+        INSERT INTO bible_memo(연관구절, 메모)
+        VALUES ("$ContentsIdList_clicked", "$memo");
+      """;
+    var result =  db.rawQuery(Query);
+    return result;
+  }
+
+  // 메모 DB 불러오기(LOAD)
+  static Future<List<Map<String, dynamic>>> Memo_load() async {
+    var db = await BibleDatabase.getDb();
+    var Query =
+      """
+        SELECT *
+        FROM bible_memo
+        ORDER by updated_at DESC
+      """;
     var result =  db.rawQuery(Query);
     return result;
   }

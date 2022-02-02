@@ -2,6 +2,7 @@ import 'package:bible_in_us/bible/bible_component.dart';
 import 'package:bible_in_us/bible/bible_controller.dart';
 import 'package:bible_in_us/bible/bible_favorite_page.dart';
 import 'package:bible_in_us/bible/bible_main_page.dart';
+import 'package:bible_in_us/bible/bible_memo_page.dart';
 import 'package:bible_in_us/bible/bible_search_screen.dart';
 import 'package:bible_in_us/general/general_controller.dart';
 import 'package:flutter/material.dart';
@@ -131,7 +132,7 @@ class Mainwidget extends StatelessWidget {
               children: <Widget>[
                 BibleMainPage(), // 메인 페이지 호출
                 BibleFavoritePage(),
-                Icon(Icons.directions_car, size: 30),
+                BibleMemoPage(),
               ],
             ),
           )),
@@ -195,7 +196,12 @@ class FlotingActionButton extends StatelessWidget {
                           ],
                         ),
                       ),
-                      onPressed: () {print('Home');}
+                      onPressed: () {
+                        /* 1. 메모팝업띄우기 */
+                        AddMemo(context);
+                        /* 2. 선택 메모 리스트에 표기할 사람이 클릭한 구절 정보 받아오기 */
+                        BibleCtr.GetClickedVerses();
+                      }
                   ),
                   // 3. 즐겨찾기 버튼 추가
                   RawMaterialButton(
@@ -211,9 +217,9 @@ class FlotingActionButton extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
-                        // 1. 즐겨찾기 팝업 띄우기
+                        /* 1. 즐겨찾기 팝업 띄우기 */
                         AddFavorite(context);
-                        // 2. 즐겨찾기 리스트에 표기할 사람이 클릭한 구절 정보 받아오기
+                        /* 2. 즐겨찾기 리스트에 표기할 사람이 클릭한 구절 정보 받아오기 */
                         BibleCtr.GetClickedVerses();
                       }
                   ),

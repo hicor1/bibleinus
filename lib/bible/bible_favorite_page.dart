@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttericon/entypo_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:get/get.dart';
+import 'package:word_break_text/word_break_text.dart';
 
 
 // Gex컨트롤러 객체 초기화
@@ -32,7 +33,7 @@ class MainWidget extends StatelessWidget {
         init: BibleController(),
         builder: (_){
           return Padding(
-            padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+            padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -46,77 +47,82 @@ class MainWidget extends StatelessWidget {
                         itemCount: BibleCtr.Favorite_list.length,
                         itemBuilder: (context, index) {
                           var result = BibleCtr.Favorite_list[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
-                          return Container(
-                            width: MediaQuery.of(context).size.width, // 요건 필수
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black.withOpacity(0.3), width: 1),
-                                borderRadius: BorderRadius.circular(5)
-                            ),
-                            padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                            margin: EdgeInsets.fromLTRB(0, 0, 10, 5),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    /* 구절 정보 */
-                                    Text("${result['국문']} (${result['영문']}): ${result['cnum']}장 ${result['vnum']}절 ",
-                                        style: TextStyle(fontSize: GeneralCtr.Textsize*0.8, color: BibleCtr.ColorCode[result['highlight_color_index']], fontWeight: FontWeight.bold)),
+                          return Column(
+                            children: [
+                              // 컨테이너에 테두리 대신, 그림자(elevation)로 구분을 준다.
+                              Material(
+                                color: Colors.white,
+                                elevation: 1.5, // 그림자(elevation) 두께? 너비 같은거
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width, // 요건 필수
+                                  padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                                  margin: EdgeInsets.fromLTRB(5, 0, 5, 5),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          /* 구절 정보 */
+                                          Text("${result['국문']} (${result['영문']}): ${result['cnum']}장 ${result['vnum']}절 ",
+                                              style: TextStyle(fontSize: GeneralCtr.Textsize*0.8, color: BibleCtr.ColorCode[result['highlight_color_index']], fontWeight: FontWeight.bold)),
 
+                                          /* 각종 버튼 */
+                                          Row(
+                                            children: [
+                                              /* 경과시간 표기 */
+                                              Text("${BibleCtr.Favorite_timediffer_list[index]}",
+                                                  style: TextStyle(fontSize: GeneralCtr.Textsize*0.8, color: BibleCtr.ColorCode[result['highlight_color_index']], fontWeight: FontWeight.bold)),
+                                              /* 즐겨찾기 색(칼러,칼라) 변경 버튼 */
+                                              IconButton(
+                                                onPressed: () {
+                                                  // 0. 클릭된 구절정보로 업데이트 해주기
+                                                  BibleCtr.Favorite_color_change(result['_id']);
+                                                  // 1. 팝업창 띄우고 '예'인 경우, 넘어가기 //
+                                                  AddFavorite(context);
+                                                },
+                                                icon: Icon(
+                                                    FontAwesome5.highlighter,
+                                                    size: GeneralCtr.Textsize*0.9,
+                                                    color: BibleCtr.ColorCode[result['highlight_color_index']]),
+                                                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                                constraints: BoxConstraints(),
+                                              ),
 
-                                    /* 각종 버튼 */
-                                    Row(
-                                      children: [
-                                        /* 경과시간 표기 */
-                                        Text("${BibleCtr.Favorite_timediffer_list[index]}",
-                                            style: TextStyle(fontSize: GeneralCtr.Textsize*0.8, color: BibleCtr.ColorCode[result['highlight_color_index']], fontWeight: FontWeight.bold)),
-                                        /* 즐겨찾기 색(칼러,칼라) 변경 버튼 */
-                                        IconButton(
-                                          onPressed: () {
-                                            // 0. 클릭된 구절정보로 업데이트 해주기
-                                            BibleCtr.Favorite_color_change(result['_id']);
-                                            // 1. 팝업창 띄우고 '예'인 경우, 넘어가기 //
-                                            AddFavorite(context);
-                                          },
-                                          icon: Icon(
-                                              FontAwesome5.highlighter,
-                                              size: GeneralCtr.Textsize*0.9,
-                                              color: BibleCtr.ColorCode[result['highlight_color_index']]),
-                                          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                          constraints: BoxConstraints(),
-                                        ),
-                                        /* 본문으로 이동해서 전체로 보기 버튼 */
-                                        IconButton(
-                                          onPressed: () {
-                                            // 1. 팝업창 띄우고 '예'인 경우, 넘어가기 //
-                                            IsMoveDialog(context, result, index);
-                                          },
-                                          icon: Icon(
-                                              FontAwesome5.arrow_circle_right,
-                                              size: GeneralCtr.Textsize*0.9,
-                                              color: BibleCtr.ColorCode[result['highlight_color_index']]),
-                                          padding: EdgeInsets.zero,
-                                          constraints: BoxConstraints(),
-                                        ),
-                                      ],
-                                    )
-                                  ],
+                                              /* 본문으로 이동해서 전체로 보기 버튼 */
+                                              IconButton(
+                                                onPressed: () {
+                                                  // 1. 팝업창 띄우고 '예'인 경우, 넘어가기 //
+                                                  IsMoveDialog(context, result, index);
+                                                },
+                                                icon: Icon(
+                                                    FontAwesome5.arrow_circle_right,
+                                                    size: GeneralCtr.Textsize*0.9,
+                                                    color: BibleCtr.ColorCode[result['highlight_color_index']]),
+                                                padding: EdgeInsets.zero,
+                                                constraints: BoxConstraints(),
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                      SizedBox(height: 5), //제목열과 본문 살짝 띄워주기
+
+                                      /* 본문 */
+                                      WordBreakText("${result[BibleCtr.Bible_choiced]}",
+                                        style: TextStyle(fontSize: GeneralCtr.Textsize, height: GeneralCtr.Textheight),),
+                                    ],
+                                  ),
                                 ),
-
-
-                                /* 본문 */
-                                Text("${result[BibleCtr.Bible_choiced]}",
-                                  style: TextStyle(fontSize: GeneralCtr.Textsize, height: GeneralCtr.Textheight),),
-                              ],
-                            ),
+                              ),
+                              // 컨테이너 끼리 조금 띄워놔야 이쁘다
+                              SizedBox(height: 5)
+                            ],
                           );
                         }
                     ),
                   ),
                 ),
-
-
 
                 /* 칼라코드 보여주기 */
                 Container(

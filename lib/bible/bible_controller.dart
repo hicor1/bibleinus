@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'dart:convert';
 
 // Gex컨트롤러 객체 초기화
 final GeneralCtr = Get.put(GeneralController());
@@ -63,8 +64,9 @@ class BibleController extends GetxController {
   final ScrollController BookCountScroller  = ScrollController(keepScrollOffset: true);
   final ScrollController ContentsScroller   = ScrollController(keepScrollOffset: true);
 
-  /* 자유 검색 스크린 검색창 텍스트컨트롤러 정의 */
-  var textController = TextEditingController();
+  /* 텍스트컨트롤러 정의 */
+  var textController     = TextEditingController(); // 자유 검색 스크린 검색창
+  var MemotextController = TextEditingController(); // 메모 팝업 메모내용 컨트롤러
 
   /* 메인페이지 플로팅액션버튼 컨트롤러 정의 */
   final GlobalKey<FabCircularMenuState> fabKey = GlobalKey();
@@ -107,6 +109,10 @@ class BibleController extends GetxController {
   var Favorite_choiced_color_list = []; // 즐겨찾기 페이지 _  선택된 칼라코드 인덱스
   var Favorite_list = []; // 즐겨찾기 페이지 _ 조건에 맞는 즐겨찾기 불러오기
   var Favorite_timediffer_list = []; // 즐겨찾기 페이지 _ 시간산출결고 담기
+  
+  var Memo_list = []; // 메모 페이지 _ DB에서 불러온 메모 내용 저장
+  var Memo_verses_list = []; // 메모 페이지 _ 메모와 관련있는 구절 불러오기
+  var Memo_timediffer_list = []; // 메모 페이지 _ 시간산출결고 담기
 
 
   //<함수>성경(book)리스트 받아오기
@@ -344,6 +350,7 @@ class BibleController extends GetxController {
     Getcontents(); /* 메인 성경 컨텐츠 업데이트 */
     FreeSearch_init(); // 자유검색 초기화
     GetFavorite_list(); // 즐겨찾기 업데이트
+    Memo_DB_load(); // 메모 업데이트
     update();
   }
 
@@ -452,6 +459,64 @@ class BibleController extends GetxController {
     update();
   }
 
+  //<함수> 메모내용 저장 (INSERT)
+  Future<void> Memo_DB_save(String memo) async {
+    // DB에 덮어쓰기
+    await BibleRepository.Memo_save(ContentsIdList_clicked, memo);
+    // 얘는 토스트 메세지 하나 띄워줄까?? 당장 변하는 부분이 안보이므로
+    PopToast("메모가 저장되었습니다.");
+    // 플로팅 액션버튼 초기화
+    ContentsIdList_clicked = [];// 선택한 구절 초기화
+    fabKey.currentState!.close();
+    Change_FAB_opacity(0.0); // 플로팅 액션버튼 숨기기
+    update();
+  }
+
+  //<함수> 메모내용 로드 (LOAD)
+  Future<void> Memo_DB_load() async {
+    // 0. 연관구절에 대한 구정 내용 DB 조회해서 가져오기
+    Memo_list = await BibleRepository.Memo_load();
+
+    // 1. 연관 구절 중복 제거해서 정리
+    var verses_id_list = []; // 결과 담을 공간
+    for(int i = 0; i < Memo_list.length; i++){
+      var _toList = json.decode('${Memo_list[i]['연관구절']}'); // 텍스트형식의 리스트를 리스트 타입으로 변경해준다.
+      for(int j = 0; j < _toList.length; j++){ // 리스트 속의 리스트를 순환하면서 하나씩 배열에 다시 담아준다.
+        verses_id_list.add(_toList[j]); // 결과를 하나씩 모아준다.
+      }
+    }
+    verses_id_list = verses_id_list.toSet().toList(); // 중복값 제거 ( duplicate drop )
+
+    // 2. DB에서 해당되는 구절 가져와서 입혀주기
+    Memo_verses_list = await BibleRepository.GetClickedVerses(verses_id_list, Bible_choiced);
+
+    // 3. 현재와의 시간차이 구하기 ( 방금_1분이내, xx시간전, xx일전, xx달전, xx년전 으로 구분 ) //
+    // 현재 시간
+    var _toDay = DateTime.now();
+    // 결과 담을 공간 초기화
+    Memo_timediffer_list = [];
+    // for로 모든 항목에 대한 시간 계산
+    for(int i = 0; i < Memo_list.length; i++){
+      var date = Memo_list[i]['updated_at'];
+      print(date);
+      // 1. 시간 산출결과 임시 저장공간
+      var temp = "";
+      // 2. 시간차이 계산 ( 분 기준으로 )
+      int time_difference = int.parse(_toDay.difference(DateTime.parse(date)).inMinutes.toString());
+      // 3. 조건에 맞게 시간 재지정
+      if(time_difference<=0){temp = "방금 전";} // 1분 미만
+      else if (0 < time_difference &&  time_difference < 60){temp = "${time_difference}분 전";} // 1시간 미만
+      else if (60 < time_difference &&  time_difference < 60*24){temp = "${(time_difference/60).round()}시간 전";} // 1일 미만
+      else if (60*24 < time_difference &&  time_difference < 60*24*30){temp = "${(time_difference/(60*24)).round()}일 전";} // 1달 미만
+      else if (60*24*30 < time_difference &&  time_difference < 60*24*30*12){temp = "${(time_difference/(60*24*30)).round()}달 전";} // 1년 미만
+      else if (60*24*30*12 < time_difference){temp = "${(time_difference/(60*24*30*12)).round()}년 전";} // 1년 초과
+      // 4. 결과 담기
+      Memo_timediffer_list.add(temp);
+
+    }
+    print(Memo_timediffer_list);
+    update();
+  }
 
 
 
