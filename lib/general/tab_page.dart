@@ -1,6 +1,9 @@
 import 'package:bible_in_us/bible/bible_tab_page.dart';
 import 'package:bible_in_us/general/general_controller.dart';
+import 'package:bible_in_us/hymn/hymn_tab_page.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttericon/elusive_icons.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:get/get.dart';
 
 // Gex컨트롤러 객체 초기화
@@ -16,7 +19,7 @@ class TabPage extends StatefulWidget {
 class _TabPageState extends State<TabPage> {
   List pages = [
     BibleTabPage(),
-    Text("MY페이지"),
+    HymnTabPage(),
   ];
 
   @override
@@ -53,9 +56,9 @@ class _TabPageState extends State<TabPage> {
                     //Tab 아이템 정의
                     items: const [
                       BottomNavigationBarItem(
-                          icon: Icon(Icons.bookmarks, size: 35), label: '성경'),
+                          icon: Icon(FontAwesome5.bible, size: 35), label: '성경'),
                       BottomNavigationBarItem(
-                          icon: Icon(Icons.person_rounded, size: 35), label: 'MY'),
+                          icon: Icon(Elusive.headphones, size: 35), label: '찬송가'),
                       //BottomNavigationBarItem(icon: Icon(Icons.account_circle, size: 30), label:'더보기'),
                     ],
                   )

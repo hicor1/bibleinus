@@ -59,7 +59,6 @@ class MainWidget extends StatelessWidget {
                           /* 커스톰 위젯을 써보자 ㄱㄱ */
                           child: GFAccordion(
                             /* 각종 스타일 정의 */
-
                             collapsedTitleBackgroundColor: Colors.white, // 평소 제목 배경 색깔
                             expandedTitleBackgroundColor:GeneralCtr.MainColor.withOpacity(0.15), // 펼쳤을때, 제목 배경 색깔
                             contentBackgroundColor: Colors.white, // 본문 배경 색깔

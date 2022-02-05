@@ -177,10 +177,6 @@ class ModalWigdet extends StatelessWidget {
                     Icon(Entypo.down_open_mini,
                         color: GeneralCtr.BlueColor, size: 30),
 
-
-
-
-
                     /* 모달창 최상단 성경 권(book) 검색창 */
                     TextField(
                       onChanged: (keyword){
@@ -205,15 +201,8 @@ class ModalWigdet extends StatelessWidget {
                           border: InputBorder.none),
                     ),
 
-
-
-
-
-
-
                     // 사회적 위젯 거리두기
                     Divider(indent: 10, endIndent: 10),
-
 
                     // 아래부터 성경 선택 스크롤
                     SizedBox(

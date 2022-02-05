@@ -19,6 +19,7 @@ class BibleController extends GetxController {
     GetVersesDummy(); // 초반 다음 페이지 정보를 확인하기 위한 더미 데이터 get
     NEWorOLD_choice(NEWorOLD_choiced);  //초반 권(book)불러오기
     Book_choice(Book_choiced); // 초반 챕터번호 선택해놓기
+    FloatingAB_init(); // 플로팅 액션버튼 초기화
   }
 
   /* SharedPrefs 저장하기(save) */
@@ -83,7 +84,7 @@ class BibleController extends GetxController {
 
   var ChapterList_filtered    = []; // 권에 맞는 챕터 리스트 불러오기
   var Chapter_choiced         = 1; //"구약" or "신약" 선택 인덱스
-  var Bible_list              = ['개역개정', '개역한글판_국한문', '현대인의성경', 'KJV', 'NIV', 'ASV'];
+  var Bible_list              = ['개역개정', '개역한글판_국한문','쉬운성경','현대어성경', '현대인의성경', 'KJV', 'NIV', 'ASV'];
   var Bible_choiced           = '개역개정';
   var ContentsList_filtered   = []; // 선택된 구절
   var ContentsIdList_clicked  = []; // 사람이 클릭한 구절 담기
@@ -198,7 +199,7 @@ class BibleController extends GetxController {
   // <함수> 플로팅 액션버튼 초기화
   void FloatingAB_init(){
     ContentsIdList_clicked = [];// 선택한 구절 초기화
-    fabKey.currentState!.close();
+    fabKey.currentState?.close();
     Change_FAB_opacity(0.0); // 플로팅 액션버튼 숨기기
   }
 
