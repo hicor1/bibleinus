@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttericon/entypo_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/typicons_icons.dart';
+import 'package:fluttericon/web_symbols_icons.dart';
 import 'package:get/get.dart';
 import 'package:word_break_text/word_break_text.dart';
 import 'package:getwidget/getwidget.dart';
@@ -173,21 +174,23 @@ class MainWidget extends StatelessWidget {
                                 BibleCtr.GetFavorite_list();
                               },
                               child: Container(
-                                padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-                                decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      // 선택한 색깔 테두리 강조
-                                        color: BibleCtr.Favorite_choiced_color_list.contains(index) ? Colors.grey : Colors.transparent,
-                                        width: 2)
-                                ),
+                                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                                 // 젤 처음 아이콘은 "X"표시로 변경
                                 child: Column(
                                   children: [
-                                    /* 아이콘 배치(색깔에 맞게) */
-                                    Icon(
-                                        index != 0 ? FontAwesome5.highlighter : Entypo.cancel,
-                                        color: BibleCtr.ColorCode[index], size: 40),
+                                    /* 아이콘 배치(색깔에 맞게), 아이콘을 겹쳐서 강조표기해주기 */
+                                    Stack(
+                                      children:[
+                                        Icon(
+                                            index != 0 ? FontAwesome5.highlighter : Entypo.cancel,
+                                            color: BibleCtr.ColorCode[index], size: 40
+                                        ),
+                                        Icon(
+                                          BibleCtr.Favorite_choiced_color_list.contains(index) ? WebSymbols.ok : null,
+                                            color: Colors.deepOrangeAccent, size: 20
+                                        ),
+                                      ]
+                                    ),
                                     /* 색깔별 갯수 배치 (0번 인덱스는 갯수 표기 안함) */
                                     Text(
                                         index == 0 ? "" :
