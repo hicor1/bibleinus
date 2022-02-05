@@ -97,8 +97,8 @@ class MainWidget extends StatelessWidget {
                       child: Column(
                         children: [
                           /* [제목]성경 정&절(bible, chapter) 뿌려주기 */
-                          Text("${BibleCtr.Book_choiced} ${BibleCtr.Chapter_choiced}장",
-                            style: TextStyle(fontSize: 30)),
+                          Text("${BibleCtr.Book_choiced}\n${BibleCtr.Chapter_choiced}장",
+                            style: TextStyle(fontSize: GeneralCtr.Textsize+10), textAlign: TextAlign.center,),
                           // 엄청난 공간
                           SizedBox(height: 30),
                           /* [성경내용(contents)]뿌려주기 */
@@ -197,7 +197,7 @@ class ModalWigdet extends StatelessWidget {
                             onPressed: () {
                               /* 클리어 버튼(X) 눌렀을 때 텍스트 비우기 */
                               BibleCtr.ModaltextController.clear();
-                              BibleCtr.Search_book("");
+                              BibleCtr.NEWorOLD_choice(BibleCtr.NEWorOLD_choiced);// 원래 조건으로 재검색
                             },
                           ),
                           hintText: '검색어를 입력해주세요',

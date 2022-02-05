@@ -129,6 +129,8 @@ class BibleController extends GetxController {
   void NEWorOLD_choice(String value){
     // 조건 업데이트
     NEWorOLD_choiced = value;
+    // 검색창 텍스트 초기화
+    ModaltextController.text = "";
     // 조건에 맞는 성경 권(book)가져오기
     switch (value) {
       case "구약" :
