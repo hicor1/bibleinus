@@ -163,12 +163,14 @@ class FreeSearchResult extends StatelessWidget {
               children: [
                 /* 전체 검색 결과 등 결과 요약 표기 */
                 Container(
-                  child: Text('검색어 : "${BibleCtr.textController.text}" 에 대한 검색결과 ${NumberFormat('##,###').format(BibleCtr.FreeSearchResult.length)} 건'),
+                  child: Text(
+                    '검색어 : "${BibleCtr.textController.text}" 에 대한 검색결과 ${NumberFormat('##,###').format(BibleCtr.FreeSearchResult.length)} 건',
+                    style: TextStyle(fontSize: GeneralCtr.Textsize*0.9),),
                   margin: EdgeInsets.fromLTRB(0,5,0,5),
                   padding: EdgeInsets.fromLTRB(50,2,50,2),
                   decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: GeneralCtr.MainColor),
-                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(width: 2, color: Colors.grey),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
                 /* 아래는 검색 결과 표기 */

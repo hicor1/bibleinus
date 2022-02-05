@@ -52,7 +52,15 @@ class MainWidget extends StatelessWidget {
                         //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
                         itemCount: BibleCtr.Favorite_list.length,
                         itemBuilder: (context, index) {
-                          var result = BibleCtr.Favorite_list[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
+                          /* 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능 */
+                          var result = BibleCtr.Favorite_list[index];
+                          /* 해당 구절이 클릭된 구절인지 확인 */
+                          var checker = false;
+                          if(BibleCtr.ContentsIdList_clicked.contains(result['_id'])){
+                            checker = true;
+                          }else{
+                            checker = false;
+                          }
                           return Column(
                             children: [
                               // 컨테이너에 테두리 대신, 그림자(elevation)로 구분을 준다.
@@ -75,31 +83,44 @@ class MainWidget extends StatelessWidget {
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
+                                            /* 구절정보를 포함하는 체크버튼에 대한 액션 설정 */
+                                            InkWell(
+                                              onTap: (){
+                                                /* 클릭한 컨텐츠 아이디 저장(아래 아이콘 클릭과 동일한 기능 적용) */
+                                                BibleCtr.ContentsList_click(result['_id']);
+                                              },
+                                              child: Row(
+                                                children: [
+                                                  /* 메모 추가를 위한 체크박스 */
+                                                  GFCheckbox(
+                                                    size: GeneralCtr.Textsize*1.1, // 박스 사이즈
+                                                    activeIcon: Icon(Typicons.ok, size: GeneralCtr.Textsize*1.1, color: BibleCtr.ColorCode[result['highlight_color_index']]), // 활성 아이콘
+                                                    inactiveIcon: Icon(Typicons.ok_outline, size: GeneralCtr.Textsize*1.1, color: Colors.white), // 비활성 아이콘
+                                                    type: GFCheckboxType.circle, // 아이콘 모양(사각형, 원형 등등)
+                                                    activeBgColor: Colors.transparent, // 활성 아이콘 배경 색깔
+                                                    activeBorderColor: BibleCtr.ColorCode[result['highlight_color_index']], // 활성 아이콘 테두리 색깔
+                                                    inactiveBgColor: BibleCtr.ColorCode[result['highlight_color_index']].withOpacity(0.25), // 비활성 아이콘 색깔
+                                                    inactiveBorderColor: Colors.grey.withOpacity(0.0), // 비활성 아이콘 테두리 색깔
 
-                                            Row(
-                                              children: [
-                                                /* 메모 추가를 위한 체크박스 */
-                                                GFCheckbox(
-                                                  size: GeneralCtr.Textsize*1, // 박스 사이즈
-                                                  activeIcon: Icon(Typicons.ok, size: GeneralCtr.Textsize, color: BibleCtr.ColorCode[result['highlight_color_index']]), // 활성 아이콘
-                                                  inactiveIcon: Icon(Typicons.ok_outline, size: GeneralCtr.Textsize, color: Colors.grey), // 비활성 아이콘
-                                                  type: GFCheckboxType.square, // 아이콘 모양(사각형, 원형 등등)
-                                                  activeBgColor: Colors.transparent, // 활성 아이콘 색깔
-                                                  activeBorderColor: BibleCtr.ColorCode[result['highlight_color_index']], // 활성 아이콘 테두리 색깔
-                                                  inactiveBgColor: Colors.transparent, // 비활성 아이콘 색깔
-                                                  inactiveBorderColor: Colors.grey.withOpacity(1.0), // 비활성 아이콘 테두리 색깔
-
-                                                  onChanged: (value) {
-                                                    print("$value");
-                                                  },
-                                                  value: false,
-                                                ),
-                                                /* 위젯간 거리두기 캠페인 */
-                                                SizedBox(width: 5),
-                                                /* 구절 정보 */
-                                                Text("${result['국문']} (${result['영문']}): ${result['cnum']}장 ${result['vnum']}절 ",
-                                                    style: TextStyle(fontSize: GeneralCtr.Textsize*0.8, color: BibleCtr.ColorCode[result['highlight_color_index']], fontWeight: FontWeight.bold)),
-                                              ],
+                                                    onChanged: (value) {
+                                                      /* 클릭한 컨텐츠 아이디 저장(위에 컨테이너 클릭과 동일한 기능 적용) */
+                                                      BibleCtr.ContentsList_click(result['_id']);
+                                                    },
+                                                    value: checker,
+                                                  ),
+                                                  /* 위젯간 거리두기 캠페인 */
+                                                  SizedBox(width: 5),
+                                                  /* 구절 정보( 클릭된 구절은 강조해주기 ) */
+                                                  Container(
+                                                    color: checker ? BibleCtr.ColorCode[result['highlight_color_index']] : Colors.transparent,
+                                                    child: Text("${result['국문']} (${result['영문']}): ${result['cnum']}장 ${result['vnum']}절 ",
+                                                        style: TextStyle(fontSize: GeneralCtr.Textsize*0.8,
+                                                            color: checker ? Colors.white :BibleCtr.ColorCode[result['highlight_color_index']],
+                                                            fontWeight: FontWeight.bold)
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
                                             ),
 
                                             /* 각종 버튼 */
@@ -108,28 +129,11 @@ class MainWidget extends StatelessWidget {
                                                 /* 경과시간 표기 */
                                                 Text("${BibleCtr.Favorite_timediffer_list[index]}",
                                                     style: TextStyle(fontSize: GeneralCtr.Textsize*0.8, color: Colors.grey, fontWeight: FontWeight.bold)),
-
-                                                /* 즐겨찾기 색(칼러,칼라) 변경 버튼 */
-                                                IconButton(
-                                                  icon: Image.asset(
-                                                      'assets/img/icons/color_wheel.png', // 0,2,3,4 번 있음
-                                                      width: GeneralCtr.Textsize,
-                                                      height: GeneralCtr.Textsize
-                                                  ),
-                                                  tooltip: '색변경',
-                                                  onPressed: () {
-                                                    // 0. 클릭된 구절정보로 업데이트 해주기
-                                                    BibleCtr.Favorite_color_change(result['_id']);
-                                                    // 1. 팝업창 띄우고 '예'인 경우, 넘어가기 //
-                                                    AddFavorite(context);
-                                                  },
-                                                ),
-
                                               ],
                                             )
                                           ],
                                         ),
-                                        SizedBox(height: 5), //제목열과 본문 살짝 띄워주기
+                                        SizedBox(height: GeneralCtr.Textheight+5), //제목열과 본문 살짝 띄워주기
 
                                         /* 본문 */
                                         WordBreakText("${result[BibleCtr.Bible_choiced]}",

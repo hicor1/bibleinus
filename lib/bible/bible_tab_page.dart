@@ -159,7 +159,7 @@ class FlotingActionButton extends StatelessWidget {
             duration: Duration(milliseconds: 500),
             child: FabCircularMenu(
                 key: BibleCtr.fabKey, // 위에서 정의한 컨트롤러 할당 // 닫기:fabKey.currentState!.close()
-                ringColor: GeneralCtr.MainColor.withOpacity(0.9),
+                ringColor: GeneralCtr.MainColor.withOpacity(0.7),
                 ringDiameter: 350.0,
                 ringWidth: 70.0, // 안쪽 하얀링 크기
                 fabSize: 64.0, // 버튼 동그라미 지름

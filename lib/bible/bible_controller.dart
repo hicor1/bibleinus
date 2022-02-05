@@ -414,7 +414,8 @@ class BibleController extends GetxController {
   void Favorite_choiced_color_list_update(int index){
     // 0번 칼라코드 인덱스(X)를 클릭한 경우, 리스트 초기화
     if(index == 0){
-      Favorite_choiced_color_list = [];
+      Favorite_choiced_color_list = []; // 선택된 칼라코드 모두 초기화
+      FloatingAB_init(); // 플로팅 액션버튼 관련 정보 모두 초기화
     // 0번이 아닌 칼라코드 인경우, 아래와 같이 처리한다 ㄱㄱ
     }else{
       // 1. 클릭한 칼라 인덱스가 있는지 확인하고 있으면 제외, 없으면 추가 해준다.
