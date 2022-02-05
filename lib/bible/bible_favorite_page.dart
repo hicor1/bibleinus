@@ -58,66 +58,59 @@ class MainWidget extends StatelessWidget {
                               Material(
                                 color: Colors.white,
                                 elevation: 1.0, // 그림자(elevation) 두께? 너비 같은거
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width, // 요건 필수
-                                  padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                                  margin: EdgeInsets.fromLTRB(5, 0, 5, 5),
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          /* 구절 정보 */
-                                          Text("${result['국문']} (${result['영문']}): ${result['cnum']}장 ${result['vnum']}절 ",
-                                              style: TextStyle(fontSize: GeneralCtr.Textsize*0.8, color: BibleCtr.ColorCode[result['highlight_color_index']], fontWeight: FontWeight.bold)),
+                                /* 본문으로 이동해서 전체로 보기 버튼 */
+                                child: InkWell(
+                                  onTap: () {
+                                    // 1. 팝업창 띄우고 '예'인 경우, 넘어가기 //
+                                    IsMoveDialog(context, result, index);
+                                  },
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width, // 요건 필수
+                                    padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                                    margin: EdgeInsets.fromLTRB(5, 0, 5, 5),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            /* 구절 정보 */
+                                            Text("${result['국문']} (${result['영문']}): ${result['cnum']}장 ${result['vnum']}절 ",
+                                                style: TextStyle(fontSize: GeneralCtr.Textsize*0.8, color: BibleCtr.ColorCode[result['highlight_color_index']], fontWeight: FontWeight.bold)),
 
-                                          /* 각종 버튼 */
-                                          Row(
-                                            children: [
-                                              /* 경과시간 표기 */
-                                              Text("${BibleCtr.Favorite_timediffer_list[index]}",
-                                                  style: TextStyle(fontSize: GeneralCtr.Textsize*0.8, color: Colors.grey, fontWeight: FontWeight.bold)),
-                                              /* 즐겨찾기 색(칼러,칼라) 변경 버튼 */
-                                              IconButton(
-                                                onPressed: () {
-                                                  // 0. 클릭된 구절정보로 업데이트 해주기
-                                                  BibleCtr.Favorite_color_change(result['_id']);
-                                                  // 1. 팝업창 띄우고 '예'인 경우, 넘어가기 //
-                                                  AddFavorite(context);
-                                                },
-                                                icon: Icon(
-                                                    FontAwesome5.highlighter,
-                                                    size: GeneralCtr.Textsize*0.9,
-                                                    color: BibleCtr.ColorCode[result['highlight_color_index']]),
-                                                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                                constraints: BoxConstraints(),
-                                              ),
+                                            /* 각종 버튼 */
+                                            Row(
+                                              children: [
+                                                /* 경과시간 표기 */
+                                                Text("${BibleCtr.Favorite_timediffer_list[index]}",
+                                                    style: TextStyle(fontSize: GeneralCtr.Textsize*0.8, color: Colors.grey, fontWeight: FontWeight.bold)),
+                                                /* 즐겨찾기 색(칼러,칼라) 변경 버튼 */
+                                                IconButton(
+                                                  onPressed: () {
+                                                    // 0. 클릭된 구절정보로 업데이트 해주기
+                                                    BibleCtr.Favorite_color_change(result['_id']);
+                                                    // 1. 팝업창 띄우고 '예'인 경우, 넘어가기 //
+                                                    AddFavorite(context);
+                                                  },
+                                                  /* 색변경 아이콘 */
+                                                  icon: Icon(
+                                                      FontAwesome5.highlighter,
+                                                      size: GeneralCtr.Textsize*0.9,
+                                                      color: BibleCtr.ColorCode[result['highlight_color_index']]),
+                                                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                                  constraints: BoxConstraints(),
+                                                ),
+                                              ],
+                                            )
+                                          ],
+                                        ),
+                                        SizedBox(height: 5), //제목열과 본문 살짝 띄워주기
 
-                                              /* 본문으로 이동해서 전체로 보기 버튼 */
-                                              IconButton(
-                                                onPressed: () {
-                                                  // 1. 팝업창 띄우고 '예'인 경우, 넘어가기 //
-                                                  IsMoveDialog(context, result, index);
-                                                },
-                                                icon: Icon(
-                                                    FontAwesome5.arrow_circle_right,
-                                                    size: GeneralCtr.Textsize*0.9,
-                                                    color: BibleCtr.ColorCode[result['highlight_color_index']]),
-                                                padding: EdgeInsets.zero,
-                                                constraints: BoxConstraints(),
-                                              ),
-
-                                            ],
-                                          )
-                                        ],
-                                      ),
-                                      SizedBox(height: 5), //제목열과 본문 살짝 띄워주기
-
-                                      /* 본문 */
-                                      WordBreakText("${result[BibleCtr.Bible_choiced]}",
-                                        style: TextStyle(fontSize: GeneralCtr.Textsize, height: GeneralCtr.Textheight),),
-                                    ],
+                                        /* 본문 */
+                                        WordBreakText("${result[BibleCtr.Bible_choiced]}",
+                                          style: TextStyle(fontSize: GeneralCtr.Textsize, height: GeneralCtr.Textheight),),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
