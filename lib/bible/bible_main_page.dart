@@ -1,3 +1,4 @@
+import 'package:bible_in_us/bible/bible_component.dart';
 import 'package:bible_in_us/bible/bible_controller.dart';
 import 'package:bible_in_us/general/general_controller.dart';
 import 'package:flutter/cupertino.dart';
@@ -124,7 +125,7 @@ class MainWidget extends StatelessWidget {
                             // 모달창을 위로 올리라는 아이콘
                             Text(
                               "${BibleCtr.Book_choiced} ${BibleCtr.Chapter_choiced} 장",
-                              style: TextStyle(color: GeneralCtr.BlueColor, fontSize: 15),
+                              style: TextStyle(color: GeneralCtr.BlueColor, fontSize: GeneralCtr.Textsize),
                             ),
                           ],
                         ),
@@ -169,22 +170,61 @@ class ModalWigdet extends StatelessWidget {
             // 메인위젯 뿌리기
             return Material(
               child: SizedBox(
-                height: 400, // 전체 모달창 크기 설정
+                height: 500, // 전체 모달창 크기 설정
                 child: Column(
                   children: [
                     // 모달창을 아래로 내리라는 아이콘
                     Icon(Entypo.down_open_mini,
                         color: GeneralCtr.BlueColor, size: 30),
+
+
+
+
+
+                    /* 모달창 최상단 성경 권(book) 검색창 */
+                    TextField(
+                      onChanged: (keyword){
+                        /* 검색어를 입력 했을 때 액션 정의 */
+                        BibleCtr.Search_book(keyword);
+                      },
+                      controller: BibleCtr.ModaltextController, // 텍스트값을 가져오기 위해 컨트롤러 할당
+                      autofocus: false, // 자동으로 클릭할것인가
+                      style: TextStyle(fontSize: GeneralCtr.Textsize),
+                      decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.search),
+                          suffixIcon: IconButton(
+                            icon: Icon(Icons.clear),
+                            onPressed: () {
+                              /* 클리어 버튼(X) 눌렀을 때 텍스트 비우기 */
+                              BibleCtr.ModaltextController.clear();
+                              BibleCtr.Search_book("");
+                            },
+                          ),
+                          hintText: '검색어를 입력해주세요',
+                          hintStyle: GeneralCtr.TextStyle_normal_disable,
+                          border: InputBorder.none),
+                    ),
+
+
+
+
+
+
+
+                    // 사회적 위젯 거리두기
+                    Divider(indent: 10, endIndent: 10),
+
+
                     // 아래부터 성경 선택 스크롤
                     SizedBox(
-                      height: 350, // 아이콘을 제외한 나머지 모달창 크기 설정
+                      height: 400, // 아이콘을 제외한 나머지 모달창 크기 설정
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           // 첫 번째 열은 신약/구약 선택
                           SingleChildScrollView(
                             // 성경 권(book)리스트 뿌려주기
-                            child: SizedBox(width: 50, height: 350, // "ListView.builder"는 반드시 사이즈 구속 필요!
+                            child: SizedBox(width: 50, height: 400, // "ListView.builder"는 반드시 사이즈 구속 필요!
                               child: ListView.builder(
                                 //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
                                   itemCount: BibleCtr.NEWorOLD_list.length,
@@ -213,7 +253,7 @@ class ModalWigdet extends StatelessWidget {
                             controller: BibleCtr.BookScroller, // 아래 스크롤러랑 반드시 동일
                             isAlwaysShown: false,   //화면에 항상 스크롤바가 나오도록 한다
                             // 성경 권(book)리스트 뿌려주기
-                            child: SizedBox(width: 150, height: 350, // "ListView.builder"는 반드시 사이즈 구속 필요!
+                            child: SizedBox(width: 150, height: 400, // "ListView.builder"는 반드시 사이즈 구속 필요!
                               child: ListView.builder(
                                   controller: BibleCtr.BookScroller,// 위에 스크롤러랑 반드시 동일
                                   itemCount: BibleCtr.BookList_filtered.length,
@@ -241,7 +281,7 @@ class ModalWigdet extends StatelessWidget {
                             controller: BibleCtr.ChapterScroller, // 아래 스크롤러랑 반드시 동일
                             isAlwaysShown: false,   //화면에 항상 스크롤바가 나오도록 한다
                             // 성경 권(book)리스트 뿌려주기
-                            child: SizedBox(width: 60, height: 350, // "ListView.builder"는 반드시 사이즈 구속 필요!
+                            child: SizedBox(width: 60, height: 400, // "ListView.builder"는 반드시 사이즈 구속 필요!
                               child: ListView.builder(
                                   controller: BibleCtr.ChapterScroller,// 위에 스크롤러랑 반드시 동일
                                   itemCount: BibleCtr.ChapterList_filtered.length,

@@ -65,9 +65,10 @@ class BibleController extends GetxController {
   final ScrollController ContentsScroller   = ScrollController(keepScrollOffset: true);
 
   /* 텍스트컨트롤러 정의 */
-  var textController     = TextEditingController(); // 자유 검색 스크린 검색창
-  var MemotextController = TextEditingController(); // 메모 팝업 메모내용 컨트롤러
-  var MemoErrorText      = null; // 메모 팝업 글자 수 모자람 에러 텍스트 저장
+  var ModaltextController = TextEditingController(); // 메인 모달 검색어 컨트롤러
+  var textController      = TextEditingController(); // 자유 검색 스크린 검색창
+  var MemotextController  = TextEditingController(); // 메모 팝업 메모내용 컨트롤러
+  var MemoErrorText       = null; // 메모 팝업 글자 수 모자람 에러 텍스트 저장
 
   /* 메인페이지 플로팅액션버튼 컨트롤러 정의 */
   final GlobalKey<FabCircularMenuState> fabKey = GlobalKey();
@@ -141,6 +142,12 @@ class BibleController extends GetxController {
     }
     update();
   }
+  //<함수> 메인페이지 _ 모달 검색창에서 성경 권(book) 자유 검색
+  void Search_book(keyword){
+    BookList_filtered = BookList.where((f) => f['국문'].contains(keyword)).toList();
+    update();
+  }
+
 
   // <함수> 성경 권(book) 선택
   Future<void> Book_choice(String value) async {

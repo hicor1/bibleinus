@@ -154,7 +154,7 @@ class MainWidget extends StatelessWidget {
 
                 /* 칼라코드 보여주기 */
                 Container(
-                    height: 60,
+                    height: 70,
                     width: MediaQuery.of(context).size.width,
                     margin: EdgeInsets.all(20),
                     child: Center(
@@ -192,7 +192,7 @@ class MainWidget extends StatelessWidget {
                                     Text(
                                         index == 0 ? "" :
                                         "${BibleCtr.Favorite_Color_count.where((e)=>e['highlight_color_index']==index).toList()[0]['count(highlight_color_index)']}"
-                                            , style: TextStyle(color: BibleCtr.ColorCode[index]),
+                                            , style: TextStyle(color: BibleCtr.ColorCode[index], fontSize: 20),
                                     )
                                   ],
                                 ),

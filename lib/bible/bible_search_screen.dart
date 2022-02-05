@@ -80,7 +80,7 @@ class MainWidget extends StatelessWidget {
                     }
                   },
                   autofocus: false, // 자동으로 클릭할것인가
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: GeneralCtr.Textsize),
                   decoration: InputDecoration(
                     //prefixIcon: Icon(Icons.search),
                       suffixIcon: IconButton(
