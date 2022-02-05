@@ -4,6 +4,7 @@ import 'package:bible_in_us/general/general_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/entypo_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:fluttericon/typicons_icons.dart';
 import 'package:get/get.dart';
 import 'package:word_break_text/word_break_text.dart';
 import 'package:getwidget/getwidget.dart';
@@ -74,9 +75,32 @@ class MainWidget extends StatelessWidget {
                                         Row(
                                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                           children: [
-                                            /* 구절 정보 */
-                                            Text("${result['국문']} (${result['영문']}): ${result['cnum']}장 ${result['vnum']}절 ",
-                                                style: TextStyle(fontSize: GeneralCtr.Textsize*0.8, color: BibleCtr.ColorCode[result['highlight_color_index']], fontWeight: FontWeight.bold)),
+
+                                            Row(
+                                              children: [
+                                                /* 메모 추가를 위한 체크박스 */
+                                                GFCheckbox(
+                                                  size: GeneralCtr.Textsize*1, // 박스 사이즈
+                                                  activeIcon: Icon(Typicons.ok, size: GeneralCtr.Textsize, color: BibleCtr.ColorCode[result['highlight_color_index']]), // 활성 아이콘
+                                                  inactiveIcon: Icon(Typicons.ok_outline, size: GeneralCtr.Textsize, color: Colors.grey), // 비활성 아이콘
+                                                  type: GFCheckboxType.square, // 아이콘 모양(사각형, 원형 등등)
+                                                  activeBgColor: Colors.transparent, // 활성 아이콘 색깔
+                                                  activeBorderColor: BibleCtr.ColorCode[result['highlight_color_index']], // 활성 아이콘 테두리 색깔
+                                                  inactiveBgColor: Colors.transparent, // 비활성 아이콘 색깔
+                                                  inactiveBorderColor: Colors.grey.withOpacity(1.0), // 비활성 아이콘 테두리 색깔
+
+                                                  onChanged: (value) {
+                                                    print("$value");
+                                                  },
+                                                  value: false,
+                                                ),
+                                                /* 위젯간 거리두기 캠페인 */
+                                                SizedBox(width: 5),
+                                                /* 구절 정보 */
+                                                Text("${result['국문']} (${result['영문']}): ${result['cnum']}장 ${result['vnum']}절 ",
+                                                    style: TextStyle(fontSize: GeneralCtr.Textsize*0.8, color: BibleCtr.ColorCode[result['highlight_color_index']], fontWeight: FontWeight.bold)),
+                                              ],
+                                            ),
 
                                             /* 각종 버튼 */
                                             Row(
@@ -84,22 +108,23 @@ class MainWidget extends StatelessWidget {
                                                 /* 경과시간 표기 */
                                                 Text("${BibleCtr.Favorite_timediffer_list[index]}",
                                                     style: TextStyle(fontSize: GeneralCtr.Textsize*0.8, color: Colors.grey, fontWeight: FontWeight.bold)),
+
                                                 /* 즐겨찾기 색(칼러,칼라) 변경 버튼 */
                                                 IconButton(
+                                                  icon: Image.asset(
+                                                      'assets/img/icons/color_wheel.png', // 0,2,3,4 번 있음
+                                                      width: GeneralCtr.Textsize,
+                                                      height: GeneralCtr.Textsize
+                                                  ),
+                                                  tooltip: '색변경',
                                                   onPressed: () {
                                                     // 0. 클릭된 구절정보로 업데이트 해주기
                                                     BibleCtr.Favorite_color_change(result['_id']);
                                                     // 1. 팝업창 띄우고 '예'인 경우, 넘어가기 //
                                                     AddFavorite(context);
                                                   },
-                                                  /* 색변경 아이콘 */
-                                                  icon: Icon(
-                                                      FontAwesome5.highlighter,
-                                                      size: GeneralCtr.Textsize*0.9,
-                                                      color: BibleCtr.ColorCode[result['highlight_color_index']]),
-                                                  padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                                                  constraints: BoxConstraints(),
                                                 ),
+
                                               ],
                                             )
                                           ],
