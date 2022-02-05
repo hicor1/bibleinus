@@ -51,6 +51,7 @@ dependencies:
   flutter_easyloading: ^3.0.3 # 로딩화면
   fab_circular_menu: ^1.0.0 # 플롯팅 액숀버튼
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

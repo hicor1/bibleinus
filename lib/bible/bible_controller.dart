@@ -67,9 +67,11 @@ class BibleController extends GetxController {
   /* 텍스트컨트롤러 정의 */
   var textController     = TextEditingController(); // 자유 검색 스크린 검색창
   var MemotextController = TextEditingController(); // 메모 팝업 메모내용 컨트롤러
+  var MemoErrorText      = null; // 메모 팝업 글자 수 모자람 에러 텍스트 저장
 
   /* 메인페이지 플로팅액션버튼 컨트롤러 정의 */
   final GlobalKey<FabCircularMenuState> fabKey = GlobalKey();
+
 
   var NEWorOLD_list           = ["구약","신약"]; // "구약" or "신약" 선택
   var NEWorOLD_choiced        = "구약"; //"구약" or "신약" 선택 인덱스
@@ -108,6 +110,7 @@ class BibleController extends GetxController {
 
   var Favorite_choiced_color_list = []; // 즐겨찾기 페이지 _  선택된 칼라코드 인덱스
   var Favorite_list = []; // 즐겨찾기 페이지 _ 조건에 맞는 즐겨찾기 불러오기
+  var Favorite_Color_count = []; // 즐겨찾기 페이지 _ 색깔별 갯수 담기
   var Favorite_timediffer_list = []; // 즐겨찾기 페이지 _ 시간산출결고 담기
   
   var Memo_list = []; // 메모 페이지 _ DB에서 불러온 메모 내용 저장
@@ -177,12 +180,17 @@ class BibleController extends GetxController {
     SavePrefsData(); //현재 설정값 저장
 
     // 플로팅 액션버튼 초기화
-    ContentsIdList_clicked = [];// 선택한 구절 초기화
-    fabKey.currentState!.close();
-    Change_FAB_opacity(0.0); // 플로팅 액션버튼 숨기기
+    FloatingAB_init();
 
     // 로딩화면 종료
     EasyLoading.dismiss();
+  }
+
+  // <함수> 플로팅 액션버튼 초기화
+  void FloatingAB_init(){
+    ContentsIdList_clicked = [];// 선택한 구절 초기화
+    fabKey.currentState!.close();
+    Change_FAB_opacity(0.0); // 플로팅 액션버튼 숨기기
   }
 
   // <함수> 성경구절 손으로 클릭
@@ -208,7 +216,7 @@ class BibleController extends GetxController {
   Future<void> GetClickedVerses() async {
     /* DB에서 정보 받아오기 */
     ContentsDataList_clicked = await BibleRepository.GetClickedVerses(ContentsIdList_clicked, Bible_choiced);
-    /* 팝업 띄우기 전에 선택된 칼라코드 가장 위쪽에 있는  색깔로 업뎃해주기 */
+    /* 팝업 띄우기 전에 선택된 칼라코드 가장 위쪽에 있는 색깔로 업뎃해주기 */
     ColorCode_choice(ContentsDataList_clicked[0]["highlight_color_index"]);
     update();
   }
@@ -244,10 +252,8 @@ class BibleController extends GetxController {
         }
         break;
     }
-    // 앞에서 클릭한 구절 초기화 및 플로팅 액션버튼 닫기
-    ContentsIdList_clicked = [];
-    Change_FAB_opacity(0.0); // 플로팅 액션버튼 숨기기
-    fabKey.currentState!.close(); // 열려있는 액션버튼이 있으므로 닫아준다 ㄱㄱ
+    // 플로팅 액션버튼 초기화
+    FloatingAB_init();
 
     // 성경구절 재조회
     Getcontents();
@@ -269,12 +275,20 @@ class BibleController extends GetxController {
     FreeSearch_history_query.add(query); /* 쿼리문 넣기 */
     update();
   }
-  // <함수> 자유검색 히스토리 삭제 (초기화)
-  void FreeSearch_history_remove(){
+  // <함수> 자유검색 히스토리 삭제 (1개 삭제 & 일부 삭제)
+  void FreeSearch_history_remove_one(index){
+    FreeSearch_history_bible.removeAt(index);
+    FreeSearch_history_query.removeAt(index);
+    // 토스트 메세지 띄우기
+    PopToast("해당 검색 기록이 삭제 되었습니다.");
+    update();
+  }
+  // <함수> 자유검색 히스토리 삭제 (전체 삭제 & 초기화)
+  void FreeSearch_history_remove_all(){
     FreeSearch_history_bible=[]; /* 성경이름 넣기 */
     FreeSearch_history_query=[]; /* 쿼리문 넣기 */
     // 토스트 메세지 띄우기
-    PopToast("최근검색 기록이 삭제 되었습니다.");
+    PopToast("전체 검색 기록이 삭제 되었습니다.");
     update();
   }
 
@@ -392,9 +406,7 @@ class BibleController extends GetxController {
     // 즐겨찾기 목록 재조회
     GetFavorite_list();
     // 플로팅 액션버튼 초기화
-    ContentsIdList_clicked = [];// 선택한 구절 초기화
-    fabKey.currentState!.close();
-    Change_FAB_opacity(0.0); // 플로팅 액션버튼 숨기기
+    FloatingAB_init();
     update();
   }
 
@@ -415,12 +427,21 @@ class BibleController extends GetxController {
     update();
   }
 
+  /* 즐겨찾기페이지 _ 칼라코드 별 갯수 구하기 */
+  Future<void> Get_color_count() async {
+    //1. DB에서 칼라코드별 갯수 받아오기
+    Favorite_Color_count = await BibleRepository.Get_color_count();
+    update();
+    //print(Favorite_Color_count.where((e)=>e['highlight_color_index']==1).toList()[0]['count(highlight_color_index)']);
+  }
+
+
   // <함수> 즐겨찾기페이지 _ 즐겨찾기 불러오기 _ 특정 칼라코드에 따른 즐겨찾기 리스트 가져오기
   Future<void> GetFavorite_list() async {
     // 로딩화면 띄우기
     EasyLoading.show(status: 'loading...');
 
-    // DB 조회하기
+    /* DB 조회하기 */
     Favorite_list = await BibleRepository.Favorite_list_load_specific(Bible_choiced, Favorite_choiced_color_list);
 
     /* 현재와의 시간차이 구하기 ( 방금_1분이내, xx시간전, xx일전, xx달전, xx년전 으로 구분 ) */
@@ -445,6 +466,8 @@ class BibleController extends GetxController {
       // 4. 결과 담기
       Favorite_timediffer_list.add(temp);
     }
+    // 즐겨찾기 색깔별 갯수 가져오기
+    Get_color_count();
     // 로딩화면 종료
     EasyLoading.dismiss();
     update();
@@ -463,14 +486,20 @@ class BibleController extends GetxController {
   Future<void> Memo_DB_save(String memo) async {
     // DB에 덮어쓰기
     await BibleRepository.Memo_save(ContentsIdList_clicked, memo);
-    // 얘는 토스트 메세지 하나 띄워줄까?? 당장 변하는 부분이 안보이므로
-    PopToast("메모가 저장되었습니다.");
     // 플로팅 액션버튼 초기화
-    ContentsIdList_clicked = [];// 선택한 구절 초기화
-    fabKey.currentState!.close();
-    Change_FAB_opacity(0.0); // 플로팅 액션버튼 숨기기
+    FloatingAB_init();
     update();
   }
+
+  //<함수> 메모내용 수정 (UPDATE)
+  Future<void> Memo_update(int id, String memo) async {
+    // DB에 수정하기
+    await BibleRepository.Memo_update(id, memo);
+    // 메모내용 로드
+    Memo_DB_load();
+    update();
+  }
+
 
   //<함수> 메모내용 로드 (LOAD)
   Future<void> Memo_DB_load() async {
@@ -498,7 +527,6 @@ class BibleController extends GetxController {
     // for로 모든 항목에 대한 시간 계산
     for(int i = 0; i < Memo_list.length; i++){
       var date = Memo_list[i]['updated_at'];
-      print(date);
       // 1. 시간 산출결과 임시 저장공간
       var temp = "";
       // 2. 시간차이 계산 ( 분 기준으로 )
@@ -512,12 +540,43 @@ class BibleController extends GetxController {
       else if (60*24*30*12 < time_difference){temp = "${(time_difference/(60*24*30*12)).round()}년 전";} // 1년 초과
       // 4. 결과 담기
       Memo_timediffer_list.add(temp);
-
     }
-    print(Memo_timediffer_list);
     update();
   }
 
+  //<함수> 메모 페이지 _ 메모 팝업 초기화
+  void MemoPop_init(){
+    MemotextController.text = ""; // 메모 초기화
+    MemoErrorText = null; // 메모 오류 알림 초기화
+  }
+
+  //<함수> 메모 페이지 _ 메모 입력 시 validation 경고 띄우기
+  void MemoErrorText_update(String msg){
+    MemoErrorText = msg;
+    update();
+  }
+
+  //<함수> 메모 페이지 _ 메모 삭제 (DELETE)
+  Future<void> Memo_DB_delete(int id) async {
+    //1. DB에서 지우기
+    await BibleRepository.Memo_delete(id);
+    //2. 메모 DB 다시 불러오기
+    Memo_DB_load();
+    update();
+  }
+
+  //<함수> 메모 페이지 _ 편집 버튼 눌렀을 때, 해당 구절 리스트에 담아주기 + 메모 내용 붙여주기
+  void Memo_ContentsIdList_update(result){
+    //0. 그냥 가져오면 텍스트로 가져오므로 리스트로 변환해줌
+    var verses_list = json.decode(result['연관구절']);//
+    //1. 선택된 연관구절 담아주기
+    ContentsIdList_clicked = verses_list;
+    //2. 기존 메모내용 붙여주기 ( 텍스트 필드 컨트롤러 활용 )
+    MemotextController.text = result['메모'];
+    //3. 해당 구절 정보 받아와서 업뎃해주기
+    GetClickedVerses();
+    update();
+  }
 
 
 

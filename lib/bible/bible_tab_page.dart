@@ -59,6 +59,7 @@ class Mainwidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
+      initialIndex: 0,
       length: 3,
       child: Scaffold(
 
@@ -107,6 +108,9 @@ class Mainwidget extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.centerLeft, // 탭 메뉴들 왼쪽 정렬
                       child: TabBar(
+                        onTap: (index){
+                          BibleCtr.FloatingAB_init(); // 탭 이동시 플로팅액션버튼 초기화
+                        },//
                         controller: BibleCtr.tabController, // 컨트롤러 정의
                         labelColor: GeneralCtr.MainColor, // 활성 탭 색
                         labelStyle: TextStyle(fontSize: 17.0), // 활성 탭 스타일
@@ -197,8 +201,10 @@ class FlotingActionButton extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
+                        /* 0. 메모팝업초기화 */
+                        BibleCtr.MemoPop_init();
                         /* 1. 메모팝업띄우기 */
-                        AddMemo(context);
+                        AddMemo(context, null, "NEW"); // 신규등록이므로 "NEW"로 분류
                         /* 2. 선택 메모 리스트에 표기할 사람이 클릭한 구절 정보 받아오기 */
                         BibleCtr.GetClickedVerses();
                       }

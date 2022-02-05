@@ -72,7 +72,7 @@ void FlutterDialog(context) {
 
 // 자유검색에서 선택한구절로 넘어갈지 묻는 경고창
 Future<void> IsMoveDialog(context, result, index) async {
-  var verses_info = "${result['국문']}(${result['영문']}) :  ${result['cnum']}장  ${result['vnum']}절";
+  var verses_info = "${result['국문']}(${result['영문']}) :  ${result['cnum']}장";
   await showDialog(
       context: context,
       //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
@@ -405,7 +405,7 @@ void AddFavorite(context) {
                                   splashColor: Colors.white,
                                   onTap: (){BibleCtr.ColorCode_choice(index);},
                                   child: Container(
-                                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                    padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
                                     decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         border: Border.all(
@@ -416,7 +416,7 @@ void AddFavorite(context) {
                                     // 젤 처음 아이콘은 "X"표시로 변경
                                     child: Icon(
                                         index != 0 ? FontAwesome5.highlighter : Entypo.cancel,
-                                        color: BibleCtr.ColorCode[index], size: 40),
+                                        color: BibleCtr.ColorCode[index], size: 25),
                                   ),
                                 );
                               }
@@ -437,6 +437,8 @@ void AddFavorite(context) {
           onPressed: () {
             // 선택결과 DB에 저장하기
             BibleCtr.ColorCode_DB_save();
+            // 토스트메세지 띄우기
+            PopToast("즐겨찾기 변경 완료");
             //이전화면으로 돌아가기
             Navigator.pop(context);
             },
@@ -447,7 +449,7 @@ void AddFavorite(context) {
 
 
 /*  메모하기 팝업 _ from. 플로팅 액션 버튼 */
-void AddMemo(context) {
+void AddMemo(context, id, action) {
   Alert(
       context: context,
       // 팝업창 스타일 조정
@@ -473,7 +475,7 @@ void AddMemo(context) {
                         Text("메모하기", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, height: 3),)
                       ],
                     ),
-                    // 1. 선택된 구절 리스트
+                    /* 1. 선택된 구절 리스트 */
                     Container(
                       height: 200,
                       width: MediaQuery.of(context).size.width, // 요건 필수
@@ -499,9 +501,9 @@ void AddMemo(context) {
                                   Flexible(
                                     // 색 코드에서 선택한 색상으로 배경색 변경해준다, 단 0번의 경우는 무색처리한다.
                                     child: DecoratedBox(
-                                      decoration: BoxDecoration(color: BibleCtr.ColorCode_choiced_index == 0 ? Colors.transparent : BibleCtr.ColorCode[BibleCtr.ColorCode_choiced_index]),
+                                      decoration: BoxDecoration(color: result['highlight_color_index'] == 0 ? Colors.transparent : BibleCtr.ColorCode[result['highlight_color_index']]),
                                       child: Text("${result[BibleCtr.Bible_choiced]}",
-                                          maxLines:2, overflow: TextOverflow.ellipsis, // 공간을 넘는 글자는 쩜쩜쩜(...)으로 표기한다.
+                                          maxLines:3, overflow: TextOverflow.ellipsis, // 공간을 넘는 글자는 쩜쩜쩜(...)으로 표기한다.
                                           style: TextStyle(fontSize: GeneralCtr.Textsize, height: GeneralCtr.Textheight)
                                       ),
                                     ),
@@ -513,12 +515,17 @@ void AddMemo(context) {
                       ),
                     ),
                     SizedBox(height: 10),
+                    /* 2. 메모 입력 텍스트필드(Textfield) */
                     TextField(
-                        controller: BibleCtr.MemotextController, // 텍스트값을 가져오기 위해 컨트롤러 할당
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(),
-                          labelText: '메모(memo)',
-                        )
+                      minLines: 1,
+                      maxLines: 5, // 이까지 늘어나고, 이걸 넘어서면 그냥 옆으로간다
+                      controller: BibleCtr.MemotextController, // 텍스트값을 가져오기 위해 컨트롤러 할당
+                      style: TextStyle(fontSize: GeneralCtr.Textsize, height: GeneralCtr.Textheight),
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: '메모(memo)',
+                        errorText: BibleCtr.MemoErrorText,
+                      )
                     )
                   ],
                 );
@@ -531,13 +538,82 @@ void AddMemo(context) {
       buttons: [
         DialogButton(
           onPressed: () {
-            // 메모내용 DB에 신규 저장하기(INSERT)
-            BibleCtr.Memo_DB_save(BibleCtr.MemotextController.text);
-
-            //이전화면으로 돌아가기
-            Navigator.pop(context);
+            /* 최소 글자수 ( 2글자 ) 만족하는지 체크 */
+            if(BibleCtr.MemotextController.text.length>=2){
+              /* "NEW" 또는 "UPDATE" 중 액션 선택*/
+              switch(action){
+                // "NEW"케이스 : 메모내용 DB에 신규 저장(INSERT) 및 저장완료 Toast띄우기
+                case"NEW":
+                  BibleCtr.Memo_DB_save(BibleCtr.MemotextController.text);
+                  PopToast("메모가 저장되었습니다.");
+                  break;
+                // "UPDATE"케이스 : 메모내용 DB에 수정(UPDATE) 및 수정완료 Toast띄우기
+                case"UPDATE":
+                  BibleCtr.Memo_update(id, BibleCtr.MemotextController.text);
+                  PopToast("메모가 수정되었습니다.");
+                  break;
+              }
+              //이전화면으로 돌아가기
+              Navigator.pop(context);
+            }else{
+              /* 글자수 모자람 안내창 띄우기 */
+              BibleCtr.MemoErrorText_update("최소 글자수는 '2글자'입니다.");
+            }
           },
           child: Text("확인", style: TextStyle(color: Colors.white, fontSize: 20)),
         ),
       ]).show();
+}
+
+
+// 메모페이지 _ 팝업메뉴버튼에서 "삭제"버튼 누르면 띄워주는 안내창
+Future<void> IsMemoDelete(context, memoId) async {
+  await showDialog(
+      context: context,
+      //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5.0)),
+          //Dialog Main Title
+          title: Column(
+            children: <Widget>[
+              new Text("안내 메세지"),
+            ],
+          ),
+          //
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text("메모를 삭제하시겠습니까?"),
+            ],
+          ),
+          actions: <Widget>[
+
+            /* [확인]버튼 액션 정의 */
+            OutlinedButton(
+              child: new Text("확인"),
+              onPressed: () {
+                // 0. DB에서 지우기
+                BibleCtr.Memo_DB_delete(memoId);
+                // 1. 토스트메세지 띄우기
+                PopToast("메모 삭제 완료했습니다.");
+                // 2. 삭제 완료 후 창 내리기
+                Navigator.pop(context);
+              },
+            ),
+            /* [취소]버튼 액션 정의 */
+            ElevatedButton(
+              child: new Text("취소"),
+              onPressed: () {
+                // "취소"인 경우, 바로 액션없이 팝업창 내리기
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      });
 }

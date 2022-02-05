@@ -149,9 +149,25 @@ class BibleRepository {
     return result;
   }
 
+  // 즐겨찾기 페이지 _ 즐겨찾기 색깔별 갯수 구하기
+  static Future<List<Map<String, dynamic>>> Get_color_count() async {
+    var db = await BibleDatabase.getDb();
+    var Query =
+    """
+      SELECT highlight_color_index, count(highlight_color_index)
+      FROM verses
+      GROUP BY highlight_color_index
+      ORDER BY count(highlight_color_index) DESC;
+    """;
+    var result =  db.rawQuery(Query);
+    return result;
+  }
+
+
+
 
   // 메모 DB 추가 하기(INSERT)
-  static Future<List<Map<String, dynamic>>> Memo_save(ContentsIdList_clicked, memo) async {
+  static Future<List<Map<String, dynamic>>> Memo_save(ContentsIdList_clicked, String memo) async {
     var db = await BibleDatabase.getDb();
     var Query =
       """
@@ -175,6 +191,32 @@ class BibleRepository {
     return result;
   }
 
+  // 메모 DB 삭제하기(DELETE)
+  static Future<List<Map<String, dynamic>>> Memo_delete(int id) async {
+    var db = await BibleDatabase.getDb();
+    var Query =
+      """
+        DELETE FROM bible_memo
+        WHERE _id = $id
+      """;
+    var result =  db.rawQuery(Query);
+    return result;
+  }
+
+  // 메모 DB 수정하기(UPDATE)
+  static Future<List<Map<String, dynamic>>> Memo_update(int id, String memo) async {
+    var db = await BibleDatabase.getDb();
+    var Query =
+      """
+        UPDATE bible_memo
+        SET
+           메모 = "$memo",
+           updated_at = CURRENT_TIMESTAMP
+        WHERE _id = $id;
+      """;
+    var result =  db.rawQuery(Query);
+    return result;
+  }
 
 
 

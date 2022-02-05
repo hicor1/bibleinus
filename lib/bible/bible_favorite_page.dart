@@ -6,6 +6,7 @@ import 'package:fluttericon/entypo_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:get/get.dart';
 import 'package:word_break_text/word_break_text.dart';
+import 'package:getwidget/getwidget.dart';
 
 
 // Gex컨트롤러 객체 초기화
@@ -17,6 +18,9 @@ class BibleFavoritePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    /* 색깔별 갯수 받아오기 */
+    BibleCtr.Get_color_count();
+    /* 메인위젯 뿌려주기 */
     return MainWidget();
   }
 }
@@ -42,6 +46,7 @@ class MainWidget extends StatelessWidget {
                 Flexible(
                   child: Scrollbar(
                     child: ListView.builder(
+                        shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
                         scrollDirection: Axis.vertical, // 수직(vertical)  수평(horizontal) 배열 선택
                         //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
                         itemCount: BibleCtr.Favorite_list.length,
@@ -52,7 +57,7 @@ class MainWidget extends StatelessWidget {
                               // 컨테이너에 테두리 대신, 그림자(elevation)로 구분을 준다.
                               Material(
                                 color: Colors.white,
-                                elevation: 1.5, // 그림자(elevation) 두께? 너비 같은거
+                                elevation: 1.0, // 그림자(elevation) 두께? 너비 같은거
                                 child: Container(
                                   width: MediaQuery.of(context).size.width, // 요건 필수
                                   padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
@@ -72,7 +77,7 @@ class MainWidget extends StatelessWidget {
                                             children: [
                                               /* 경과시간 표기 */
                                               Text("${BibleCtr.Favorite_timediffer_list[index]}",
-                                                  style: TextStyle(fontSize: GeneralCtr.Textsize*0.8, color: BibleCtr.ColorCode[result['highlight_color_index']], fontWeight: FontWeight.bold)),
+                                                  style: TextStyle(fontSize: GeneralCtr.Textsize*0.8, color: Colors.grey, fontWeight: FontWeight.bold)),
                                               /* 즐겨찾기 색(칼러,칼라) 변경 버튼 */
                                               IconButton(
                                                 onPressed: () {
@@ -102,6 +107,7 @@ class MainWidget extends StatelessWidget {
                                                 padding: EdgeInsets.zero,
                                                 constraints: BoxConstraints(),
                                               ),
+
                                             ],
                                           )
                                         ],
@@ -126,13 +132,13 @@ class MainWidget extends StatelessWidget {
 
                 /* 칼라코드 보여주기 */
                 Container(
-                    height: 50,
+                    height: 60,
                     width: MediaQuery.of(context).size.width,
                     margin: EdgeInsets.all(20),
                     child: Center(
                       child: ListView.builder(
                           shrinkWrap: true, // 등간격 정렬하기 위해 위에 "Center"위젯과 함께 사용
-                          scrollDirection: Axis.horizontal,
+                          scrollDirection: Axis.horizontal, // 수평 배치
                           itemCount: BibleCtr.ColorCode.length,
                           itemBuilder: (context, index) {
                             // 색깔 선택이 가능하도록 "InkWell" 위젯으로 감싸기
@@ -145,7 +151,7 @@ class MainWidget extends StatelessWidget {
                                 BibleCtr.GetFavorite_list();
                               },
                               child: Container(
-                                padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
                                 decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     border: Border.all(
@@ -154,9 +160,20 @@ class MainWidget extends StatelessWidget {
                                         width: 2)
                                 ),
                                 // 젤 처음 아이콘은 "X"표시로 변경
-                                child: Icon(
-                                    index != 0 ? FontAwesome5.highlighter : Entypo.cancel,
-                                    color: BibleCtr.ColorCode[index], size: 40),
+                                child: Column(
+                                  children: [
+                                    /* 아이콘 배치(색깔에 맞게) */
+                                    Icon(
+                                        index != 0 ? FontAwesome5.highlighter : Entypo.cancel,
+                                        color: BibleCtr.ColorCode[index], size: 40),
+                                    /* 색깔별 갯수 배치 (0번 인덱스는 갯수 표기 안함) */
+                                    Text(
+                                        index == 0 ? "" :
+                                        "${BibleCtr.Favorite_Color_count.where((e)=>e['highlight_color_index']==index).toList()[0]['count(highlight_color_index)']}"
+                                            , style: TextStyle(color: BibleCtr.ColorCode[index]),
+                                    )
+                                  ],
+                                ),
                               ),
                             );
                           }

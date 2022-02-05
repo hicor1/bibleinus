@@ -72,7 +72,7 @@ class MainWidget extends StatelessWidget {
                       decoration: IsClicked == true ? TextDecoration.underline : null,
                       decorationStyle: TextDecorationStyle.dashed, // .underline .dotted. dashed .double .wavy
                       decorationColor: Colors.purpleAccent,
-                      decorationThickness: 2,
+                      decorationThickness: 5,
                       color: IsClicked == true ? Colors.black : Colors.black
                     ),
                     /* 구절(텍스트)을 눌렀을 때 이벤트 정의 */
@@ -169,7 +169,7 @@ class ModalWigdet extends StatelessWidget {
             // 메인위젯 뿌리기
             return Material(
               child: SizedBox(
-                height: 600, // 전체 모달창 크기 설정
+                height: 400, // 전체 모달창 크기 설정
                 child: Column(
                   children: [
                     // 모달창을 아래로 내리라는 아이콘
@@ -177,20 +177,26 @@ class ModalWigdet extends StatelessWidget {
                         color: GeneralCtr.BlueColor, size: 30),
                     // 아래부터 성경 선택 스크롤
                     SizedBox(
-                      height: 550, // 아이콘을 제외한 나머지 모달창 크기 설정
+                      height: 350, // 아이콘을 제외한 나머지 모달창 크기 설정
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
                           // 첫 번째 열은 신약/구약 선택
                           SingleChildScrollView(
                             // 성경 권(book)리스트 뿌려주기
-                            child: SizedBox(width: 150, height: 550, // "ListView.builder"는 반드시 사이즈 구속 필요!
+                            child: SizedBox(width: 50, height: 350, // "ListView.builder"는 반드시 사이즈 구속 필요!
                               child: ListView.builder(
                                 //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
                                   itemCount: BibleCtr.NEWorOLD_list.length,
                                   itemBuilder: (context, index) {
                                     var result = BibleCtr.NEWorOLD_list[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
                                     return TextButton(
+                                      /* 쓸데없는 패딩 없애주기 */
+                                        style: TextButton.styleFrom(
+                                          minimumSize: Size.zero,
+                                          padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                        ),
                                         onPressed: (){BibleCtr.NEWorOLD_choice(result);},
                                         child: Text(
                                             "${result}",
@@ -205,15 +211,21 @@ class ModalWigdet extends StatelessWidget {
                           // 두 번째 열은 권(book)선택
                           Scrollbar(
                             controller: BibleCtr.BookScroller, // 아래 스크롤러랑 반드시 동일
-                            isAlwaysShown: true,   //화면에 항상 스크롤바가 나오도록 한다
+                            isAlwaysShown: false,   //화면에 항상 스크롤바가 나오도록 한다
                             // 성경 권(book)리스트 뿌려주기
-                            child: SizedBox(width: 150, height: 550, // "ListView.builder"는 반드시 사이즈 구속 필요!
+                            child: SizedBox(width: 150, height: 350, // "ListView.builder"는 반드시 사이즈 구속 필요!
                               child: ListView.builder(
                                   controller: BibleCtr.BookScroller,// 위에 스크롤러랑 반드시 동일
                                   itemCount: BibleCtr.BookList_filtered.length,
                                   itemBuilder: (context, index) {
                                     var result = BibleCtr.BookList_filtered[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
                                     return TextButton(
+                                      /* 쓸데없는 패딩 없애주기 */
+                                        style: TextButton.styleFrom(
+                                          minimumSize: Size.zero,
+                                          padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                        ),
                                         onPressed: (){BibleCtr.Book_choice(result['국문']);},
                                         child: Text(
                                             "${result['국문']}",
@@ -227,15 +239,21 @@ class ModalWigdet extends StatelessWidget {
                           // 세 번째 열은 장(chapter)선택
                           Scrollbar(
                             controller: BibleCtr.ChapterScroller, // 아래 스크롤러랑 반드시 동일
-                            isAlwaysShown: true,   //화면에 항상 스크롤바가 나오도록 한다
+                            isAlwaysShown: false,   //화면에 항상 스크롤바가 나오도록 한다
                             // 성경 권(book)리스트 뿌려주기
-                            child: SizedBox(width: 150, height: 550, // "ListView.builder"는 반드시 사이즈 구속 필요!
+                            child: SizedBox(width: 60, height: 350, // "ListView.builder"는 반드시 사이즈 구속 필요!
                               child: ListView.builder(
                                   controller: BibleCtr.ChapterScroller,// 위에 스크롤러랑 반드시 동일
                                   itemCount: BibleCtr.ChapterList_filtered.length,
                                   itemBuilder: (context, index) {
                                     var result = BibleCtr.ChapterList_filtered[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
                                     return TextButton(
+                                      /* 쓸데없는 패딩 없애주기 */
+                                        style: TextButton.styleFrom(
+                                          minimumSize: Size.zero,
+                                          padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
+                                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                        ),
                                         onPressed: (){BibleCtr.Chapternumber_choice(result['cnum']);},
                                         child: Text(
                                             "${result['cnum']} 장",
