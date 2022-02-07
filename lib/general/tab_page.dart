@@ -58,7 +58,7 @@ class _TabPageState extends State<TabPage> {
                       BottomNavigationBarItem(
                           icon: Icon(FontAwesome5.bible, size: 35), label: '성경'),
                       BottomNavigationBarItem(
-                          icon: Icon(Elusive.headphones, size: 35), label: '찬송가'),
+                          icon: Icon(Elusive.music, size: 35), label: '찬송가'),
                       //BottomNavigationBarItem(icon: Icon(Icons.account_circle, size: 30), label:'더보기'),
                     ],
                   )

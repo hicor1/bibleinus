@@ -164,6 +164,15 @@ class MainWidget extends StatelessWidget {
                           scrollDirection: Axis.horizontal, // 수평 배치
                           itemCount: BibleCtr.ColorCode.length,
                           itemBuilder: (context, index) {
+                            /* 각 색깔별 갯수 구하기 */
+                            //1. 결과값 담을 변수 만들기
+                            var color_count = null;
+                            //2. 빈값이면 "0"을 리턴하고, 그렇지 않으면 DB에서 받은값을 사용하기
+                            if(BibleCtr.Favorite_Color_count.where((e)=>e['highlight_color_index']==index).isEmpty){
+                              color_count = "0";
+                            }else{
+                              color_count = BibleCtr.Favorite_Color_count.where((e)=>e['highlight_color_index']==index).toList()[0]['count(highlight_color_index)'];
+                            }
                             // 색깔 선택이 가능하도록 "InkWell" 위젯으로 감싸기
                             return InkWell(
                               splashColor: Colors.white,
@@ -193,9 +202,8 @@ class MainWidget extends StatelessWidget {
                                     ),
                                     /* 색깔별 갯수 배치 (0번 인덱스는 갯수 표기 안함) */
                                     Text(
-                                        index == 0 ? "" :
-                                        "${BibleCtr.Favorite_Color_count.where((e)=>e['highlight_color_index']==index).toList()[0]['count(highlight_color_index)']}"
-                                            , style: TextStyle(color: BibleCtr.ColorCode[index], fontSize: 20),
+                                        index == 0 ? "취소" :  // 0번째 인덱스는 "취소"표기
+                                        "${color_count}", style: TextStyle(color: BibleCtr.ColorCode[index], fontSize: 20),
                                     )
                                   ],
                                 ),
@@ -204,7 +212,7 @@ class MainWidget extends StatelessWidget {
                           }
                       ),
                     )
-                )
+                ),
               ],
             ),
           ); //return은 필수

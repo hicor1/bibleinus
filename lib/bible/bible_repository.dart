@@ -149,7 +149,7 @@ class BibleRepository {
     return result;
   }
 
-  // 즐겨찾기 페이지 _ 즐겨찾기 색깔별 갯수 구하기
+  // 즐겨찾기 페이지 _ 즐겨찾기 색깔별 갯수 구하기 ( "0"인경우, 인덱스 자체가 없어지므로, 0값이라도 인덱스가 나오게 수정 )
   static Future<List<Map<String, dynamic>>> Get_color_count() async {
     var db = await BibleDatabase.getDb();
     var Query =

@@ -391,6 +391,7 @@ class BibleController extends GetxController {
     GetFreeSearchList();
     /* 메인 성경 컨텐츠 업데이트 */
     Getcontents();
+    GetFavorite_list(); // 즐겨찾기 업데이트
     update();
   }
 

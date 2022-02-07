@@ -190,25 +190,31 @@ class FreeSearchResult extends StatelessWidget {
                               itemBuilder: (context, index) {
                                 var result = BibleCtr.FreeSearchResultCount[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
                                 /* 성경 권(book) 리스트를 갯수와 함께 뿌려주기 ㄱㄱ */
-                                return TextButton(
-                                  // 텍스트 버튼 쓸데없는 패딩 삭제
-                                  style: TextButton.styleFrom(
-                                    minimumSize: Size.zero,
-                                    padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 3.0),
-                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                  ),
-                                  onPressed: (){
-                                    /* 성경 권(book)이름을 선택하면 해당 권으로 필터링*/
-                                    BibleCtr.FreeSearch_book_choice(result['bcode']);
-                                  },
-                                  // 텍스트 정렬을 위해 "Align" 위젯 씌우기
-                                  child: Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Text("${result['국문']} (${result['count(국문)']})",
-                                      /* 선택된 권의 경우 강조해주기, 그렇지 않은 권은 회색처리 */
-                                      style: result['bcode'] == BibleCtr.FreeSearchSelected_bcode ?
-                                      TextStyle(color: Colors.black, fontSize: 17) : TextStyle(color: Colors.grey, fontSize: 15) ),
-                                  ),
+                                return Column(
+                                  children: [
+                                    TextButton(
+                                      // 텍스트 버튼 쓸데없는 패딩 삭제
+                                      style: TextButton.styleFrom(
+                                        minimumSize: Size.zero,
+                                        padding: EdgeInsets.fromLTRB(0.0, 0.0, 0.0, 3.0),
+                                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      ),
+                                      onPressed: (){
+                                        /* 성경 권(book)이름을 선택하면 해당 권으로 필터링*/
+                                        BibleCtr.FreeSearch_book_choice(result['bcode']);
+                                      },
+                                      // 텍스트 정렬을 위해 "Align" 위젯 씌우기
+                                      child: Align(
+                                        alignment: Alignment.topLeft,
+                                        child: Text("${result['국문']} (${result['count(국문)']})",
+                                            /* 선택된 권의 경우 강조해주기, 그렇지 않은 권은 회색처리 */
+                                            style: result['bcode'] == BibleCtr.FreeSearchSelected_bcode ?
+                                            GeneralCtr.TextStyle_normal_accent : GeneralCtr.TextStyle_normal_disable ),
+                                      ),
+                                    ),
+                                    /* 리스트간 사히적 거리두기 */
+                                    SizedBox(height: 5)
+                                  ],
                                 );
                               }
                           ),
@@ -321,7 +327,11 @@ class History extends StatelessWidget {
                       //var result = FavoriteCtr.FavoriteList[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
                       /* 아래부터 검색결과를 하나씩 컨테이너에 담아주기*/
                       return InkWell(
-                        onTap: (){BibleCtr.History_click(index);},
+                        /* 히스토리를 클릭 했을 때 이벤트 정의 */
+                        onTap: (){
+                          /* 찾기 페이지로 넘어가기 */
+                          BibleCtr.History_click(index)
+                          ;},
                         child: Container(
                           padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                           color: Colors.transparent,
@@ -331,16 +341,20 @@ class History extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
                                   /* 검색결과 내용 표기 */
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Icon(Elusive.search, size: GeneralCtr.Textsize*0.9, color: GeneralCtr.MainColor),
-                                      Text("   ${BibleCtr.FreeSearch_history_query[index]}    ",
-                                          style: TextStyle(fontSize: GeneralCtr.Textsize, color: Colors.black)),
-                                      Icon(FontAwesome5.bible, size: GeneralCtr.Textsize*0.9, color: Colors.grey.withOpacity(0.8)),
-                                      Text(" ${BibleCtr.FreeSearch_history_bible[index]}",
-                                          style: TextStyle(fontSize: GeneralCtr.Textsize*0.85, color: Colors.grey.withOpacity(0.8))),
-                                    ],
+                                  Flexible(
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        Icon(Elusive.search, size: GeneralCtr.Textsize*0.9, color: GeneralCtr.MainColor),
+                                        Flexible(
+                                          child: Text("   ${BibleCtr.FreeSearch_history_query[index]}    ",
+                                              style: TextStyle(fontSize: GeneralCtr.Textsize, color: Colors.black)),
+                                        ),
+                                        Icon(FontAwesome5.bible, size: GeneralCtr.Textsize*0.9, color: Colors.grey.withOpacity(0.8)),
+                                        Text(" ${BibleCtr.FreeSearch_history_bible[index]}",
+                                            style: TextStyle(fontSize: GeneralCtr.Textsize*0.85, color: Colors.grey.withOpacity(0.8))),
+                                      ],
+                                    ),
                                   ),
                                   /* 옵션 버튼 */
                                   PopupMenuButton(

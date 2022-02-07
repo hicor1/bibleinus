@@ -367,21 +367,26 @@ void AddFavorite(context) {
                             itemCount: BibleCtr.ContentsDataList_clicked.length,
                             itemBuilder: (context, index) {
                               var result = BibleCtr.ContentsDataList_clicked[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
-                              return Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              return Column(
                                 children: [
-                                  Text("${result['cnum']}:${result['vnum']} | ", style: TextStyle(color: Colors.grey, fontSize: GeneralCtr.Textsize)),
-                                  // 구절의 길이가 너무 길 경우, "...."으로 표현해준다.
-                                  Flexible(
-                                    // 색 코드에서 선택한 색상으로 배경색 변경해준다, 단 0번의 경우는 무색처리한다.
-                                    child: DecoratedBox(
-                                      decoration: BoxDecoration(color: BibleCtr.ColorCode_choiced_index == 0 ? Colors.transparent : BibleCtr.ColorCode[BibleCtr.ColorCode_choiced_index]),
-                                      child: Text("${result[BibleCtr.Bible_choiced]}",
-                                        maxLines:2, overflow: TextOverflow.ellipsis, // 공간을 넘는 글자는 쩜쩜쩜(...)으로 표기한다.
-                                        style: TextStyle(fontSize: GeneralCtr.Textsize, height: GeneralCtr.Textheight)
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text("${result['cnum']}:${result['vnum']} | ", style: TextStyle(color: Colors.grey, fontSize: GeneralCtr.Textsize)),
+                                      // 구절의 길이가 너무 길 경우, "...."으로 표현해준다.
+                                      Flexible(
+                                        // 색 코드에서 선택한 색상으로 배경색 변경해준다, 단 0번의 경우는 무색처리한다.
+                                        child: DecoratedBox(
+                                          decoration: BoxDecoration(color: BibleCtr.ColorCode_choiced_index == 0 ? Colors.transparent : BibleCtr.ColorCode[BibleCtr.ColorCode_choiced_index]),
+                                          child: Text("${result[BibleCtr.Bible_choiced]}",
+                                              maxLines:2, overflow: TextOverflow.ellipsis, // 공간을 넘는 글자는 쩜쩜쩜(...)으로 표기한다.
+                                              style: TextStyle(fontSize: GeneralCtr.Textsize, height: GeneralCtr.Textheight)
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                    ],
                                   ),
+                                  Divider(),
                                 ],
                               );
                             }
@@ -394,19 +399,28 @@ void AddFavorite(context) {
                     Container(
                         height: 50,
                         width: MediaQuery.of(context).size.width,
-                        margin: EdgeInsets.all(20),
+                        margin: EdgeInsets.all(5),
                         child: Center(
                           child: ListView.builder(
                               shrinkWrap: true, // 등간격 정렬하기 위해 위에 "Center"위젯과 함께 사용
                               scrollDirection: Axis.horizontal,
                               itemCount: BibleCtr.ColorCode.length,
                               itemBuilder: (context, index) {
+                                /* 각 색깔별 갯수 구하기 */
+                                //1. 결과값 담을 변수 만들기
+                                var color_count = null;
+                                //2. 빈값이면 "0"을 리턴하고, 그렇지 않으면 DB에서 받은값을 사용하기
+                                if(BibleCtr.Favorite_Color_count.where((e)=>e['highlight_color_index']==index).isEmpty){
+                                  color_count = "0";
+                                }else{
+                                  color_count = BibleCtr.Favorite_Color_count.where((e)=>e['highlight_color_index']==index).toList()[0]['count(highlight_color_index)'];
+                                }
                                 // 색깔 선택이 가능하도록 "InkWell" 위젯으로 감싸기
                                 return InkWell(
                                   splashColor: Colors.white,
                                   onTap: (){BibleCtr.ColorCode_choice(index);},
                                   child: Container(
-                                    padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                    padding: EdgeInsets.fromLTRB(6, 0, 6, 0),
                                     // 젤 처음 아이콘은 "X"표시로 변경
                                     child: Column(
                                       children: [
@@ -425,9 +439,8 @@ void AddFavorite(context) {
                                         ),
                                         /* 색깔별 갯수 배치 (0번 인덱스는 갯수 표기 안함) */
                                         Text(
-                                          index == 0 ? "" :
-                                          "${BibleCtr.Favorite_Color_count.where((e)=>e['highlight_color_index']==index).toList()[0]['count(highlight_color_index)']}"
-                                          , style: TextStyle(color: BibleCtr.ColorCode[index], fontSize: 20),
+                                          index == 0 ? "취소" :
+                                          "${color_count}", style: TextStyle(color: BibleCtr.ColorCode[index], fontSize: 15),
                                         )
                                       ],
                                     ),
@@ -507,21 +520,26 @@ void AddMemo(context, id, action) {
                             itemCount: BibleCtr.ContentsDataList_clicked.length,
                             itemBuilder: (context, index) {
                               var result = BibleCtr.ContentsDataList_clicked[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
-                              return Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              return Column(
                                 children: [
-                                  Text("${result['cnum']}:${result['vnum']} | ", style: TextStyle(color: Colors.grey, fontSize: GeneralCtr.Textsize)),
-                                  // 구절의 길이가 너무 길 경우, "...."으로 표현해준다.
-                                  Flexible(
-                                    // 색 코드에서 선택한 색상으로 배경색 변경해준다, 단 0번의 경우는 무색처리한다.
-                                    child: DecoratedBox(
-                                      decoration: BoxDecoration(color: result['highlight_color_index'] == 0 ? Colors.transparent : BibleCtr.ColorCode[result['highlight_color_index']]),
-                                      child: Text("${result[BibleCtr.Bible_choiced]}",
-                                          maxLines:3, overflow: TextOverflow.ellipsis, // 공간을 넘는 글자는 쩜쩜쩜(...)으로 표기한다.
-                                          style: TextStyle(fontSize: GeneralCtr.Textsize, height: GeneralCtr.Textheight)
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Text("${result['cnum']}:${result['vnum']} | ", style: TextStyle(color: Colors.grey, fontSize: GeneralCtr.Textsize)),
+                                      // 구절의 길이가 너무 길 경우, "...."으로 표현해준다.
+                                      Flexible(
+                                        // 색 코드에서 선택한 색상으로 배경색 변경해준다, 단 0번의 경우는 무색처리한다.
+                                        child: DecoratedBox(
+                                          decoration: BoxDecoration(color: result['highlight_color_index'] == 0 ? Colors.transparent : BibleCtr.ColorCode[result['highlight_color_index']]),
+                                          child: Text("${result[BibleCtr.Bible_choiced]}",
+                                              maxLines:3, overflow: TextOverflow.ellipsis, // 공간을 넘는 글자는 쩜쩜쩜(...)으로 표기한다.
+                                              style: TextStyle(fontSize: GeneralCtr.Textsize, height: GeneralCtr.Textheight)
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                    ],
                                   ),
+                                  Divider(),
                                 ],
                               );
                             }

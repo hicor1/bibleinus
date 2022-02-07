@@ -6,6 +6,7 @@ import 'package:bible_in_us/bible/bible_memo_page.dart';
 import 'package:bible_in_us/bible/bible_search_screen.dart';
 import 'package:bible_in_us/general/general_controller.dart';
 import 'package:bible_in_us/hymn/hymn_controller.dart';
+import 'package:bible_in_us/hymn/hymn_score_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/typicons_icons.dart';
@@ -74,7 +75,7 @@ class Mainwidget extends StatelessWidget {
                   title: Text('Bible In Us', style: TextStyle(color: GeneralCtr.MainColor, fontSize: 25, fontWeight: FontWeight.bold)),
                   backgroundColor: Colors.white,
                   floating: true, // 최상단 앱바까지 감출지 여부
-                  pinned: false, // 탭까지 모두 감출지 여부
+                  pinned: true, // 탭까지 모두 감출지 여부
                   snap: true, // 잠깐다시올릴때 앱바 보여주기
 
                   // "TabBar"는 기본적으로 Evenly 정렬이므로, 좌측정렬이 안됨. 따라서 PreferredSize를 사용해서 인위적으로 좌측 정렬 시킴
@@ -98,7 +99,7 @@ class Mainwidget extends StatelessWidget {
                         isScrollable: true, // 수평으로 스크롤가능여부
                         tabs: [
                           Tab(child: Text('찬송가')),
-                          Tab(child: Text('즐겨찾기')),
+                          Tab(child: Text('악보')),
                         ],
                       ),
                     ),
@@ -110,7 +111,7 @@ class Mainwidget extends StatelessWidget {
               controller: HymnCtr.tabController, // 컨트롤러 정의
               children: <Widget>[
                 HymnMainWidget(), // 메인 페이지 호출
-                Text("즐겨찾기"),
+                HymnScorePage(),
               ],
             ),
           )),

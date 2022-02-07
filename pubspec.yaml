@@ -51,6 +51,8 @@ dependencies:
   flutter_easyloading: ^3.0.3 # 로딩화면
   fab_circular_menu: ^1.0.0 # 플롯팅 액숀버튼
 
+  firebase_core: ^1.12.0 # 파이어베이스
+
 
 dev_dependencies:
   flutter_test:

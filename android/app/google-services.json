@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "412090218126",
+    "project_id": "bible-in-us",
+    "storage_bucket": "bible-in-us.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:412090218126:android:631901f3e433457e043bdf",
+        "android_client_info": {
+          "package_name": "com.hicor.bible_in_us"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "412090218126-dvenec33tn1h9kc82rnibugc461f1in7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hicor.bible_in_us",
+            "certificate_hash": "d1ae40ae676ee5a689d4d742c3536731d65b0f6c"
+          }
+        },
+        {
+          "client_id": "412090218126-frhdlnpuep08527rj130hvrsolq0ijo3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAdODjvG_3SD2p1vAVbdb_DO9_WESQT5MA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "412090218126-frhdlnpuep08527rj130hvrsolq0ijo3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
