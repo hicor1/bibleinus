@@ -52,6 +52,10 @@ dependencies:
   fab_circular_menu: ^1.0.0 # 플롯팅 액숀버튼
 
   firebase_core: ^1.12.0 # 파이어베이스
+  firebase_auth: ^3.3.6 # 파이어베이스
+  google_sign_in: ^5.2.3 # 구글 로그인
+  flutter_facebook_auth: ^4.0.1 # 페이스북 로그인
+  flutter_signin_button: ^2.0.0 # 소셜로그인 버튼
 
 
 dev_dependencies:
@@ -81,6 +85,7 @@ flutter:
     - assets/
     - assets/img/hymns/ # 찬송가 악보
     - assets/img/icons/ # 아이콘
+    - assets/img/logo/  # 로고관련 이미지
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
@@ -93,10 +98,16 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
+  fonts:
+    - family: cafe1
+      fonts:
+        - asset: assets/fonts/Cafe24Ohsquareair.ttf
+    - family: cafe2
+      fonts:
+        - asset: assets/fonts/Cafe24Ohsquare.ttf
+    - family: cafe3
+      fonts:
+        - asset: assets/fonts/Cafe24Ssurround.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

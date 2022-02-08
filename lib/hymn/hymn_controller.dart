@@ -17,7 +17,7 @@ class HymnController extends GetxController {
   var selected_type_name     = "송영"; // 사용자가 선택한 타입(type)이름
   var selected_hymn_name     = "만복의 근원 하나님"; // 사용자가 선택한 찬송가 이름
   var selected_hymn_number   = 1; // 사용자가 선택한 찬송가 번호
-  var selected_hymn_path     = ""; // 사용자가 선택한 찬송가 이미지 경로
+  var selected_hymn_path     = "assets/img/hymns/newhymn-001.jpg"; // 사용자가 선택한 찬송가 이미지 경로
 
   /* 컨트롤러 정의 */
   var searchtextController = TextEditingController(); // 메인 검색어 컨트롤러

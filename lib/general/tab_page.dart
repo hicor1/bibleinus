@@ -1,6 +1,7 @@
 import 'package:bible_in_us/bible/bible_tab_page.dart';
 import 'package:bible_in_us/general/general_controller.dart';
 import 'package:bible_in_us/hymn/hymn_tab_page.dart';
+import 'package:bible_in_us/user/user_main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/elusive_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
@@ -20,6 +21,7 @@ class _TabPageState extends State<TabPage> {
   List pages = [
     BibleTabPage(),
     HymnTabPage(),
+    UserMainPage(),
   ];
 
   @override
@@ -32,7 +34,7 @@ class _TabPageState extends State<TabPage> {
             return Scaffold(
               body: Center(child: pages[GeneralCtr.selectedPageIndex]),
               bottomNavigationBar: Container(
-                  height: 70, // 네비바 높이
+                  height: 55, // 네비바 높이
                   decoration: const BoxDecoration(
                       color: Colors.white,
                       boxShadow: [BoxShadow(color: Colors.white)],
@@ -56,10 +58,10 @@ class _TabPageState extends State<TabPage> {
                     //Tab 아이템 정의
                     items: const [
                       BottomNavigationBarItem(
-                          icon: Icon(FontAwesome5.bible, size: 35), label: '성경'),
+                          icon: Icon(FontAwesome5.bible, size: 25), label: ''),
                       BottomNavigationBarItem(
-                          icon: Icon(Elusive.music, size: 35), label: '찬송가'),
-                      //BottomNavigationBarItem(icon: Icon(Icons.account_circle, size: 30), label:'더보기'),
+                          icon: Icon(Elusive.music , size: 25), label: ''),
+                      BottomNavigationBarItem(icon: Icon(FontAwesome5.user, size: 25), label:''),
                     ],
                   )
               ),

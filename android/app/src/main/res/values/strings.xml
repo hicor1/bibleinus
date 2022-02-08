@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">bible_in_us</string>
+    <string name="facebook_app_id">1097828281059473</string>
+    <string name="fb_login_protocol_scheme">fb1097828281059473</string>
+</resources>

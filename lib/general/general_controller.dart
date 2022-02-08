@@ -29,8 +29,8 @@ class GeneralController extends GetxController {
     var BlueColor = Color(0xff536dfe); // 블루계열 색상 # 0xff2196f3 # 0xff2196f3 # 0xff2979ff
 
     /* 모달창 텍스트 스타일 */
-    var TextStyle_normal_accent = TextStyle(fontSize: 17, color: Colors.black, fontWeight: FontWeight.w900); // 일반적인 텍스트 스타일 정의
-    var TextStyle_normal_disable = TextStyle(fontSize: 17, color: Colors.grey, fontWeight: FontWeight.w300); // 일반적인 텍스트 스타일 정의
+    var TextStyle_normal_accent = TextStyle(fontSize: 13, color: Colors.black, fontWeight: FontWeight.w900); // 일반적인 텍스트 스타일 정의
+    var TextStyle_normal_disable = TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.w300); // 일반적인 텍스트 스타일 정의
 
     /*  메인에 보여지는 성경구절 스타일 */
     var Textsize = 15.0; // 팝업창에서 설정할 전체 텍스트 사이즈
