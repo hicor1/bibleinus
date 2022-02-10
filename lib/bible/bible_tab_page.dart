@@ -72,7 +72,7 @@ class Mainwidget extends StatelessWidget {
               return <Widget>[
                 // 수직으로 스크롤 가능하도록 설정
                 SliverAppBar(
-                  title: Text('Bible In Us', style: TextStyle(color: GeneralCtr.MainColor, fontSize: 25, fontWeight: FontWeight.bold)),
+                  title: Text('성경', style: TextStyle(color: GeneralCtr.MainColor, fontSize: 25, fontWeight: FontWeight.bold)),
                   backgroundColor: Colors.white,
                   floating: true, // 최상단 앱바까지 감출지 여부
                   pinned: false, // 탭까지 모두 감출지 여부

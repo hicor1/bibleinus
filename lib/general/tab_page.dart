@@ -1,7 +1,7 @@
 import 'package:bible_in_us/bible/bible_tab_page.dart';
 import 'package:bible_in_us/general/general_controller.dart';
 import 'package:bible_in_us/hymn/hymn_tab_page.dart';
-import 'package:bible_in_us/user/user_main_page.dart';
+import 'package:bible_in_us/my/my_main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/elusive_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
@@ -21,7 +21,7 @@ class _TabPageState extends State<TabPage> {
   List pages = [
     BibleTabPage(),
     HymnTabPage(),
-    UserMainPage(),
+    MyMainPage(),
   ];
 
   @override
@@ -34,7 +34,7 @@ class _TabPageState extends State<TabPage> {
             return Scaffold(
               body: Center(child: pages[GeneralCtr.selectedPageIndex]),
               bottomNavigationBar: Container(
-                  height: 55, // 네비바 높이
+                  height: 40, // 네비바 높이
                   decoration: const BoxDecoration(
                       color: Colors.white,
                       boxShadow: [BoxShadow(color: Colors.white)],
@@ -42,14 +42,15 @@ class _TabPageState extends State<TabPage> {
                       border: BorderDirectional(
                           top: BorderSide(
                               color: Colors.grey,
-                              width: 0.4,
+                              width: 0.2,
                               style: BorderStyle.solid))),
                   child: BottomNavigationBar(
+
                     type: BottomNavigationBarType.fixed,
                     unselectedItemColor: Colors.grey, // 비활성 아이콘 색깔
                     selectedItemColor: GeneralCtr.MainColor,  // 활성 아이콘 색깔
-                    unselectedFontSize: 10, // 비활성 텍스트 크기
-                    selectedFontSize: 13, // 활성 텍스트 크기
+                    unselectedFontSize: 0, // 비활성 텍스트 크기, 텍스트를 안쓸거기때문에 가장작게한다!
+                    selectedFontSize: 0, // 활성 텍스트 크기, 텍스트를 안쓸거기때문에 가장작게한다!
                     // 탭 클릭 이벤트
                     onTap: (index) {
                       GeneralCtr.PageChanged(index);

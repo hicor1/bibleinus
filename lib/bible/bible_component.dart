@@ -146,7 +146,6 @@ void openPopup(context) {
             GetBuilder<BibleController>(
                 init: BibleController(),
                 builder: (_){
-                  var children;
                   return Container(
                     child: Column(
                       children: [
@@ -197,7 +196,7 @@ void openPopup(context) {
                   ); //return은 필수
                 }
             ),
-            SizedBox(height: 15,),
+            SizedBox(height: 5),
 
             /* 1. 글씨크기 (GeneralController에 집어넣기)*/
             GetBuilder<GeneralController>(
@@ -226,7 +225,7 @@ void openPopup(context) {
                                   width: 400,
                                   child: SfSlider(
                                     min: 10.0,
-                                    max: 50.0,
+                                    max: 30.0,
                                     interval: 10,
                                     stepSize: 2,
                                     showTicks: false,
@@ -249,7 +248,7 @@ void openPopup(context) {
                 }
             ),
 
-            SizedBox(height: 15,),
+            SizedBox(height: 5),
 
             /* 2. 줄 간격 (GeneralController에 집어넣기)*/
             GetBuilder<GeneralController>(
@@ -303,7 +302,7 @@ void openPopup(context) {
                 }
             ),
 
-            SizedBox(height: 30,)
+            SizedBox(height: 10)
           ],
         ),
       buttons: [
@@ -539,14 +538,18 @@ void AddMemo(context, id, action) {
                                       ),
                                     ],
                                   ),
-                                  Divider(),
+                                  Divider()
                                 ],
                               );
                             }
                         ),
                       ),
                     ),
+
+                    /* 사회적 거리두기 */
                     SizedBox(height: 10),
+
+
                     /* 2. 메모 입력 텍스트필드(Textfield) */
                     TextField(
                       minLines: 1,

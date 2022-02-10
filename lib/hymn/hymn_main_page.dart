@@ -56,7 +56,7 @@ class HymnMainWidget extends StatelessWidget {
                   ),
 
                   /* 사회적거리두기 표시선 */
-                  Divider(indent: 10, endIndent: 10, height: 0),
+                  Divider(indent: 0, endIndent: 0, height: 0),
 
                   /* 아래는 검색결과를 리스트로 보여주는 부분 */
                   Flexible(

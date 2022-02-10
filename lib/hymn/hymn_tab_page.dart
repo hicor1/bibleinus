@@ -72,10 +72,10 @@ class Mainwidget extends StatelessWidget {
               return <Widget>[
                 // 수직으로 스크롤 가능하도록 설정
                 SliverAppBar(
-                  title: Text('Bible In Us', style: TextStyle(color: GeneralCtr.MainColor, fontSize: 25, fontWeight: FontWeight.bold)),
+                  title: Text('찬송가', style: TextStyle(color: GeneralCtr.MainColor, fontSize: 25, fontWeight: FontWeight.bold)),
                   backgroundColor: Colors.white,
                   floating: true, // 최상단 앱바까지 감출지 여부
-                  pinned: true, // 탭까지 모두 감출지 여부
+                  pinned: false, // 탭까지 모두 감출지 여부
                   snap: true, // 잠깐다시올릴때 앱바 보여주기
 
                   // "TabBar"는 기본적으로 Evenly 정렬이므로, 좌측정렬이 안됨. 따라서 PreferredSize를 사용해서 인위적으로 좌측 정렬 시킴

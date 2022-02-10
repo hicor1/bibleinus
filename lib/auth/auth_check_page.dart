@@ -1,4 +1,5 @@
 import 'package:bible_in_us/auth/auth_login_page.dart';
+import 'package:bible_in_us/general/root_page.dart';
 import 'package:bible_in_us/general/tab_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class AuthCheckPage extends StatelessWidget {
               return AuthLoginPage();
             } else {
             /* 2. 파이어 베이스 로그인 상태일 때 페이지 */
-              return TabPage();
+              return RootPage();
             }
           },
         ),

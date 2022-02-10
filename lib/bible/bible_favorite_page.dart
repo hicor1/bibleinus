@@ -44,7 +44,10 @@ class MainWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
 
-                /* 선택된 성경 구절 가져오기 */
+                /* 사회적 거리두기 */
+                SizedBox(height: 10),
+
+                /* 메인컨텐츠 _ 선택된 성경 구절 가져오기 */
                 Flexible(
                   child: Scrollbar(
                     child: ListView.builder(
@@ -92,7 +95,7 @@ class MainWidget extends StatelessWidget {
                                               },
                                               child: Row(
                                                 children: [
-                                                  /* 메모 추가를 위한 체크박스 */
+                                                  /* 메모 추가를 위한 체크박스 _ 플로팅 액숀버튼 띄우기 */
                                                   GFCheckbox(
                                                     size: GeneralCtr.Textsize*1.1, // 박스 사이즈
                                                     activeIcon: Icon(Typicons.ok, size: GeneralCtr.Textsize*1.1, color: BibleCtr.ColorCode[result['highlight_color_index']]), // 활성 아이콘
@@ -155,9 +158,9 @@ class MainWidget extends StatelessWidget {
 
                 /* 칼라코드 보여주기 */
                 Container(
-                    height: 70,
+                    height: 45,
                     width: MediaQuery.of(context).size.width,
-                    margin: EdgeInsets.all(20),
+                    margin: EdgeInsets.all(10),
                     child: Center(
                       child: ListView.builder(
                           shrinkWrap: true, // 등간격 정렬하기 위해 위에 "Center"위젯과 함께 사용
@@ -190,20 +193,22 @@ class MainWidget extends StatelessWidget {
                                     /* 아이콘 배치(색깔에 맞게), 아이콘을 겹쳐서 강조표기해주기 */
                                     Stack(
                                       children:[
+                                        /* 색깔 아이콘 */
                                         Icon(
                                             index != 0 ? FontAwesome5.highlighter : Entypo.cancel,
-                                            color: BibleCtr.ColorCode[index], size: 40
+                                            color: BibleCtr.ColorCode[index], size: 25
                                         ),
+                                        /* 색깔 선택 아이콘 */
                                         Icon(
                                           BibleCtr.Favorite_choiced_color_list.contains(index) ? WebSymbols.ok : null,
-                                            color: Colors.deepOrangeAccent, size: 20
+                                            color: Colors.deepOrangeAccent, size: 15
                                         ),
                                       ]
                                     ),
                                     /* 색깔별 갯수 배치 (0번 인덱스는 갯수 표기 안함) */
                                     Text(
                                         index == 0 ? "취소" :  // 0번째 인덱스는 "취소"표기
-                                        "${color_count}", style: TextStyle(color: BibleCtr.ColorCode[index], fontSize: 20),
+                                        "${color_count}", style: TextStyle(color: BibleCtr.ColorCode[index], fontSize: 15),
                                     )
                                   ],
                                 ),

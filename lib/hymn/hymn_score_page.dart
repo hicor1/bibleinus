@@ -22,19 +22,22 @@ class HymnScorePage extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.all(3.0),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    SizedBox(height: 10),
+                    SizedBox(height: 5),
 
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.center,
-                    //   children: [
-                    //     Text("[${HymnCtr.selected_type_name}] ${HymnCtr.selected_hymn_number}. ${HymnCtr.selected_hymn_name}",
-                    //         style: TextStyle(fontSize: GeneralCtr.Textsize+5), textAlign: TextAlign.center),
-                    //   ],
-                    // ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("[${HymnCtr.selected_type_name}] ${HymnCtr.selected_hymn_number}. ${HymnCtr.selected_hymn_name}",
+                            style: TextStyle(
+                                fontSize: GeneralCtr.Textsize+5,
 
-                    SizedBox(height: 10),
+                            ), textAlign: TextAlign.center),
+                      ],
+                    ),
+
+                    SizedBox(height: 30),
 
                     Flexible(child: Image.asset(HymnCtr.selected_hymn_path)),
                   ],
