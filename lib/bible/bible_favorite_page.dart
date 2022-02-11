@@ -39,13 +39,10 @@ class MainWidget extends StatelessWidget {
         init: BibleController(),
         builder: (_){
           return Padding(
-            padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+            padding: EdgeInsets.fromLTRB(5, 10, 5, 0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-
-                /* 사회적 거리두기 */
-                SizedBox(height: 10),
 
                 /* 메인컨텐츠 _ 선택된 성경 구절 가져오기 */
                 Flexible(

@@ -33,11 +33,11 @@ class _BibleTabPageState extends State<BibleTabPage> with TickerProviderStateMix
     BibleCtr.tabController = TabController(length: 3, vsync: this); // 메인 페이지 탭
     super.initState();
   }
-  @override
-  void dispose() {
-    BibleCtr.tabController.dispose();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   BibleCtr.tabController.dispose();
+  //   super.dispose();
+  // }
   // 메인위젯 뿌리기
   @override
   Widget build(BuildContext context) {

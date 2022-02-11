@@ -43,7 +43,7 @@ dependencies:
   flutter_app_name: ^0.1.1 # 앱 이름 변경하기
   fluttericon: ^2.0.0 # 앱 아이콘 모음 추가
   modal_bottom_sheet: ^2.0.0 # 밑에서 올라오는 창
-  fluttertoast: ^8.0.7 # 토스트 메세지 띄우기
+  fluttertoast: ^8.0.8 # 토스트 메세지 띄우기
   substring_highlight: ^1.0.33 # 텍스트 하이라이트
   syncfusion_flutter_sliders: ^19.4.42 # 슬라이더
   rflutter_alert: ^2.0.4 # 팝업창

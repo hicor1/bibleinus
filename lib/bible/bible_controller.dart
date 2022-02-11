@@ -289,6 +289,7 @@ class BibleController extends GetxController {
   void FreeSearch_history_remove_one(index){
     FreeSearch_history_bible.removeAt(index);
     FreeSearch_history_query.removeAt(index);
+    SavePrefsData(); //현재 설정값 저장
     // 토스트 메세지 띄우기
     PopToast("해당 검색 기록이 삭제 되었습니다.");
     update();
@@ -297,6 +298,7 @@ class BibleController extends GetxController {
   void FreeSearch_history_remove_all(){
     FreeSearch_history_bible=[]; /* 성경이름 넣기 */
     FreeSearch_history_query=[]; /* 쿼리문 넣기 */
+    SavePrefsData(); //현재 설정값 저장
     // 토스트 메세지 띄우기
     PopToast("전체 검색 기록이 삭제 되었습니다.");
     update();

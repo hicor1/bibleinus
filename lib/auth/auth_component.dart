@@ -17,6 +17,7 @@ void signInWithEmail(String email, String pwd) async {
     await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: email, password: pwd);
   } on FirebaseAuthException catch (e) {
+    print(e.code);
     if (e.code == 'user-not-found') {
       /* 이메일 주소가 존재하지 않음 */
       PopToast('이메일 주소가 정확하지 않습니다.');
@@ -45,7 +46,7 @@ void signUpWithEmail(String displayname, String email, String pwd) async {
     await FirebaseAuth.instance.createUserWithEmailAndPassword(email: email, password: pwd);
 
     //2. 회원 객체에 닉네임 업데이트 해주기
-    await userCred.user!.updateProfile(displayName: displayname);
+    await userCred.user!.updateDisplayName(displayname);
 
     //3. 메인탭으로 이동
     Get.to(() => AuthCheckPage());

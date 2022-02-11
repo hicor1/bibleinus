@@ -24,8 +24,9 @@ void PopToast(String message){
   Fluttertoast.showToast(
       msg: message,
       gravity: ToastGravity.BOTTOM,
-      backgroundColor: Colors.white,
+      timeInSecForIosWeb: 1,
       fontSize: 20.0,
+      backgroundColor: Colors.black,
       textColor: Colors.white,
       toastLength: Toast.LENGTH_SHORT
   );
@@ -73,7 +74,7 @@ void FlutterDialog(context) {
 
 // 자유검색에서 선택한구절로 넘어갈지 묻는 경고창
 Future<void> IsMoveDialog(context, result, index) async {
-  var verses_info = "${result['국문']}(${result['영문']}) :  ${result['cnum']}장";
+  var versesInfo = "${result['국문']}(${result['영문']}) :  ${result['cnum']}장";
   await showDialog(
       context: context,
       //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
@@ -94,7 +95,7 @@ Future<void> IsMoveDialog(context, result, index) async {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              Text("$verses_info", style: TextStyle(fontWeight: FontWeight.bold),),
+              Text("$versesInfo", style: TextStyle(fontWeight: FontWeight.bold),),
               Text("구절로 이동하시겠습니까"),
             ],
           ),
@@ -103,7 +104,7 @@ Future<void> IsMoveDialog(context, result, index) async {
               child: new Text("확인"),
               onPressed: () {
                 // 1. 토스트메세지 띄우기
-                PopToast("$verses_info로 이동합니다.");
+                PopToast("$versesInfo로 이동합니다.");
                 // 2. 선택 구절을 메인에서 보여주기 위해 데이터 업데이트
                 BibleCtr.MoveToContents(result);
                 // 3. 팝업창 닫기
@@ -407,12 +408,12 @@ void AddFavorite(context) {
                               itemBuilder: (context, index) {
                                 /* 각 색깔별 갯수 구하기 */
                                 //1. 결과값 담을 변수 만들기
-                                var color_count = null;
+                                var colorCount = null;
                                 //2. 빈값이면 "0"을 리턴하고, 그렇지 않으면 DB에서 받은값을 사용하기
                                 if(BibleCtr.Favorite_Color_count.where((e)=>e['highlight_color_index']==index).isEmpty){
-                                  color_count = "0";
+                                  colorCount = "0";
                                 }else{
-                                  color_count = BibleCtr.Favorite_Color_count.where((e)=>e['highlight_color_index']==index).toList()[0]['count(highlight_color_index)'];
+                                  colorCount = BibleCtr.Favorite_Color_count.where((e)=>e['highlight_color_index']==index).toList()[0]['count(highlight_color_index)'];
                                 }
                                 // 색깔 선택이 가능하도록 "InkWell" 위젯으로 감싸기
                                 return InkWell(
@@ -439,7 +440,7 @@ void AddFavorite(context) {
                                         /* 색깔별 갯수 배치 (0번 인덱스는 갯수 표기 안함) */
                                         Text(
                                           index == 0 ? "취소" :
-                                          "${color_count}", style: TextStyle(color: BibleCtr.ColorCode[index], fontSize: 15),
+                                          "${colorCount}", style: TextStyle(color: BibleCtr.ColorCode[index], fontSize: 15),
                                         )
                                       ],
                                     ),
@@ -509,7 +510,7 @@ void AddMemo(context, id, action) {
                           border: Border.all(color: Colors.grey.withOpacity(0.4), width: 2),
                           borderRadius: BorderRadius.circular(15)
                       ),
-                      padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
+                      padding: EdgeInsets.fromLTRB(15, 10, 15, 0),
                       //height: 130,
                       child: Scrollbar(
                         //isAlwaysShown: true,   //화면에 항상 스크롤바가 나오도록 한다
