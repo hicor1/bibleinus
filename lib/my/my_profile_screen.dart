@@ -198,58 +198,62 @@ class DisplayNameModalWigdet extends StatelessWidget {
               /* 닉네임 적는곳 */
               Container(
                 padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                child: Form(
-                  /* Form을 위한 key(키) 할당 */
-                  key: Update_displayname_formkey,
-                  child: TextFormField(
-                    /* 저장 버튼("_formKey.save()" 눌렀을 때 이벤트 정의 */
-                    onSaved: (val){
-                      displayname = val!; // 닉네임 값 저장
-                    },
-                    /* 스타일 정의 */
-                    decoration: InputDecoration(
-                      prefixIcon: Icon(Iconic.user, size: 15, color: Colors.grey.withOpacity(0.7)), // 전방배치 아이콘
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(color: Colors.blueAccent, width: 1),
+                child: Column(
+                  children: [
+                    /* 1. 닉네임 입력 */
+                    Form(
+                      /* Form을 위한 key(키) 할당 */
+                      key: Update_displayname_formkey,
+                      child: TextFormField(
+                        /* 저장 버튼("_formKey.save()" 눌렀을 때 이벤트 정의 */
+                        onSaved: (val){
+                          displayname = val!; // 닉네임 값 저장
+                        },
+                        /* 스타일 정의 */
+                        decoration: InputDecoration(
+                          prefixIcon: Icon(Iconic.user, size: 15, color: Colors.grey.withOpacity(0.7)), // 전방배치 아이콘
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.blueAccent, width: 1),
+                          ),
+                          labelText: '닉네임', // 라벨
+                          labelStyle: TextStyle(color: Colors.grey.withOpacity(0.7), fontSize: 13, ), // 라벨 스타일
+                          floatingLabelStyle: TextStyle(fontSize: 15), // 포커스된 라벨 스타일
+                        ),
+                        /* 닉네임 유효성 검사 */
+                        validator: (val) {
+                          if(val!.length < 1) {
+                            return '닉네임은 필수사항입니다.';
+                          }
+                          if(val.length < 2){
+                            return '2자 이상 입력해주세요!';
+                          } return null;
+                        },
                       ),
-                      labelText: '닉네임', // 라벨
-                      labelStyle: TextStyle(color: Colors.grey.withOpacity(0.7), fontSize: 13, ), // 라벨 스타일
-                      floatingLabelStyle: TextStyle(fontSize: 15), // 포커스된 라벨 스타일
                     ),
-                    /* 닉네임 유효성 검사 */
-                    validator: (val) {
-                      if(val!.length < 1) {
-                        return '닉네임은 필수사항입니다.';
-                      }
-                      if(val.length < 2){
-                        return '2자 이상 입력해주세요!';
-                      } return null;
-                    },
-                  ),
-                ),
-              ),
 
-              /* 사회적 거리두기 */
-              SizedBox(height: 10),
+                    /* 사회적 거리두기 */
+                    SizedBox(height: 10),
 
-              /* 닉네임 재설정 버튼 */
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size.fromHeight(50), // 좌우로 쫙 늘리고 높이는 지정
-                  primary: GeneralCtr.MainColor,
-                ),
-                child: Text("확인", style: TextStyle(fontSize: 13)),
-                onPressed: (){
-                  /* 닉네임 재설정 모듈 작동 */
-                  // 텍스트폼필드의 상태가 적합한지 확인
-                  if (Update_displayname_formkey.currentState!.validate()) {
-                    /* Form값 가져오기 */
-                    Update_displayname_formkey.currentState!.save();
-                    /* 닉네임 재설정 함수 호출 */
-                    MyCtr.Change_displayName(context, displayname);
-                  } else return null;
-
-                },
+                    /* 2. 닉네임 재설정 버튼 */
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        minimumSize: Size.fromHeight(50), // 좌우로 쫙 늘리고 높이는 지정
+                        primary: GeneralCtr.MainColor,
+                      ),
+                      child: Text("확인", style: TextStyle(fontSize: 13)),
+                      onPressed: (){
+                        /* 닉네임 재설정 모듈 작동 */
+                        // 텍스트폼필드의 상태가 적합한지 확인
+                        if (Update_displayname_formkey.currentState!.validate()) {
+                          /* Form값 가져오기 */
+                          Update_displayname_formkey.currentState!.save();
+                          /* 닉네임 재설정 함수 호출 */
+                          MyCtr.Change_displayName(context, displayname);
+                        } else return null;
+                      },
+                    ),
+                  ],
+                )
               ),
             ],
           ),

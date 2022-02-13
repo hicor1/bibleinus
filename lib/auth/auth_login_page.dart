@@ -285,60 +285,67 @@ class ModalWigdet extends StatelessWidget {
               /* 이메일 적는 곳 */
               Container(
                 padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                  child: Form(
-                    /* Form을 위한 key(키) 할당 */
-                    key: Pass_RE_formkey,
-                    child: TextFormField(
-                      /* 저장 버튼("_formKey.save()" 눌렀을 때 이벤트 정의 */
-                      onSaved: (val){
-                        Pass_RE_email = val!; // 이메일 값 저장
-                      },
-                      /* 스타일 정의 */
-                      decoration: InputDecoration(
-                        prefixIcon: Icon(FontAwesome.mail_alt, size: 15, color: Colors.grey.withOpacity(0.7)), // 전방배치 아이콘
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: Colors.blueAccent, width: 1),
+                  child: Column(
+                    children: [
+                      /* 1. 이메일 입력 */
+                      Form(
+                        /* Form을 위한 key(키) 할당 */
+                        key: Pass_RE_formkey,
+                        child: TextFormField(
+                          /* 저장 버튼("_formKey.save()" 눌렀을 때 이벤트 정의 */
+                          onSaved: (val){
+                            Pass_RE_email = val!; // 이메일 값 저장
+                          },
+                          /* 스타일 정의 */
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(FontAwesome.mail_alt, size: 15, color: Colors.grey.withOpacity(0.7)), // 전방배치 아이콘
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: BorderSide(color: Colors.blueAccent, width: 1),
+                            ),
+                            labelText: '이메일', // 라벨
+                            labelStyle: TextStyle(color: Colors.grey.withOpacity(0.7), fontSize: 13, ), // 라벨 스타일
+                            floatingLabelStyle: TextStyle(fontSize: 15), // 포커스된 라벨 스타일
+                          ),
+                          /* 이메일 유효성 검사 */
+                          validator: (val) {
+                            if(val!.isEmpty) {
+                              return '이메일은 필수사항입니다.';
+                            }
+                            if(!RegExp(
+                                r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
+                                .hasMatch(val)){
+                              return '잘못된 이메일 형식입니다.';
+                            } else return null;
+                          },
                         ),
-                        labelText: '이메일', // 라벨
-                        labelStyle: TextStyle(color: Colors.grey.withOpacity(0.7), fontSize: 13, ), // 라벨 스타일
-                        floatingLabelStyle: TextStyle(fontSize: 15), // 포커스된 라벨 스타일
                       ),
-                      /* 이메일 유효성 검사 */
-                      validator: (val) {
-                        if(val!.isEmpty) {
-                          return '이메일은 필수사항입니다.';
-                        }
-                        if(!RegExp(
-                            r'^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$')
-                            .hasMatch(val)){
-                          return '잘못된 이메일 형식입니다.';
-                        } else return null;
-                      },
-                    ),
-                  ),
+
+                      /* 사회적 거리두기 */
+                      SizedBox(height: 10),
+
+                      /* 2. 비밀번호 재설정 이메일 전송 버튼 */
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size.fromHeight(50), // 좌우로 쫙 늘리고 높이는 지정
+                          primary: GeneralCtr.MainColor,
+                        ),
+                        child: Text("이메일로 로그인", style: TextStyle(fontSize: 13)),
+                        onPressed: (){
+                          /* 비밀번호 재설정 모듈 동작 */
+                          // 텍스트폼필드의 상태가 적함하는
+                          if (Pass_RE_formkey.currentState!.validate()) {
+                            /* Form값 가져오기 */
+                            Pass_RE_formkey.currentState!.save();
+                            /* 비밀번호 재설정 함수 호출 */
+                            resetPassword(context, Pass_RE_email);
+                          } else return null;
+                        },
+                      ),
+                    ],
+                  )
               ),
 
-              /* 사회적 거리두기 */
-              SizedBox(height: 10),
 
-              /* 비밀번호 재설정 이메일 전송 버튼 */
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  minimumSize: Size.fromHeight(50), // 좌우로 쫙 늘리고 높이는 지정
-                  primary: GeneralCtr.MainColor,
-                ),
-                child: Text("이메일로 로그인", style: TextStyle(fontSize: 13)),
-                onPressed: (){
-                  /* 비밀번호 재설정 모듈 동작 */
-                  // 텍스트폼필드의 상태가 적함하는
-                  if (Pass_RE_formkey.currentState!.validate()) {
-                    /* Form값 가져오기 */
-                    Pass_RE_formkey.currentState!.save();
-                    /* 비밀번호 재설정 함수 호출 */
-                    resetPassword(context, Pass_RE_email);
-                  } else return null;
-                },
-              ),
             ],
           ),
         ),

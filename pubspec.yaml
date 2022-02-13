@@ -52,10 +52,18 @@ dependencies:
   fab_circular_menu: ^1.0.0 # 플롯팅 액숀버튼
 
   firebase_core: ^1.12.0 # 파이어베이스
+  firebase_storage: ^10.2.7 # 파이어베이스
   firebase_auth: ^3.3.6 # 파이어베이스
+  firebase_analytics: ^9.1.0 # 파이어베이스
   google_sign_in: ^5.2.3 # 구글 로그인
   flutter_facebook_auth: ^4.0.1 # 페이스북 로그인
   flutter_signin_button: ^2.0.0 # 소셜로그인 버튼
+
+  path_provider: ^2.0.9
+
+  image_picker: ^0.8.4+8 # 갤러리 or 카메라 에서 이미지 자겨오기
+
+  kpostal: ^0.4.0 # 카카오 주소 검색
 
 
 dev_dependencies:

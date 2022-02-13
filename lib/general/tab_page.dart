@@ -1,4 +1,5 @@
 import 'package:bible_in_us/bible/bible_tab_page.dart';
+import 'package:bible_in_us/diary/diary_tab_page.dart';
 import 'package:bible_in_us/general/general_controller.dart';
 import 'package:bible_in_us/hymn/hymn_tab_page.dart';
 import 'package:bible_in_us/my/my_main_page.dart';
@@ -20,6 +21,7 @@ class TabPage extends StatefulWidget {
 class _TabPageState extends State<TabPage> {
   List pages = [
     BibleTabPage(),
+    DiaryTabPage(),
     HymnTabPage(),
     MyMainPage(),
   ];
@@ -60,6 +62,8 @@ class _TabPageState extends State<TabPage> {
                     items: const [
                       BottomNavigationBarItem(
                           icon: Icon(FontAwesome5.bible, size: 25), label: ''),
+                      BottomNavigationBarItem(
+                          icon: Icon(Elusive.pencil, size: 25), label: ''),
                       BottomNavigationBarItem(
                           icon: Icon(Elusive.music , size: 25), label: ''),
                       BottomNavigationBarItem(icon: Icon(FontAwesome5.user, size: 25), label:''),

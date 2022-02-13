@@ -1,9 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hicor.bible_in_us">
    <application
-        android:label="bible_in_us"
-        android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+       android:label="bible_in_us"
+       android:name="${applicationName}"
+       android:icon="@mipmap/ic_launcher"
+       android:usesCleartextTraffic="true"> <!--카카오 주소찾기 때매 추가-->
+
+
         <activity
             android:name=".MainActivity"
             android:exported="true"
