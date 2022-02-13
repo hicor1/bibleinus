@@ -104,8 +104,5 @@ class MainWidget extends StatelessWidget {
             ); //return은 필수
           }
       );
-
-
-
   }
 }

@@ -96,8 +96,12 @@ class BibleController extends GetxController {
   var FreeSearchResult_filtered = []; // 자유검색결과 필터링된 결과
   var FreeSearchResultCount   = []; // 자유검색결과 각 권마다 몇개가 있는지 담을 공간
   var FreeSearchSelected_bcode = 1; // 자유검색결과 선택된 북코드
+  var FreeSearchResultCount_cnum   = []; // 자유검색결과 각 챕터마다 몇개가 있는지 담을 공간
+  var FreeSearchSelected_cnum  = 1; // 자유검색결과 선택된 챕터번호
   List<String> FreeSearch_history_bible  = []; // 최근검색 성경이름
   List<String> FreeSearch_history_query  = []; // 최근검색 쿼리문
+
+  var from_which_app = ""; // 어떤 앱(app)에서 호출했는지 분류하기위한 변수
 
   var FAB_opacity = 0.0; // 메인페이지 플로팅액션버튼 투명도
 
@@ -333,12 +337,48 @@ class BibleController extends GetxController {
   }
 
   // <함수> 자유검색 성경 권(book) 선택
-  void FreeSearch_book_choice(bcode){
+  Future<void> FreeSearch_book_choice(bcode) async {
+    //0. 로딩시작 화면 띄우기
+    EasyLoading.show(status: 'loading...');
+
     /* 선택된 권 번호 업데이트 */
     FreeSearchSelected_bcode = bcode;
-    /* 선택된 권 번호에 맞게 결과 필터링 */
+
+    /* 선택된 권에 맞는 챕터(cnum) 갯수 받아오기 */
+    FreeSearchResultCount_cnum = await BibleRepository.FreeSearchResultCount_cnum(Bible_choiced, FreeSearchSelected_bcode, FreeSearchQuery);
+    /* 선택된 챕터(cnum)번호 가장 위에 있는 챕터번호로 초기화 */
+    FreeSearchSelected_cnum = FreeSearchResultCount_cnum[0]['cnum'];
+
+
+    /* 선택된 권 번호(bcode) & 챕터번호 (cnum) 에 맞게 결과 필터링 */
     if(FreeSearchResult.length > 0){
-      FreeSearchResult_filtered = FreeSearchResult.where((f) => f['bcode'] == bcode).toList();
+      FreeSearchResult_filtered = FreeSearchResult.where(
+              (f) =>
+              (f['bcode'] == FreeSearchSelected_bcode) &
+              (f['cnum'] == FreeSearchSelected_cnum)
+      ).toList();
+    }else{
+      FreeSearchResult_filtered = [];
+    }
+    /* 컨텐츠 스크롤 초기화 */
+    ContentsScroller.jumpTo(0);
+    update();
+
+    //5. 로딩종료 화면 띄우기
+    EasyLoading.dismiss();
+  }
+
+  // <함수> 자유검색 성경 챕터번호(cnum) 선택
+  void FreeSearch_cnum_choice(cnum){
+    /* 챕터번호(cnum)업데이트 */
+    FreeSearchSelected_cnum = cnum;
+    /* 선택된 권 번호(bcode) & 챕터번호 (cnum) 에 맞게 결과 필터링 */
+    if(FreeSearchResult.length > 0){
+      FreeSearchResult_filtered = FreeSearchResult.where(
+              (f) =>
+          (f['bcode'] == FreeSearchSelected_bcode) &
+          (f['cnum'] == FreeSearchSelected_cnum)
+      ).toList();
     }else{
       FreeSearchResult_filtered = [];
     }
@@ -346,6 +386,7 @@ class BibleController extends GetxController {
     ContentsScroller.jumpTo(0);
     update();
   }
+
 
   // <함수> 자유검색에서 "구절로 이동" 클릭 BookCode_choiced, Chapter_choiced
   void MoveToContents(result){
@@ -367,6 +408,9 @@ class BibleController extends GetxController {
     FreeSearchResult = []; /* 검색결과 초기화 */
     FreeSearchResult_filtered = []; /* 검색결과 초기화 */
     FreeSearchResultCount = []; /* 검색결과 초기화 */
+    FreeSearchResultCount_cnum = []; /* 검색결과 초기화 */
+    FreeSearchQuery = ""; // 자유검색 쿼리문 초기화
+    GetFreeSearchList();
     update();
   }
 
@@ -593,5 +637,10 @@ class BibleController extends GetxController {
   }
 
 
+  //<함수> 호출 앱 정보 변경
+  void update_from_which_app(String appname){
+    from_which_app = appname;
+    update();
+  }
 
 }

@@ -1,24 +1,27 @@
+import 'package:bible_in_us/bible/bible_controller.dart';
+import 'package:bible_in_us/bible/bible_favorite_page.dart';
+import 'package:bible_in_us/bible/bible_search_screen.dart';
 import 'package:bible_in_us/diary/diary_controller.dart';
 import 'package:bible_in_us/general/general_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/elusive_icons.dart';
+import 'package:fluttericon/entypo_icons.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
-import 'package:fluttericon/typicons_icons.dart';
-import 'package:fluttericon/web_symbols_icons.dart';
 import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
-import 'package:word_break_text/word_break_text.dart';
 import 'package:kpostal/kpostal.dart';
+import 'package:word_break_text/word_break_text.dart';
 
 // Gex컨트롤러 객체 초기화
 final GeneralCtr = Get.put(GeneralController());
 final DiaryCtr = Get.put(DiaryController());
+final BibleCtr = Get.put(BibleController());
 
 
 /* 입력 컨테이터 _ 폼필드 (formfield)에 필요한 각종 변수 정의 */
-final _formKey = GlobalKey<FormState>();// 폼에 부여할 수 있는 유니크한 글로벌 키를 생성한다.
-String title = ""; // 이메일 주소 저장
+final _formKey  = GlobalKey<FormState>();// 폼에 부여할 수 있는 유니크한 글로벌 키를 생성한다.
+String title    = ""; // 이메일 주소 저장
 String contents = ""; // 비밀번호 저장
 
 /* <메인위젯> */
@@ -56,7 +59,10 @@ class MainWidget extends StatelessWidget {
               actions: [
                 /* 저장 버튼 */
                 TextButton(
-                    onPressed: (){},
+                    onPressed: (){
+                      /* 저장버튼 클릭 이벤트 */
+
+                    },
                     child: Text("저장")
                 )
               ],
@@ -81,12 +87,16 @@ class MainWidget extends StatelessWidget {
                     autoPlay: true, // 자동 넘기기 on/off
                     pauseAutoPlayOnTouch: Duration(milliseconds: 5000), // 클릭하면 자동넘기기 일시 정지
 
-                    items: [1,null].map(
+                    /* 선택된 구절 갯수만큼 카드 만들어주기 */
+                    items: DiaryCtr.dirary_screen_selected_verses_id.map(
                           (id) {
+                            /* 필터링으로 구절정보 하나씩 가져오기 */
+                            var result = DiaryCtr.selected_contents_data.where((f)=>f["_id"]==id).toList();
 
                         /* 성경 구절 카드에 담아서 보여주기 */
                             /* 1. 정보가 "null"이 아니면, 구절 정보 담아서 보여준다 */
-                        return id != null ? Container(
+                        if (id != 99999) {
+                          return Container(
                           decoration: BoxDecoration(
                               color: DiaryCtr.ColorCode[DiaryCtr.dirary_screen_color_index].withOpacity(0.4), // 카드 색깔
                               borderRadius: BorderRadius.circular(10),
@@ -101,7 +111,7 @@ class MainWidget extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     /* 구절 정보 */
-                                    Text("  [예레미야 29:11]"),
+                                    Text("  [${result[0]['국문']}(${result[0]['영문']}) ${result[0]['cnum']}장 ${result[0]['vnum']}절]"),
                                     /* 옵션 버튼 */
                                     PopupMenuButton(
                                         icon: Icon(Icons.more_vert_sharp, size: GeneralCtr.Textsize*1.2, color: Colors.black54), // pop메뉴 아이콘
@@ -112,11 +122,33 @@ class MainWidget extends StatelessWidget {
                                         color: Colors.white, // pop메뉴 배경색
                                         elevation: 10,// pop메뉴 그림자
                                         onSelected: (value) {
+                                          /* 자유검색 상태값 변경해주기 ( diary app에서 호출했음을 알리기 위해 ) */
+                                          BibleCtr.update_from_which_app("diary");
+                                          /* 수정모드 입력 */
+                                          DiaryCtr.update_mode_select("replace", id);
+                                          var temp = "";
+                                          /* 경우의 수에 맞게 이벤트 정의 */
+                                          switch(value){
+                                          /* 해당 구절 삭제 이동 */
+                                            case"삭제" : DiaryCtr.remove_verses_id(id);  break;
+                                          /* 자유검색 페이지 선택값으로 !수정! */
+                                            case"검색" :
+
+                                              Get.to(() => BibleSearchScreen());  break;
+                                          /* 즐겨찾기 페이지 선택값으로 !수정! */
+                                            case"즐겨찾기" : Get.to(() => BibleFavoritePage()); break;
+                                          }
                                         },
 
                                         /* 옵션 버튼 _ 하위 메뉴 스타일 */
                                         itemBuilder: (context) => [
-                                          PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: GeneralCtr.Textsize*0.9), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "삭제"),
+                                          /*삭제*/
+                                          PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: 20), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "삭제"),
+                                          /*검색*/
+                                          PopupMenuItem(child: Row(children: [Icon(Entypo.search, size: 20), Text(" 검색", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "검색"),
+                                          /*즐겨찾기*/
+                                          PopupMenuItem(child: Row(children: [Icon(FontAwesome.bookmark_empty, size: 20), Text(" 즐겨찾기", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "즐겨찾기"),
+
                                         ]
                                     )
                                   ],
@@ -131,29 +163,18 @@ class MainWidget extends StatelessWidget {
                                     margin: EdgeInsets.fromLTRB(0, 0, 0, 25), // 컨테이너 자체 마진
                                     boxFit: BoxFit.fitHeight,
                                     /* 구절 내영 */
-                                    content: WordBreakText('여를 향한 나생각을 한 니라 너희에의 생각을 한 나의 생각을 내가 니라 너희에평안이요 내가 니요 재앙이 아니니라게 미래와 희망을 주는 것이니라',style:TextStyle(height: 1.5)),
+                                    content: WordBreakText('${result[0][BibleCtr.Bible_choiced]}',style:TextStyle(height: 1.5)),
                                   ),
                                 ),
                               ],
                             )
                           ),
-                        )
-
-                        /* 2. 정보가 "null"이면, 구절 정보 담아서 보여준다 */
-                            :
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey, width: 3),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.add, size: 30, color: Colors.grey,)
-                            ],
-                          ),
                         );
+
+                          /* 2. 정보가 "null"이면, 검색 버튼을 보여준다 */
+                        } else {
+                          return AddVerses(id: id);
+                        }
                       },
                     ).toList(),
                     onPageChanged: (index) {
@@ -186,6 +207,7 @@ class MainWidget extends StatelessWidget {
                           height : 60,
                           child: ListView.builder(
                             //physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
+                              //reverse: true,
                               shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
                               scrollDirection: Axis.horizontal, // 수직(vertical)  수평(horizontal) 배열 선택
                               //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
@@ -271,7 +293,7 @@ class MainWidget extends StatelessWidget {
                                     color: Colors.grey.withOpacity(0.1),
                                   ),
                                   child: TextFormField(
-                                    maxLines: 10,
+                                    maxLines: 7,
                                     /* 저장 버튼("_formKey.save()" 눌렀을 때 이벤트 정의 */
                                     onSaved: (val){
                                       contents = val!; // 비밀번호 값 저장
@@ -435,5 +457,60 @@ class MainWidget extends StatelessWidget {
         }
     );
 
+  }
+}
+
+
+//<서브위젯> 구절추가 빈 컨테이너
+class AddVerses extends StatelessWidget {
+  const AddVerses({Key? key, required this.id}) : super(key: key);
+
+  final id;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey, width: 3),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          //
+          /* 옵션 버튼 */
+          PopupMenuButton(
+              icon: Icon(Icons.add, size: 50, color: Colors.black54), // pop메뉴 아이콘
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(5)),
+              padding: EdgeInsets.zero,
+              tooltip: "추가기능",
+              color: Colors.white, // pop메뉴 배경색
+              elevation: 10,// pop메뉴 그림자
+              /* 구절 조회할 옵션 선택 ( 자유 검색 또는 즐찾 ) */
+              onSelected: (value) {
+                /* 자유검색 상태값 변경해주기 ( diary app에서 호출했음을 알리기 위해 ) */
+                BibleCtr.update_from_which_app("diary");
+                /* 신규모드 입력 */
+                DiaryCtr.update_mode_select("add", id);
+                /* 경우의 수에 맞게 이벤트 정의 */
+                switch(value){
+                /* 자유검색 페이지로 이동 */
+                  case"검색" : Get.to(() => BibleSearchScreen());  break;
+                /* 즐겨찾기 페이지로 이동 */
+                  case"즐겨찾기" : Get.to(() => BibleFavoritePage()); break;
+                }
+              },
+
+              /* 옵션 버튼 _ 하위 메뉴 스타일 */
+              itemBuilder: (context) => [
+                PopupMenuItem(child: Row(children: [Icon(Entypo.search, size: 20), Text(" 검색", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "검색"),
+                PopupMenuItem(child: Row(children: [Icon(FontAwesome.bookmark_empty, size: 20), Text(" 즐겨찾기", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "즐겨찾기"),
+              ]
+          )
+        ],
+      ),
+    );
   }
 }

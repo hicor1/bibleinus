@@ -36,7 +36,7 @@ class _BibleTabPageState extends State<BibleTabPage> with TickerProviderStateMix
   // @override
   // void dispose() {
   //   BibleCtr.tabController.dispose();
-  //   super.dispose();f
+  //   super.dispose();
   // }
   // 메인위젯 뿌리기
   @override
@@ -84,6 +84,8 @@ class Mainwidget extends StatelessWidget {
                       padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
                       child: IconButton(
                         onPressed: (){
+                          /* 자유검색 상태값 변경해주기 ( bible app에서 호출했음을 알리기 위해 ) */
+                          BibleCtr.update_from_which_app("bible");
                           // 버튼 동작
                           Get.to(() => BibleSearchScreen());
                         },
@@ -109,6 +111,8 @@ class Mainwidget extends StatelessWidget {
                       alignment: Alignment.centerLeft, // 탭 메뉴들 왼쪽 정렬
                       child: TabBar(
                         onTap: (index){
+                          /* 자유검색 상태값 변경해주기 ( bible app에서 호출했음을 알리기 위해 ) */
+                          BibleCtr.update_from_which_app("bible");
                           BibleCtr.FloatingAB_init(); // 탭 이동시 플로팅액션버튼 초기화
                         },//
                         controller: BibleCtr.tabController, // 컨트롤러 정의

@@ -70,9 +70,16 @@ class MainWidget extends StatelessWidget {
                                 elevation: 1.0, // 그림자(elevation) 두께? 너비 같은거
                                 /* 본문으로 이동해서 전체로 보기 버튼 */
                                 child: InkWell(
-                                  onTap: () {
-                                    // 1. 팝업창 띄우고 '예'인 경우, 넘어가기 //
-                                    IsMoveDialog(context, result, index);
+                                  /* 컨테이너를 눌렀을 때 해당 페이지로 이동할지 물어보자 ㄱㄱ */
+                                  onTap: (){
+                                    /* 해당 기능을 호출한 앱(app)에 따라 다른 액션 적용 */
+                                    switch (BibleCtr.from_which_app) {
+                                      case "bible" : // 1. bible앱 에서 호출한 경우
+                                        IsMoveDialog(context, result, index); break;
+                                      case "diary" : // 2. diary앱 에서 호출한 경우
+                                        IsMoveDialog_from_diary(context, result, index); break;
+                                    }
+
                                   },
                                   child: Container(
                                     width: MediaQuery.of(context).size.width, // 요건 필수

@@ -1,5 +1,6 @@
 // 토스트메세지 띄우기
 import 'package:bible_in_us/bible/bible_controller.dart';
+import 'package:bible_in_us/diary/diary_controller.dart';
 import 'package:bible_in_us/general/general_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/entypo_icons.dart';
@@ -18,6 +19,7 @@ import 'package:getwidget/getwidget.dart';
 // Gex컨트롤러 객체 초기화
 final GeneralCtr = Get.put(GeneralController());
 final BibleCtr = Get.put(BibleController());
+final DiaryCtr = Get.put(DiaryController());
 
 // 페이지 없음 토스트 띄우기
 void PopToast(String message){
@@ -91,6 +93,7 @@ Future<void> IsMoveDialog(context, result, index) async {
             ],
           ),
           //
+
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,6 +129,63 @@ Future<void> IsMoveDialog(context, result, index) async {
         );
       });
 }
+
+// diary 앱에서 자유검색에서 선택한구절 담을지 묻는 경고창
+Future<void> IsMoveDialog_from_diary(context, result, index) async {
+  var versesInfo = "${result['국문']}(${result['영문']}) :  ${result['cnum']}장 ${result['vnum']}절";
+  await showDialog(
+      context: context,
+      //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5.0)),
+          //Dialog Main Title
+          title: Column(
+            children: <Widget>[
+              new Text("안내 메세지"),
+            ],
+          ),
+          //
+
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text("$versesInfo", style: TextStyle(fontWeight: FontWeight.bold),),
+              Text("구절을 선택하시겠습니까"),
+            ],
+          ),
+          actions: <Widget>[
+            OutlinedButton(
+              child: new Text("확인"),
+              onPressed: () {
+                // 1. 토스트메세지 띄우기
+                PopToast("$versesInfo을 추가했습니다.");
+                // 2. 선택 구절 담아주기
+                DiaryCtr.add_verses_id(result["_id"]);
+                // 3. 팝업창 닫기
+                Navigator.pop(context);
+                // 4. 이전 페이지로 돌아가기
+                Get.back(); // 검색페이지는 "페이지"가 아닌, "스크린"이므로 돌아가기(back)으로 이동
+
+              },
+            ),
+            ElevatedButton(
+              child: new Text("취소"),
+              onPressed: () {
+                // "취소"인 경우, 바로 액션없이 팝업창 내리기
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      });
+}
+
+
 
 // 설정 안내창띄우기 ( 메인 페이지 전용, 즐겨찾기 페이지는 성경 선택부분만 별도 관리해준다 ! )
 void openPopup(context) {

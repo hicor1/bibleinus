@@ -179,8 +179,10 @@ class FreeSearchResult extends StatelessWidget {
                   padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                   child: Row(
                     children: [
+
                       /* 1. 성경 권(book) 보여줄 리스트 */
                       Flexible( /* 자유로운 줄바꿈 및 크기 조절을 위해 "Flexible" 위젯 감싸기 */
+                        flex: 6, // 남은 공간을 비율로 조정함
                         child: Scrollbar(
                           controller: BibleCtr.BookCountScroller,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
                           isAlwaysShown: true,   //화면에 항상 스크롤바가 나오도록 한다
@@ -206,7 +208,7 @@ class FreeSearchResult extends StatelessWidget {
                                       // 텍스트 정렬을 위해 "Align" 위젯 씌우기
                                       child: Align(
                                         alignment: Alignment.topLeft,
-                                        child: Text("${result['국문']} (${result['count(국문)']})",
+                                        child: Text("${result['국문']}(${result['count(국문)']})",
                                             /* 선택된 권의 경우 강조해주기, 그렇지 않은 권은 회색처리 */
                                             style: result['bcode'] == BibleCtr.FreeSearchSelected_bcode ?
                                             GeneralCtr.TextStyle_normal_accent : GeneralCtr.TextStyle_normal_disable ),
@@ -222,9 +224,55 @@ class FreeSearchResult extends StatelessWidget {
                       ),
                       VerticalDivider(color: GeneralCtr.MainColor.withOpacity(0.5), indent: 10, endIndent: 10),
 
-                      /* 2. 검색된 성경구절(contents) 보여줄 리스트 */
+
+                      /* 2. 성경 장(chapter) 보여줄 리스트 */
+                      Flexible( /* 자유로운 줄바꿈 및 크기 조절을 위해 "Flexible" 위젯 감싸기 */
+                        flex: 4, // 남은 공간을 비율로 조정함
+                        child: Scrollbar(
+                          controller: BibleCtr.BookCountScroller,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
+                          isAlwaysShown: true,   //화면에 항상 스크롤바가 나오도록 한다
+                          child: ListView.builder(
+                              controller: BibleCtr.BookCountScroller,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
+                              itemCount: BibleCtr.FreeSearchResultCount_cnum.length,
+                              itemBuilder: (context, index) {
+                                var result = BibleCtr.FreeSearchResultCount_cnum[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
+                                /* 성경 권(book) 리스트를 갯수와 함께 뿌려주기 ㄱㄱ */
+                                return Column(
+                                  children: [
+                                    TextButton(
+                                      // 텍스트 버튼 쓸데없는 패딩 삭제
+                                      style: TextButton.styleFrom(
+                                        minimumSize: Size.zero,
+                                        padding: EdgeInsets.zero,
+                                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      ),
+                                      onPressed: (){
+                                        /* 성경 챕터(cnum)이름을 선택하면 해당 권으로 필터링*/
+                                        BibleCtr.FreeSearch_cnum_choice(result['cnum']);
+                                      },
+                                      // 텍스트 정렬을 위해 "Align" 위젯 씌우기
+                                      child: Align(
+                                        alignment: Alignment.topCenter,
+                                        child: Text("${result['cnum']}장(${result['count']})",
+                                            /* 선택된 챕터의 경우 강조해주기, 그렇지 않은 권은 회색처리 */
+                                            style: result['cnum'] == BibleCtr.FreeSearchSelected_cnum ?
+                                            GeneralCtr.TextStyle_normal_accent : GeneralCtr.TextStyle_normal_disable ),
+                                      ),
+                                    ),
+                                    /* 리스트간 사히적 거리두기 */
+                                    SizedBox(height: 5)
+                                  ],
+                                );
+                              }
+                          ),
+                        ),
+                      ),
+                      VerticalDivider(color: GeneralCtr.MainColor.withOpacity(0.5), indent: 10, endIndent: 10),
+
+
+                      /* 3. 검색된 성경구절(contents) 보여줄 리스트 */
                       Expanded( /* "Expanded"위젯으로 남은공간을 조정한다 */
-                        flex: 3, // 남은 공간을 비율로 조정함
+                        flex: 13, // 남은 공간을 비율로 조정함
                         child: Scrollbar(
                           controller: BibleCtr.ContentsScroller,
                           isAlwaysShown: true,   //화면에 항상 스크롤바가 나오도록 한다
@@ -241,8 +289,14 @@ class FreeSearchResult extends StatelessWidget {
                                     return InkWell(
                                       /* 컨테이너를 눌렀을 때 해당 페이지로 이동할지 물어보자 ㄱㄱ */
                                       onTap: (){
-                                        IsMoveDialog(
-                                            context, result, index);
+                                        /* 해당 기능을 호출한 앱(app)에 따라 다른 액션 적용 */
+                                        switch (BibleCtr.from_which_app) {
+                                          case "bible" : // 1. bible앱 에서 호출한 경우
+                                            IsMoveDialog(context, result, index); break;
+                                          case "diary" : // 2. diary앱 에서 호출한 경우
+                                            IsMoveDialog_from_diary(context, result, index); break;
+                                        }
+
                                       },
                                       child: Container(
                                         margin: EdgeInsets.fromLTRB(0, 0, 10, 5),
@@ -259,12 +313,17 @@ class FreeSearchResult extends StatelessWidget {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
+                                            /* 구절 정보 보여주기 */
                                             Text(
-                                                "${result['국문']} (${result['영문']}): ${result['cnum']}장 ${result['vnum']}절",
+                                                "${result['국문']} (${result['영문']})  ${result['cnum']}:${result['vnum']}",
                                                 style: TextStyle(
                                                     fontSize: GeneralCtr.Textsize*0.8,
                                                     color: Colors.grey)),
-                                            /* 검색결과에 하이라이트 입히기 */
+
+                                            /* 사회적 거리두기*/
+                                            SizedBox(height: 5),
+
+                                            /* 구절 내용 보여주기 */
                                             SubstringHighlight(
                                               text: result[BibleCtr.Bible_choiced].toString(),
                                               term: BibleCtr.textController.text,

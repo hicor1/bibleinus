@@ -71,7 +71,7 @@ class BibleRepository {
   // 자유검색 ( 각 성경 권(book)이 몇개인지 조회하는 기능 )
   static Future<List<Map<String, dynamic>>> FreeSearchResultCount(String BibleName, String query) async {
     var db = await BibleDatabase.getDb();
-    var result =  db.rawQuery(
+    var result =  db.rawQuery( // ORDER BY count(국문) DESC;
         """
         SELECT verses.bcode, 국문, count(국문)
         FROM
@@ -83,11 +83,26 @@ class BibleRepository {
         ON verses.bcode = bibles.bcode
         WHERE $BibleName like '%$query%'
         GROUP BY 국문
-        ORDER BY count(국문) DESC;
+        ORDER BY verses.bcode ASC;
       """
     );
     return result;
   }
+
+  // 자유검색 ( 각 성경 챕터(chapter)이 몇개인지 조회하는 기능 )
+  static Future<List<Map<String, dynamic>>> FreeSearchResultCount_cnum(String BibleName, int bcode, String query) async {
+    var db = await BibleDatabase.getDb();
+    var result =  db.rawQuery( // ORDER BY count(국문) DESC;
+        """
+          SELECT cnum, count($BibleName) AS count
+          FROM verses
+          WHERE bcode = $bcode and $BibleName like "%$query%"
+          GROUP BY cnum
+       """
+    );
+    return result;
+  }
+
 
   // 사람이 직접클릭한 구절들의 정보 가져오기
   static Future<List<Map<String, dynamic>>> GetClickedVerses(List ContentsIdList_clicked, String BibleName) async {
