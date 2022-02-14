@@ -1,13 +1,18 @@
 import 'package:bible_in_us/bible/bible_controller.dart';
 import 'package:bible_in_us/bible/bible_favorite_page.dart';
+import 'package:bible_in_us/bible/bible_favorite_screen.dart';
 import 'package:bible_in_us/bible/bible_search_screen.dart';
 import 'package:bible_in_us/diary/diary_controller.dart';
 import 'package:bible_in_us/general/general_controller.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/elusive_icons.dart';
 import 'package:fluttericon/entypo_icons.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
+import 'package:fluttericon/iconic_icons.dart';
+import 'package:fluttericon/typicons_icons.dart';
+import 'package:fluttericon/web_symbols_icons.dart';
 import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:kpostal/kpostal.dart';
@@ -61,6 +66,14 @@ class MainWidget extends StatelessWidget {
                 TextButton(
                     onPressed: (){
                       /* 저장버튼 클릭 이벤트 */
+                      /*1. 텍스트폼필드의 상태가 적함한지 확인 */
+                      if (_formKey.currentState!.validate()) {
+                        /* Form값 가져오기 */
+                        _formKey.currentState!.save();
+                        /* 관련정보 넘기기 */
+                        print("$title\n$contents");
+
+                      } else return null;
 
                     },
                     child: Text("저장")
@@ -74,113 +87,7 @@ class MainWidget extends StatelessWidget {
                 children: [
 
                   /* 아래부터 선택한 성경 카드로 보여주기 *///https://docs.getwidget.dev/gf-carousel/
-                  GFCarousel(
-                    height: 180,
-                    passiveIndicator: GeneralCtr.MainColor, // 이미지 하단 페이지 비활성 인디케이터 색깔
-                    activeIndicator : Colors.black, // 이미지 하단 페이지 활성 인디케이터 색깔
-                    pagerSize: 7.0, // 이미지 하단 페이지 인디케이터 크기
-                    enableInfiniteScroll: false, // 무한스크롤
-                    aspectRatio: 20, // 사진 비율
-                    enlargeMainPage: true, // 자동 확대
-                    pagination: true, // 이미지 하단 페이지 인디케이터 표시여부
-                    autoPlayInterval: Duration(milliseconds: 5000), // 자동 넘기기 주기(시간)
-                    autoPlay: true, // 자동 넘기기 on/off
-                    pauseAutoPlayOnTouch: Duration(milliseconds: 5000), // 클릭하면 자동넘기기 일시 정지
-
-                    /* 선택된 구절 갯수만큼 카드 만들어주기 */
-                    items: DiaryCtr.dirary_screen_selected_verses_id.map(
-                          (id) {
-                            /* 필터링으로 구절정보 하나씩 가져오기 */
-                            var result = DiaryCtr.selected_contents_data.where((f)=>f["_id"]==id).toList();
-
-                        /* 성경 구절 카드에 담아서 보여주기 */
-                            /* 1. 정보가 "null"이 아니면, 구절 정보 담아서 보여준다 */
-                        if (id != 99999) {
-                          return Container(
-                          decoration: BoxDecoration(
-                              color: DiaryCtr.ColorCode[DiaryCtr.dirary_screen_color_index].withOpacity(0.4), // 카드 색깔
-                              borderRadius: BorderRadius.circular(10),
-                          ),
-                          margin: EdgeInsets.fromLTRB(5, 0, 5, 0), // 좌우 카드끼리 간격 띄우기
-                          child: SingleChildScrollView(
-                            child: Column(
-                              children: [
-                                /* 수정 버튼 보여주기 */
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    /* 구절 정보 */
-                                    Text("  [${result[0]['국문']}(${result[0]['영문']}) ${result[0]['cnum']}장 ${result[0]['vnum']}절]"),
-                                    /* 옵션 버튼 */
-                                    PopupMenuButton(
-                                        icon: Icon(Icons.more_vert_sharp, size: GeneralCtr.Textsize*1.2, color: Colors.black54), // pop메뉴 아이콘
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(5)),
-                                        padding: EdgeInsets.zero,
-                                        tooltip: "추가기능",
-                                        color: Colors.white, // pop메뉴 배경색
-                                        elevation: 10,// pop메뉴 그림자
-                                        onSelected: (value) {
-                                          /* 자유검색 상태값 변경해주기 ( diary app에서 호출했음을 알리기 위해 ) */
-                                          BibleCtr.update_from_which_app("diary");
-                                          /* 수정모드 입력 */
-                                          DiaryCtr.update_mode_select("replace", id);
-                                          var temp = "";
-                                          /* 경우의 수에 맞게 이벤트 정의 */
-                                          switch(value){
-                                          /* 해당 구절 삭제 이동 */
-                                            case"삭제" : DiaryCtr.remove_verses_id(id);  break;
-                                          /* 자유검색 페이지 선택값으로 !수정! */
-                                            case"검색" :
-
-                                              Get.to(() => BibleSearchScreen());  break;
-                                          /* 즐겨찾기 페이지 선택값으로 !수정! */
-                                            case"즐겨찾기" : Get.to(() => BibleFavoritePage()); break;
-                                          }
-                                        },
-
-                                        /* 옵션 버튼 _ 하위 메뉴 스타일 */
-                                        itemBuilder: (context) => [
-                                          /*삭제*/
-                                          PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: 20), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "삭제"),
-                                          /*검색*/
-                                          PopupMenuItem(child: Row(children: [Icon(Entypo.search, size: 20), Text(" 검색", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "검색"),
-                                          /*즐겨찾기*/
-                                          PopupMenuItem(child: Row(children: [Icon(FontAwesome.bookmark_empty, size: 20), Text(" 즐겨찾기", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "즐겨찾기"),
-
-                                        ]
-                                    )
-                                  ],
-                                ),
-
-                                /* 성경 구절 메인 보여주기 */
-                                ClipRRect(
-                                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                                  /* 성경 구절 담기 */
-                                  child: GFCard(
-                                    padding: EdgeInsets.fromLTRB(5, 5, 5, 5), // 하얀카드 안쪽 텍스트 패딩
-                                    margin: EdgeInsets.fromLTRB(0, 0, 0, 25), // 컨테이너 자체 마진
-                                    boxFit: BoxFit.fitHeight,
-                                    /* 구절 내영 */
-                                    content: WordBreakText('${result[0][BibleCtr.Bible_choiced]}',style:TextStyle(height: 1.5)),
-                                  ),
-                                ),
-                              ],
-                            )
-                          ),
-                        );
-
-                          /* 2. 정보가 "null"이면, 검색 버튼을 보여준다 */
-                        } else {
-                          return AddVerses(id: id);
-                        }
-                      },
-                    ).toList(),
-                    onPageChanged: (index) {
-                      /* 카드 넘어갈때 이벤트 */
-                    },
-                  ),
+                  ViewVerses(),
 
                   /* 사회적 거리두기 */
                   SizedBox(height: 30),
@@ -196,7 +103,7 @@ class MainWidget extends StatelessWidget {
                     ),
                     padding: EdgeInsets.zero,
 
-                    height: 600,
+                    height: 1000,
                     width: MediaQuery.of(context).size.width,
                     child: Column(
                       children: [
@@ -293,7 +200,7 @@ class MainWidget extends StatelessWidget {
                                     color: Colors.grey.withOpacity(0.1),
                                   ),
                                   child: TextFormField(
-                                    maxLines: 7,
+                                    maxLines: 10,
                                     /* 저장 버튼("_formKey.save()" 눌렀을 때 이벤트 정의 */
                                     onSaved: (val){
                                       contents = val!; // 비밀번호 값 저장
@@ -327,6 +234,99 @@ class MainWidget extends StatelessWidget {
                           ),
                         ),
 
+
+
+                        
+                        
+                        
+                        /* 사회적 거리두기 */
+                        SizedBox(height: 5),
+
+                        /* 사진 추가 하는곳 */
+                        Container(
+                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                            width: MediaQuery.of(context).size.width,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                /* 사진이 입력된 컨테이너 */
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+
+                                    /* 사진이 입력된 컨테이너 */
+                                    Stack( // 사진 위에 취소(calcle)버튼 겹치기
+                                      alignment: Alignment.topRight,
+                                      children: [
+                                        SizedBox(
+                                          height: MediaQuery.of(context).size.width/3.5,
+                                          width: MediaQuery.of(context).size.width/3.5,
+                                          child: Image.asset("assets/img/logo/temp.jpg"),
+                                        ),
+                                        IconButton(
+                                            padding: EdgeInsets.zero,
+                                            constraints: BoxConstraints(),
+                                            splashColor: Colors.blueAccent,
+                                            onPressed: (){
+                                              /* 이미지 삭제 모듈 */
+                                              print("!!");
+                                            },
+                                            icon:Icon(WebSymbols.cancel_circle, color: Colors.black.withOpacity(0.7), size: 20))
+                                      ],
+                                    ),
+                                    SizedBox(width: 5),
+
+                                    /* 사진이 입력된 컨테이너 */
+                                    Stack( // 사진 위에 취소(calcle)버튼 겹치기
+                                      alignment: Alignment.topRight,
+                                      children: [
+                                        SizedBox(
+                                          height: MediaQuery.of(context).size.width/3.5,
+                                          width: MediaQuery.of(context).size.width/3.5,
+                                          child: Image.asset("assets/img/logo/temp.jpg"),
+                                        ),
+                                        IconButton(
+                                            padding: EdgeInsets.zero,
+                                            constraints: BoxConstraints(),
+                                            splashColor: Colors.blueAccent,
+                                            onPressed: (){
+                                              /* 이미지 삭제 모듈 */
+                                              print("!!");
+                                              },
+                                            icon:Icon(WebSymbols.cancel_circle, color: Colors.black.withOpacity(0.7), size: 20))
+                                      ],
+                                    ),
+                                    SizedBox(width: 5),
+
+                                    /* 사진이 미입력된 컨테이너 */
+                                    DottedBorder(
+                                      borderType: BorderType.RRect,
+                                      radius: Radius.circular(4),
+                                      color: Colors.grey.withOpacity(0.4),
+                                      strokeWidth: 1,
+                                      child: SizedBox(
+                                        height: MediaQuery.of(context).size.width/3.5,
+                                        width: MediaQuery.of(context).size.width/3.5,
+                                        child: Column(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Icon(Icons.add,color: Colors.grey.withOpacity(0.4))
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )
+                        ),
+
+
+
+
+
+
+
                         /* 사회적 거리두기 */
                         SizedBox(height: 20),
 
@@ -340,8 +340,8 @@ class MainWidget extends StatelessWidget {
                                 Text("이 시간에 추천해요", style: TextStyle(fontWeight: FontWeight.bold)),
                                 /* 추천 태그 보여주기 */
                                 Container(
-                                  padding: EdgeInsets.fromLTRB(0, 20, 0, 5),
-                                  height : 60,
+                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
+                                  height : 50,
                                   child: ListView.builder(
                                     //physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
                                       shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
@@ -444,9 +444,6 @@ class MainWidget extends StatelessWidget {
                               ],
                             )
                         ),
-
-
-
                       ],
                     ),
                   )
@@ -459,6 +456,129 @@ class MainWidget extends StatelessWidget {
 
   }
 }
+
+
+
+//<서비위젯> 성경 카드 뿌려주기
+/* 아래부터 선택한 성경 카드로 보여주기 *///https://docs.getwidget.dev/gf-carousel/
+class ViewVerses extends StatelessWidget {
+  const ViewVerses({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GFCarousel(
+      height: 180,
+      passiveIndicator: GeneralCtr.MainColor, // 이미지 하단 페이지 비활성 인디케이터 색깔
+      activeIndicator : Colors.black, // 이미지 하단 페이지 활성 인디케이터 색깔
+      pagerSize: 7.0, // 이미지 하단 페이지 인디케이터 크기
+      enableInfiniteScroll: false, // 무한스크롤
+      aspectRatio: 20, // 사진 비율
+      enlargeMainPage: true, // 자동 확대
+      pagination: true, // 이미지 하단 페이지 인디케이터 표시여부
+      autoPlayInterval: Duration(milliseconds: 5000), // 자동 넘기기 주기(시간)
+      autoPlay: true, // 자동 넘기기 on/off
+      pauseAutoPlayOnTouch: Duration(milliseconds: 5000), // 클릭하면 자동넘기기 일시 정지
+
+      /* 선택된 구절 갯수만큼 카드 만들어주기 */
+      items: DiaryCtr.dirary_screen_selected_verses_id.map(
+            (id) {
+          /* 필터링으로 구절정보 하나씩 가져오기 */
+          var result = DiaryCtr.selected_contents_data.where((f)=>f["_id"]==id).toList();
+
+          /* 성경 구절 카드에 담아서 보여주기 */
+          /* 1. 정보가 "null"이 아니면, 구절 정보 담아서 보여준다 */
+          if (id != 99999) {
+            return Container(
+              decoration: BoxDecoration(
+                color: DiaryCtr.ColorCode[DiaryCtr.dirary_screen_color_index].withOpacity(0.4), // 카드 색깔
+                borderRadius: BorderRadius.circular(10),
+              ),
+              margin: EdgeInsets.fromLTRB(5, 0, 5, 0), // 좌우 카드끼리 간격 띄우기
+              child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      /* 수정 버튼 보여주기 */
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          /* 구절 정보 */
+                          Text("  [${result[0]['국문']}(${result[0]['영문']}) ${result[0]['cnum']}장 ${result[0]['vnum']}절]"),
+                          /* 옵션 버튼 */
+                          PopupMenuButton(
+                              icon: Icon(Icons.more_vert_sharp, size: GeneralCtr.Textsize*1.2, color: Colors.black54), // pop메뉴 아이콘
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5)),
+                              padding: EdgeInsets.zero,
+                              tooltip: "추가기능",
+                              color: Colors.white, // pop메뉴 배경색
+                              elevation: 10,// pop메뉴 그림자
+                              onSelected: (value) {
+                                /* 자유검색 상태값 변경해주기 ( diary app에서 호출했음을 알리기 위해 ) */
+                                BibleCtr.update_from_which_app("diary");
+                                /* 수정모드 입력 */
+                                DiaryCtr.update_mode_select("replace", id);
+                                var temp = "";
+                                /* 경우의 수에 맞게 이벤트 정의 */
+                                switch(value){
+                                /* 해당 구절 삭제 이동 */
+                                  case"삭제" :
+                                    DiaryCtr.remove_verses_id(id);  break;
+                                /* 자유검색 페이지 선택값으로 !수정! */
+                                  case"검색" :
+                                    Get.to(() => BibleSearchScreen());  break;
+                                /* 즐겨찾기 페이지 선택값으로 !수정! */
+                                  case"즐겨찾기" :
+                                    Get.to(() => BibleFavoriteScreen()); break;
+                                }
+                              },
+
+                              /* 옵션 버튼 _ 하위 메뉴 스타일 */
+                              itemBuilder: (context) => [
+                                /*삭제*/
+                                PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: 20), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "삭제"),
+                                /*검색*/
+                                PopupMenuItem(child: Row(children: [Icon(Entypo.search, size: 20), Text(" 검색", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "검색"),
+                                /*즐겨찾기*/
+                                PopupMenuItem(child: Row(children: [Icon(FontAwesome.bookmark_empty, size: 20), Text(" 즐겨찾기", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "즐겨찾기"),
+
+                              ]
+                          )
+                        ],
+                      ),
+
+                      /* 성경 구절 메인 보여주기 */
+                      ClipRRect(
+                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                        /* 성경 구절 담기 */
+                        child: GFCard(
+                          padding: EdgeInsets.fromLTRB(5, 5, 5, 5), // 하얀카드 안쪽 텍스트 패딩
+                          margin: EdgeInsets.fromLTRB(0, 0, 0, 25), // 컨테이너 자체 마진
+                          boxFit: BoxFit.fitHeight,
+                          /* 구절 내영 */
+                          content: WordBreakText('${result[0][BibleCtr.Bible_choiced]}',style:TextStyle(height: 1.5)),
+                        ),
+                      ),
+                    ],
+                  )
+              ),
+            );
+
+            /* 2. 정보가 "null"이면, 검색 버튼을 보여준다 */
+          } else {
+            return AddVerses(id: id);
+          }
+        },
+      ).toList(),
+      onPageChanged: (index) {
+        /* 카드 넘어갈때 이벤트 */
+      },
+    );
+  }
+}
+
+
+
 
 
 //<서브위젯> 구절추가 빈 컨테이너
@@ -499,7 +619,7 @@ class AddVerses extends StatelessWidget {
                 /* 자유검색 페이지로 이동 */
                   case"검색" : Get.to(() => BibleSearchScreen());  break;
                 /* 즐겨찾기 페이지로 이동 */
-                  case"즐겨찾기" : Get.to(() => BibleFavoritePage()); break;
+                  case"즐겨찾기" : Get.to(() => BibleFavoriteScreen()); break;
                 }
               },
 

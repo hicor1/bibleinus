@@ -4,6 +4,7 @@ import 'package:bible_in_us/bible/bible_favorite_page.dart';
 import 'package:bible_in_us/bible/bible_main_page.dart';
 import 'package:bible_in_us/bible/bible_memo_page.dart';
 import 'package:bible_in_us/bible/bible_search_screen.dart';
+import 'package:bible_in_us/diary/diary_controller.dart';
 import 'package:bible_in_us/general/general_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
@@ -17,6 +18,7 @@ import 'package:fab_circular_menu/fab_circular_menu.dart';
 // Gex컨트롤러 객체 초기화
 final GeneralCtr = Get.put(GeneralController());
 final BibleCtr = Get.put(BibleController());
+final DiaryCtr = Get.put(DiaryController());
 
 class BibleTabPage extends StatefulWidget {
   const BibleTabPage({Key? key}) : super(key: key);
@@ -176,7 +178,7 @@ class FlotingActionButton extends StatelessWidget {
                 fabMargin: EdgeInsets.fromLTRB(36.0,10,10,100), // 버튼 위치
                 /* 플로팅액션 버틍을 눌렀을 떄 보이는 하위 메뉴들 */
                 children: <Widget>[
-                  // 1. 공유하기
+                  // 1. 일기쓰기
                   RawMaterialButton(
                       shape: CircleBorder(),
                       padding: EdgeInsets.all(15.0),
@@ -184,12 +186,16 @@ class FlotingActionButton extends StatelessWidget {
                         height: 60,
                         child: Column(
                           children: [
-                            Icon(FontAwesome5.share, color: Colors.white, size: 30),
-                            Text('공유하기', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                            Icon(Elusive.pencil, color: Colors.white, size: 30),
+                            SizedBox(height: 3),
+                            Text('일기쓰기', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                           ],
                         ),
                       ),
-                      onPressed: () {print('Home');}
+                      onPressed: () {
+                        /* 일기쓰기 모듈 불러오기 */
+                        DiaryCtr.add_verses_idList();
+                      }
                   ),
                   // 2. 메모 남기기
                   RawMaterialButton(
@@ -200,6 +206,7 @@ class FlotingActionButton extends StatelessWidget {
                         child: Column(
                           children: [
                             Icon(Elusive.edit, color: Colors.white, size: 30),
+                            SizedBox(height: 3),
                             Text('메모하기', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                           ],
                         ),
@@ -221,7 +228,8 @@ class FlotingActionButton extends StatelessWidget {
                         height: 60,
                         child: Column(
                           children: [
-                            Icon(FontAwesome5.highlighter, color: Colors.white, size: 30),
+                            Icon(Elusive.bookmark_empty, color: Colors.white, size: 30),
+                            SizedBox(height: 3),
                             Text('즐겨찾기', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                           ],
                         ),

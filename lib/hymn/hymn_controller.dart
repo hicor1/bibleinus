@@ -11,6 +11,10 @@ final GeneralCtr = Get.put(GeneralController());
 
 class HymnController extends GetxController {
 
+  //<함수> 초기화
+  void init(){
+  }
+
   /* <변수> 각종 변수 정의  */
   var hymn_type_count        = []; // 찬송가 타입별 갯수 받아오기
   var hymn_list              = []; // 조건에 맞는 찬송가 조회해서 받아오기

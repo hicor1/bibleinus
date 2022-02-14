@@ -60,6 +60,7 @@ class MainWidget extends StatelessWidget {
             child: Scaffold(
               appBar: AppBar(
                 title: TextField(
+                  textAlignVertical: TextAlignVertical.center,
                   controller: BibleCtr.textController, // 텍스트값을 가져오기 위해 컨트롤러 할당
                   /* 키패드에서 "완료"버튼 누르면 이벤트 발동 */
                   onEditingComplete: () {
@@ -111,10 +112,11 @@ class MainWidget extends StatelessWidget {
                 ],
                 // "TabBar"는 기본적으로 Evenly 정렬이므로, 좌측정렬이 안됨. 따라서 PreferredSize를 사용해서 인위적으로 좌측 정렬 시킴
                 bottom: PreferredSize(
-                  preferredSize: Size.fromHeight(kToolbarHeight),
+                  preferredSize: Size.fromHeight(40),
                   child: Align(
                     alignment: Alignment.centerLeft, // 탭 메뉴들 왼쪽 정렬
                     child: TabBar(
+                      padding: EdgeInsets.zero,
                       controller: BibleCtr.SearchtabController, // 컨트롤러 정의
                       //labelColor: GeneralCtr.MainColor, // 활성 탭 색
                       labelStyle: TextStyle(fontSize: 17.0), // 활성 탭 스타일
@@ -227,7 +229,7 @@ class FreeSearchResult extends StatelessWidget {
 
                       /* 2. 성경 장(chapter) 보여줄 리스트 */
                       Flexible( /* 자유로운 줄바꿈 및 크기 조절을 위해 "Flexible" 위젯 감싸기 */
-                        flex: 4, // 남은 공간을 비율로 조정함
+                        flex: 2, // 남은 공간을 비율로 조정함
                         child: Scrollbar(
                           controller: BibleCtr.BookCountScroller,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
                           isAlwaysShown: true,   //화면에 항상 스크롤바가 나오도록 한다
@@ -253,7 +255,7 @@ class FreeSearchResult extends StatelessWidget {
                                       // 텍스트 정렬을 위해 "Align" 위젯 씌우기
                                       child: Align(
                                         alignment: Alignment.topCenter,
-                                        child: Text("${result['cnum']}장(${result['count']})",
+                                        child: Text("${result['cnum']}장",// Text("${result['cnum']}장(${result['count']})",
                                             /* 선택된 챕터의 경우 강조해주기, 그렇지 않은 권은 회색처리 */
                                             style: result['cnum'] == BibleCtr.FreeSearchSelected_cnum ?
                                             GeneralCtr.TextStyle_normal_accent : GeneralCtr.TextStyle_normal_disable ),

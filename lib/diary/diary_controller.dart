@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:bible_in_us/bible/bible_component.dart';
 import 'package:bible_in_us/bible/bible_controller.dart';
+import 'package:bible_in_us/diary/diary_write_srceen.dart';
 import 'package:get/get.dart';
 import 'package:bible_in_us/bible/bible_repository.dart';
 
@@ -10,7 +11,6 @@ class DiaryController extends GetxController {
 
   //<함수> 초기화
   void init(){
-
   }
 
   /* <변수>정의 */
@@ -67,7 +67,13 @@ class DiaryController extends GetxController {
     dirary_screen_timetag_index = index;
     update();
   }
-  
+
+  //<함수> 성경일기 작성스크린 _ 선택된 구절 아이디 초기화
+  void init_selected_verses_id(){
+    dirary_screen_selected_verses_id = [99999];
+    update();
+  }
+
   //<함수> 선택한 구절 id 정보 "추가(add)" 또는 "수정(replace)"하고 DB에서 재조회 하기
   Future<void> add_verses_id (int id) async {
     /* 더미(99999) 잠깐 지우기(순서 맞추기 위함) */
@@ -90,6 +96,30 @@ class DiaryController extends GetxController {
     selected_contents_data = await BibleRepository.GetClickedVerses(dirary_screen_selected_verses_id, BibleCtr.Bible_choiced);
     update();
   }
+
+  //<함수> bible메인화면에서 선택한 구절 id 리스트 정보 "추가(add)" 하고 DB에서 재조회 하기기
+  Future<void> add_verses_idList() async {
+    /* 선택된 구절 아이디 초기화 */
+    init_selected_verses_id();
+    /* Bible컨트롤러에서 선택한 구절 아이디 리스트 가져오기 */
+    var idList = BibleCtr.ContentsIdList_clicked;
+    /* 더미(99999) 잠깐 지우기(순서 맞추기 위함) */
+    dirary_screen_selected_verses_id.remove(99999);
+    /* for문 돌면서 선택한 구절 id 담기 */
+    for(int i = 0; i < idList.length; i++){
+      dirary_screen_selected_verses_id.add(idList[i]);
+    }
+    /* 중복값 제거하기 */
+    dirary_screen_selected_verses_id = dirary_screen_selected_verses_id.toSet().toList();
+    /* 더미(99999) 다시 넣기 */
+    dirary_screen_selected_verses_id.add(99999);
+    /* 선택한 구절 DB 조회 */
+    selected_contents_data = await BibleRepository.GetClickedVerses(dirary_screen_selected_verses_id, BibleCtr.Bible_choiced);
+    update();
+    /* 일기쓰기 스크린으로 이동하기 */
+    Get.to(() => DiaryWriteScreen());
+  }
+
 
   //<함수> 선택한 구절 id 삭제하고 DB 재조회 하기
   Future<void> remove_verses_id (int id) async {
