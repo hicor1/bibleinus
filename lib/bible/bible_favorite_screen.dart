@@ -15,8 +15,8 @@ class BibleFavoriteScreen extends StatelessWidget {
             color: GeneralCtr.MainColor
         ),
         title: Text("즐겨찾기", style: TextStyle(color: GeneralCtr.MainColor),),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        backgroundColor: Colors.white,
+        elevation: 2,
         centerTitle: false,
 
       ),

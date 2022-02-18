@@ -59,14 +59,14 @@ class MainWidget extends StatelessWidget {
                       margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
                       width: 100.0,
                       height: 100.0,
-                      decoration: new BoxDecoration(
+                      decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          image: new DecorationImage(
+                          image: DecorationImage(
                               fit: BoxFit.fill,
-                              image: new NetworkImage(
-                                  "${MyCtr.photoURL}")
+                              image: NetworkImage("${MyCtr.photoURL}")
                           )
-                      )),
+                      )
+                  ),
                   /* 닉네임 */
                   Text("${MyCtr.displayName}", style: TextStyle(color: Colors.black)),
                 ],

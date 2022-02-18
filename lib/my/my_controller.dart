@@ -17,6 +17,7 @@ class MyController extends GetxController {
 
 
   /* <변수>정의 */
+  var uid          = "";
   var email        = "";
   var displayName  = "";
   var photoURL     = "";
@@ -29,12 +30,18 @@ class MyController extends GetxController {
     final User? user = auth.currentUser;// 유저 전체 정보 가져오기
 
     /* 유저정보 맵핑 */
-    email       = user!.email!;
+    uid         = user!.uid;
+    email       = user.email!;
     displayName = user.displayName!;
     photoURL    = user.photoURL ?? "https://www.rentit.kr/static/images/profile.jpg"; // 사진이 없을 경우 임의의 사진 띄워준다
     providerId  = user.providerData[0].providerId;
 
     update();
+  }
+
+  //<함수> 초기화
+  void init(){
+    Get_User_info();
   }
 
 
@@ -72,7 +79,10 @@ class MyController extends GetxController {
     /* 이미지 피커 객체 불러오기 */
     final ImagePicker _picker = ImagePicker();
     /* 갤러리에서 이미지 선택하기 */
-    final XFile? image = await _picker.pickImage(source: ImageSource.gallery); // https://firebase.flutter.dev/docs/storage/usage/
+    final XFile? image = await _picker.pickImage(
+        source: ImageSource.gallery,
+        maxHeight: 500,
+        maxWidth: 500); // https://firebase.flutter.dev/docs/storage/usage/
     /* 이미지 파일 임시 할당 */
     var _imageFile = File(image!.path);
     /* 이미지 파일 저장할 이름 */

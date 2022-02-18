@@ -67,7 +67,7 @@ class MainWidget extends StatelessWidget {
                               // 컨테이너에 테두리 대신, 그림자(elevation)로 구분을 준다.
                               Material(
                                 color: Colors.white,
-                                elevation: 1.0, // 그림자(elevation) 두께? 너비 같은거
+                                elevation: 0.0, // 그림자(elevation) 두께? 너비 같은거
                                 /* 본문으로 이동해서 전체로 보기 버튼 */
                                 child: InkWell(
                                   /* 컨테이너를 눌렀을 때 해당 페이지로 이동할지 물어보자 ㄱㄱ */
@@ -83,7 +83,7 @@ class MainWidget extends StatelessWidget {
                                   },
                                   child: Container(
                                     width: MediaQuery.of(context).size.width, // 요건 필수
-                                    padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
+                                    padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
                                     margin: EdgeInsets.fromLTRB(5, 0, 5, 5),
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,7 +141,7 @@ class MainWidget extends StatelessWidget {
                                             )
                                           ],
                                         ),
-                                        SizedBox(height: GeneralCtr.Textheight+5), //제목열과 본문 살짝 띄워주기
+                                        SizedBox(height: GeneralCtr.Textheight+10), //제목열과 본문 살짝 띄워주기
 
                                         /* 본문 */
                                         WordBreakText("${result[BibleCtr.Bible_choiced]}",
@@ -151,7 +151,8 @@ class MainWidget extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              // 컨테이너 끼리 조금 띄워놔야 이쁘다
+                              //사회적 거리두기
+                              Divider(),
                               SizedBox(height: 5)
                             ],
                           );

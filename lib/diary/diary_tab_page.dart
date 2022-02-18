@@ -1,5 +1,6 @@
 import 'package:bible_in_us/diary/diary_controller.dart';
 import 'package:bible_in_us/diary/diary_write_srceen.dart';
+import 'package:bible_in_us/diary/diray_view_page.dart';
 import 'package:bible_in_us/general/general_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/entypo_icons.dart';
@@ -16,6 +17,11 @@ class DiaryTabPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    /* 초반 리스트 불러오기 */
+    DiaryCtr.LoadAction();
+
+    /* 메인 위젯 뿌려주기 */
     return MainWidget();
   }
 }
@@ -26,6 +32,7 @@ class MainWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return
     /* GexX 빌더 소환 */
       GetBuilder<DiaryController>(
@@ -42,9 +49,9 @@ class MainWidget extends StatelessWidget {
                       return <Widget>[
                         // 수직으로 스크롤 가능하도록 설정
                         SliverAppBar(
-                          title: Text('성경일기', style: TextStyle(color: GeneralCtr.MainColor, fontSize: 25, fontWeight: FontWeight.bold)),
+                          title: Text('일기', style: TextStyle(color: GeneralCtr.MainColor, fontSize: 25, fontWeight: FontWeight.bold)),
                           backgroundColor: Colors.white,
-                          floating: false, // 최상단 앱바까지 감출지 여부
+                          floating: true, // 최상단 앱바까지 감출지 여부
                           pinned: true, // 탭까지 모두 감출지 여부
                           snap: false, // 잠깐다시올릴때 앱바 보여주기
                           // 앱바 액숀 버튼
@@ -64,7 +71,7 @@ class MainWidget extends StatelessWidget {
 
                           // "TabBar"는 기본적으로 Evenly 정렬이므로, 좌측정렬이 안됨. 따라서 PreferredSize를 사용해서 인위적으로 좌측 정렬 시킴
                           bottom: PreferredSize(
-                            preferredSize: const Size.fromHeight(kToolbarHeight),
+                            preferredSize: const Size.fromHeight(49),
                             child: Align(
                               alignment: Alignment.centerLeft, // 탭 메뉴들 왼쪽 정렬
                               child: TabBar(
@@ -82,8 +89,8 @@ class MainWidget extends StatelessWidget {
                                 indicatorColor: GeneralCtr.MainColor, // 아래 강조표시 색깔
                                 isScrollable: true, // 수평으로 스크롤가능여부
                                 tabs: [
-                                  Tab(child: Text('찬송가')),
-                                  Tab(child: Text('악보')),
+                                  Tab(child: Text('나의 일기')),
+                                  Tab(child: Text('무엇을 할꼬')),
                                 ],
                               ),
                             ),
@@ -95,7 +102,7 @@ class MainWidget extends StatelessWidget {
                       //controller: HymnCtr.tabController, // 컨트롤러 정의
                       children: <Widget>[
                         /* Tab메뉴 전환시 보여줄 메인 */
-                        Text("메인"),
+                        DiaryViewPage(),
                         Text("메인2"),
 
                       ],

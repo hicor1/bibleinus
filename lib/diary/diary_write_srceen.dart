@@ -1,17 +1,16 @@
+import 'package:bible_in_us/bible/bible_component.dart';
 import 'package:bible_in_us/bible/bible_controller.dart';
-import 'package:bible_in_us/bible/bible_favorite_page.dart';
 import 'package:bible_in_us/bible/bible_favorite_screen.dart';
 import 'package:bible_in_us/bible/bible_search_screen.dart';
 import 'package:bible_in_us/diary/diary_controller.dart';
 import 'package:bible_in_us/general/general_controller.dart';
+import 'package:bible_in_us/my/my_controller.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/elusive_icons.dart';
 import 'package:fluttericon/entypo_icons.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
-import 'package:fluttericon/iconic_icons.dart';
-import 'package:fluttericon/typicons_icons.dart';
 import 'package:fluttericon/web_symbols_icons.dart';
 import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
@@ -20,14 +19,13 @@ import 'package:word_break_text/word_break_text.dart';
 
 // Gex컨트롤러 객체 초기화
 final GeneralCtr = Get.put(GeneralController());
-final DiaryCtr = Get.put(DiaryController());
-final BibleCtr = Get.put(BibleController());
+final DiaryCtr   = Get.put(DiaryController());
+final BibleCtr   = Get.put(BibleController());
+final MyCtr      = Get.put(MyController());
 
 
 /* 입력 컨테이터 _ 폼필드 (formfield)에 필요한 각종 변수 정의 */
 final _formKey  = GlobalKey<FormState>();// 폼에 부여할 수 있는 유니크한 글로벌 키를 생성한다.
-String title    = ""; // 이메일 주소 저장
-String contents = ""; // 비밀번호 저장
 
 /* <메인위젯> */
 class DiaryWriteScreen extends StatelessWidget {
@@ -62,6 +60,21 @@ class MainWidget extends StatelessWidget {
               elevation: 0,
               centerTitle: true,
               actions: [
+                /* 초기화 버튼 */
+                TextButton(
+                  onPressed: (){
+                    /* 초기화 버튼 */
+                    DiaryCtr.diray_write_screen_init();
+                    /* 토스트 메시지 */
+                    PopToast("페이지 초기화 안료");
+                    },
+                  child: Text("초기화"),
+                  style: TextButton.styleFrom(
+                    minimumSize: Size.zero,
+                    padding: EdgeInsets.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                ),
                 /* 저장 버튼 */
                 TextButton(
                     onPressed: (){
@@ -71,7 +84,8 @@ class MainWidget extends StatelessWidget {
                         /* Form값 가져오기 */
                         _formKey.currentState!.save();
                         /* 관련정보 넘기기 */
-                        print("$title\n$contents");
+                        DiaryCtr.SaveAction(context);
+
 
                       } else return null;
 
@@ -85,6 +99,9 @@ class MainWidget extends StatelessWidget {
               //physics: NeverScrollableScrollPhysics(), // 키패드가 올라와서 화면 가려도 오류나지 않도록 ㄱㄱ
               child: Column(
                 children: [
+
+                  /* 사회적 거리두기 */
+                  SizedBox(height: 30),
 
                   /* 아래부터 선택한 성경 카드로 보여주기 *///https://docs.getwidget.dev/gf-carousel/
                   ViewVerses(),
@@ -103,7 +120,7 @@ class MainWidget extends StatelessWidget {
                     ),
                     padding: EdgeInsets.zero,
 
-                    height: 1000,
+                    height: 800, // 전체 스크롤 크기 ( 상당히 중요함! )
                     width: MediaQuery.of(context).size.width,
                     child: Column(
                       children: [
@@ -166,7 +183,7 @@ class MainWidget extends StatelessWidget {
                                 TextFormField(
                                   /* 저장 버튼("_formKey.save()" 눌렀을 때 이벤트 정의 */
                                   onSaved: (val){
-                                    title = val!; // 이메일 값 저장
+                                    DiaryCtr.dirary_screen_title = val!; // 이메일 값 저장
                                   },
                                   /* 스타일 정의 */
                                   decoration: InputDecoration(
@@ -203,7 +220,7 @@ class MainWidget extends StatelessWidget {
                                     maxLines: 10,
                                     /* 저장 버튼("_formKey.save()" 눌렀을 때 이벤트 정의 */
                                     onSaved: (val){
-                                      contents = val!; // 비밀번호 값 저장
+                                      DiaryCtr.dirary_screen_contents = val!; // 일기 내용(contents) 저장
                                     },
                                     style: TextStyle(color: Colors.black),
                                     /* 스타일 정의 */
@@ -234,98 +251,85 @@ class MainWidget extends StatelessWidget {
                           ),
                         ),
 
-
-
-                        
-                        
-                        
-                        /* 사회적 거리두기 */
-                        SizedBox(height: 5),
-
                         /* 사진 추가 하는곳 */
                         Container(
                             padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                            height: 150,
                             width: MediaQuery.of(context).size.width,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                /* 사진이 입력된 컨테이너 */
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
+                            child: ListView.builder(
+                                physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
+                                shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
+                                scrollDirection: Axis.horizontal, // 수직(vertical)  수평(horizontal) 배열 선택
+                                //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
+                                itemCount: 3,
+                                itemBuilder: (context, index) {
+                                  var result = DiaryCtr.choiced_image_file[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
+                                  if (result.path.isEmpty == false) {
 
-                                    /* 사진이 입력된 컨테이너 */
-                                    Stack( // 사진 위에 취소(calcle)버튼 겹치기
-                                      alignment: Alignment.topRight,
+                                    /* 1. 유효한 이미지 경로가 있는경우 */
+                                    return Row(
                                       children: [
-                                        SizedBox(
-                                          height: MediaQuery.of(context).size.width/3.5,
-                                          width: MediaQuery.of(context).size.width/3.5,
-                                          child: Image.asset("assets/img/logo/temp.jpg"),
-                                        ),
-                                        IconButton(
-                                            padding: EdgeInsets.zero,
-                                            constraints: BoxConstraints(),
-                                            splashColor: Colors.blueAccent,
-                                            onPressed: (){
-                                              /* 이미지 삭제 모듈 */
-                                              print("!!");
-                                            },
-                                            icon:Icon(WebSymbols.cancel_circle, color: Colors.black.withOpacity(0.7), size: 20))
-                                      ],
-                                    ),
-                                    SizedBox(width: 5),
-
-                                    /* 사진이 입력된 컨테이너 */
-                                    Stack( // 사진 위에 취소(calcle)버튼 겹치기
-                                      alignment: Alignment.topRight,
-                                      children: [
-                                        SizedBox(
-                                          height: MediaQuery.of(context).size.width/3.5,
-                                          width: MediaQuery.of(context).size.width/3.5,
-                                          child: Image.asset("assets/img/logo/temp.jpg"),
-                                        ),
-                                        IconButton(
-                                            padding: EdgeInsets.zero,
-                                            constraints: BoxConstraints(),
-                                            splashColor: Colors.blueAccent,
-                                            onPressed: (){
-                                              /* 이미지 삭제 모듈 */
-                                              print("!!");
-                                              },
-                                            icon:Icon(WebSymbols.cancel_circle, color: Colors.black.withOpacity(0.7), size: 20))
-                                      ],
-                                    ),
-                                    SizedBox(width: 5),
-
-                                    /* 사진이 미입력된 컨테이너 */
-                                    DottedBorder(
-                                      borderType: BorderType.RRect,
-                                      radius: Radius.circular(4),
-                                      color: Colors.grey.withOpacity(0.4),
-                                      strokeWidth: 1,
-                                      child: SizedBox(
-                                        height: MediaQuery.of(context).size.width/3.5,
-                                        width: MediaQuery.of(context).size.width/3.5,
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                        Stack( // 사진 위에 취소(cancel)버튼 겹치기
+                                          alignment: Alignment.topRight,
                                           children: [
-                                            Icon(Icons.add,color: Colors.grey.withOpacity(0.4))
+                                            SizedBox(
+                                              height : MediaQuery.of(context).size.width / 3.6,
+                                              width  : MediaQuery.of(context).size.width / 3.6,
+                                              child  : Image.file(result),
+                                            ),
+                                            IconButton(
+                                                padding: EdgeInsets.zero,
+                                                constraints: BoxConstraints(),
+                                                splashColor: Colors.blueAccent,
+                                                onPressed: () {
+                                                  /* 이미지 삭제 모듈 */
+                                                  DiaryCtr.DeleteImg(index);
+                                                },
+                                                icon: Icon(
+                                                    WebSymbols.cancel_circle,
+                                                    color: Colors.black.withOpacity(0.7), size: 20))
                                           ],
                                         ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                        SizedBox(width: 5.5)
+                                      ],
+                                    );
+                                  } else {
+
+                                    /* 2. 유효한 이미지 경로가 없는경우 */
+                                    return Row(
+                                      children: [
+                                        /* 사진이 미입력된 컨테이너 */
+                                        Material(
+                                          child: InkWell(
+                                            onTap : (){
+                                              /* 갤러리 이미지피커 모듈 */
+                                              DiaryCtr.galleryImagePicker(index);
+                                            },
+                                            child: DottedBorder(
+                                              borderType: BorderType.RRect,
+                                              radius: Radius.circular(4),
+                                              color: Colors.grey.withOpacity(0.4),
+                                              strokeWidth: 1,
+                                              child: SizedBox(
+                                                height: MediaQuery.of(context).size.width/3.6,
+                                                width: MediaQuery.of(context).size.width/3.6,
+                                                child: Column(
+                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                  children: [
+                                                    Icon(Icons.add,color: Colors.grey.withOpacity(0.4))
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(width: 5.5)
+                                      ],
+                                    );
+                                  }
+                                }
                             )
                         ),
-
-
-
-
-
-
 
                         /* 사회적 거리두기 */
                         SizedBox(height: 20),
@@ -360,8 +364,8 @@ class MainWidget extends StatelessWidget {
                                             /* 선택된 태그 강조해주기 */
                                             child: Text("# ${result}",
                                                 style: TextStyle(
-                                                    color: index == DiaryCtr.dirary_screen_timetag_index
-                                                        ? Colors.black : Colors.grey,
+                                                    color: index == DiaryCtr.dirary_screen_timetag_index ? Colors.black : Colors.grey,
+                                                    fontWeight: index == DiaryCtr.dirary_screen_timetag_index ? FontWeight.bold : null,
                                                     fontSize: 13)
                                             ),
                                             style: OutlinedButton.styleFrom(
@@ -370,8 +374,7 @@ class MainWidget extends StatelessWidget {
                                               ),
                                               side: BorderSide(
                                                   width: 1,
-                                                  color: index == DiaryCtr.dirary_screen_timetag_index
-                                                      ? Colors.black : Colors.grey,
+                                                  color: index == DiaryCtr.dirary_screen_timetag_index ? Colors.black : Colors.grey,
                                               ),
                                             ),
                                           ),
@@ -468,10 +471,11 @@ class ViewVerses extends StatelessWidget {
   Widget build(BuildContext context) {
     return GFCarousel(
       height: 180,
-      passiveIndicator: GeneralCtr.MainColor, // 이미지 하단 페이지 비활성 인디케이터 색깔
-      activeIndicator : Colors.black, // 이미지 하단 페이지 활성 인디케이터 색깔
-      pagerSize: 7.0, // 이미지 하단 페이지 인디케이터 크기
+      activeIndicator: GeneralCtr.MainColor,
+      passiveIndicator: Colors.white,
+      pagerSize: 7.0,// 이미지 하단 페이지 인디케이터 크기
       enableInfiniteScroll: false, // 무한스크롤
+      viewportFraction: 0.8, // 전.후 이미지 보여주기 ( 1.0이면 안보여줌 )
       aspectRatio: 20, // 사진 비율
       enlargeMainPage: true, // 자동 확대
       pagination: true, // 이미지 하단 페이지 인디케이터 표시여부
