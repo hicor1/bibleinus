@@ -17,10 +17,7 @@ class DiaryTabPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    /* 초반 리스트 불러오기 */
-    DiaryCtr.LoadAction();
-
+    
     /* 메인 위젯 뿌려주기 */
     return MainWidget();
   }

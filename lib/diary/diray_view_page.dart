@@ -124,9 +124,9 @@ class MainWidget extends StatelessWidget {
                                           /* 옵션 버튼 _ 하위 메뉴 스타일 */
                                           itemBuilder: (context) => [
                                             /*삭제*/
-                                            PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: 20), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "삭제"),
-                                            /*수정*/
                                             PopupMenuItem(child: Row(children: [Icon(FontAwesome5.eraser, size: 20), Text(" 수정", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "수정"),
+                                            /*수정*/
+                                            PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: 20), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "삭제"),
                                           ]
                                       ),
                                     ],
@@ -156,7 +156,7 @@ class MainWidget extends StatelessWidget {
                                       expanded: Column(
                                           children: [
                                             /* 내용 텍스트(펼친 경우) */
-                                            Text("${result['dirary_screen_contents']}",  style: TextStyle(fontSize:15)),
+                                            SelectableText("${result['dirary_screen_contents']}",  style: TextStyle(fontSize:15)),
                                           ]
                                       ),
                                     ),

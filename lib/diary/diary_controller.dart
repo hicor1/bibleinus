@@ -22,6 +22,7 @@ class DiaryController extends GetxController {
 
   //<함수> 초기화
   void init(){
+    LoadAction(); // 일기 데이터 로드
   }
 
   /* <변수>정의 */
@@ -32,10 +33,12 @@ class DiaryController extends GetxController {
   var dirary_screen_contents = ""; //성경일기 작성 페이지 _ 일기 내용 ( contents )
 
   var dirary_screen_selected_verses_id = [99999]; // 성경일기 작성 페이지 _ 선택된 구절 인덱스 리스트
+  var max_verse_length = 10; // 추가 가능한 최대 구절 수 제한
+
 
   var Temp_selected_contents_id   = 0; // 구절 id 수정을 위한  선택된 구절 아이디값 임시저장
   var mode_select                 = ""; // "add" or "replace" 중 모드 선택
-  var selected_contents_data      = []; // DB에서 조회한 선택된 구절 정보 담는공간
+  var selected_contents_data      = []; //dirary_screen_selected_verses_id DB에서 조회한 선택된 구절 정보 담는공간
   var choiced_image_file = [File(""),File(""),File("")]; // 선택된 사진 3장 경로 저장(빈경로), ( 3장으로 제한 )
 
   var diary_view_contents = []; // 성경일기 뷰 페이지 _ 데이터 로드
@@ -89,7 +92,7 @@ class DiaryController extends GetxController {
     dirary_screen_selected_verses_id = [99999];
     update();
   }
-
+  
   //<함수> 선택한 구절 id 정보 "추가(add)" 또는 "수정(replace)"하고 DB에서 재조회 하기
   Future<void> add_verses_id (int id) async {
     /* 더미(99999) 잠깐 지우기(순서 맞추기 위함) */
@@ -106,14 +109,19 @@ class DiaryController extends GetxController {
 
     /* 중복값 제거하기 */
     dirary_screen_selected_verses_id = dirary_screen_selected_verses_id.toSet().toList();
-    /* 더미(99999) 다시 넣기 */
-    dirary_screen_selected_verses_id.add(99999);
+    /* 전체 구절이 10개를 넘지 않도록 제한, 10개가 넘을 경우 "추가"버튼의 트리거인 '99999'가 보이지 않게한다 */
+    if(dirary_screen_selected_verses_id.length < max_verse_length){
+      /* 더미(99999) 다시 넣기 */
+      dirary_screen_selected_verses_id.add(99999);
+    }else{
+      /* 총 10개가 넘었으므로 "추가"버튼의 트리거인 '99999'는 넣지 않는다 */
+    }
     /* 선택한 구절 DB 조회 */
     selected_contents_data = await BibleRepository.GetClickedVerses(dirary_screen_selected_verses_id, BibleCtr.Bible_choiced);
     update();
   }
 
-  //<함수> bible메인화면에서 선택한 구절 id 리스트 정보 "추가(add)" 하고 DB에서 재조회 하기기
+  //<함수> "bible메인화면"에서 선택한 구절 id 리스트 정보 "추가(add)" 하고 DB에서 재조회 하기기
   Future<void> add_verses_idList() async {
     /* 선택된 구절 아이디 초기화 */
     init_selected_verses_id();
@@ -141,6 +149,11 @@ class DiaryController extends GetxController {
   Future<void> remove_verses_id (int id) async {
     /* 선택한 구절 id 담기 */
     dirary_screen_selected_verses_id.remove(id);
+    /* 더미(99999) 다시 넣기(10개가 넘어서 "추가"버튼을 빼놨을수도 있으므로, 삭제하면 갯수가 줄어드니깐 추가해줘야지 */
+    dirary_screen_selected_verses_id.add(99999);
+    /* 중복값 제거하기 */
+    dirary_screen_selected_verses_id = dirary_screen_selected_verses_id.toSet().toList();
+
     /* 선택한 구절 DB 조회 */
     selected_contents_data = await BibleRepository.GetClickedVerses(dirary_screen_selected_verses_id, BibleCtr.Bible_choiced);
     /* 삭제 안내메세지 */
@@ -242,7 +255,7 @@ class DiaryController extends GetxController {
       "dirary_screen_address":dirary_screen_address,
     });
 
-    // 리스트 다시 불러오기
+    // 일기 리스트 다시 불러오기
     LoadAction();
 
     // 로딩화면 종료
@@ -254,7 +267,6 @@ class DiaryController extends GetxController {
 
   /* <함수> 저장버튼 눌렀을 때 파이어베이스로 저장하기 */
   Future<void> SaveAction(context)  async {
-    print(dirary_screen_selected_verses_id.length);
 
     /* 유효성 검사 */
     // 1. 최소 1개 이상의 구절 선택

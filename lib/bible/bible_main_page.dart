@@ -102,7 +102,7 @@ class MainWidget extends StatelessWidget {
                           // 엄청난 공간
                           SizedBox(height: 30),
                           /* [성경내용(contents)]뿌려주기 */
-                          RichText(text: TextSpan(children: spans)),
+                          SelectableText.rich(TextSpan(children: spans)),
                           // 엄청난 공간
                           SizedBox(height: 300), // 모달창 높이만큼 띄워준다 ㄱㄱ
                         ],

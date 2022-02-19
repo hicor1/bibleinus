@@ -2,6 +2,7 @@ import 'package:bible_in_us/bible/bible_component.dart';
 import 'package:bible_in_us/bible/bible_controller.dart';
 import 'package:bible_in_us/bible/bible_favorite_screen.dart';
 import 'package:bible_in_us/bible/bible_search_screen.dart';
+import 'package:bible_in_us/diary/diary_component.dart';
 import 'package:bible_in_us/diary/diary_controller.dart';
 import 'package:bible_in_us/general/general_controller.dart';
 import 'package:bible_in_us/my/my_controller.dart';
@@ -63,10 +64,8 @@ class MainWidget extends StatelessWidget {
                 /* 초기화 버튼 */
                 TextButton(
                   onPressed: (){
-                    /* 초기화 버튼 */
-                    DiaryCtr.diray_write_screen_init();
-                    /* 토스트 메시지 */
-                    PopToast("페이지 초기화 안료");
+                    /* 초기화 묻는 안내창 띄우기 */
+                    IsInit(context);
                     },
                   child: Text("초기화"),
                   style: TextButton.styleFrom(
@@ -539,12 +538,12 @@ class ViewVerses extends StatelessWidget {
 
                               /* 옵션 버튼 _ 하위 메뉴 스타일 */
                               itemBuilder: (context) => [
-                                /*삭제*/
-                                PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: 20), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "삭제"),
                                 /*검색*/
                                 PopupMenuItem(child: Row(children: [Icon(Entypo.search, size: 20), Text(" 검색", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "검색"),
                                 /*즐겨찾기*/
                                 PopupMenuItem(child: Row(children: [Icon(FontAwesome.bookmark_empty, size: 20), Text(" 즐겨찾기", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "즐겨찾기"),
+                                /*삭제*/
+                                PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: 20), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "삭제"),
 
                               ]
                           )
@@ -560,7 +559,7 @@ class ViewVerses extends StatelessWidget {
                           margin: EdgeInsets.fromLTRB(0, 0, 0, 25), // 컨테이너 자체 마진
                           boxFit: BoxFit.fitHeight,
                           /* 구절 내영 */
-                          content: WordBreakText('${result[0][BibleCtr.Bible_choiced]}',style:TextStyle(height: 1.5)),
+                          content: SelectableText('${result[0][BibleCtr.Bible_choiced]}',style:TextStyle(height: 1.5)),
                         ),
                       ),
                     ],

@@ -70,9 +70,9 @@ class MainWidget extends StatelessWidget {
                             titleChild: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                /* 내용 표기 */
+                                /* 제목 표기 */
                                 Flexible(
-                                    child: WordBreakText("${result['메모']}",
+                                    child: SelectableText("${result['메모']}", // 복사 가능하도록
                                         style: TextStyle(fontSize: GeneralCtr.Textsize, color: Colors.black))
                                 ),
                               ],
@@ -123,7 +123,7 @@ class MainWidget extends StatelessWidget {
                                   ],
                                 ),
 
-                                /*  본문 ListView */
+                                /*  본문 성경내용 ListView */
                                 ListView.builder(
                                     physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
                                     shrinkWrap: true,
@@ -140,13 +140,13 @@ class MainWidget extends StatelessWidget {
                                             Row(
                                               children: [
 
-                                                Text("${verse['국문']} (${verse['영문']}): ${verse['cnum']}장 ${verse['vnum']}절 ",
+                                                SelectableText("${verse['국문']} (${verse['영문']}): ${verse['cnum']}장 ${verse['vnum']}절 ",
                                                     style: TextStyle(fontSize: GeneralCtr.Textsize*0.8, color: Colors.grey, fontWeight: FontWeight.bold)),
                                               ],
                                             ),
                                             /* 구절 내용 */
-                                            WordBreakText("${verse[BibleCtr.Bible_choiced]}",
-                                                style: TextStyle(fontSize: GeneralCtr.Textsize*0.9, height: GeneralCtr.Textheight))
+                                            SelectableText("${verse[BibleCtr.Bible_choiced]}",
+                                                style: TextStyle(letterSpacing: 1.0,fontSize: GeneralCtr.Textsize*0.9, height: GeneralCtr.Textheight))
                                           ],
                                         ),
                                       );
