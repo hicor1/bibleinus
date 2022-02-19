@@ -1,3 +1,4 @@
+import 'package:bible_in_us/bible/bible_controller.dart';
 import 'package:bible_in_us/diary/diary_controller.dart';
 import 'package:bible_in_us/diary/diary_write_srceen.dart';
 import 'package:bible_in_us/general/general_controller.dart';
@@ -15,6 +16,7 @@ import 'package:expandable/expandable.dart';
 final MyCtr = Get.put(MyController());
 final DiaryCtr = Get.put(DiaryController());
 final GeneralCtr = Get.put(GeneralController());
+final BibleCtr = Get.put(BibleController());
 
 class DiaryViewPage extends StatelessWidget {
   const DiaryViewPage({Key? key}) : super(key: key);
@@ -136,33 +138,30 @@ class MainWidget extends StatelessWidget {
 
                               /* 사회적 거리두기 */
                               SizedBox(height: 15),
-                              /* 제목 */
-                              Text("[${result['dirary_screen_title']}]", style: TextStyle(fontWeight: FontWeight.bold),),
-                              /* 사회적 거리두기 */
-                              SizedBox(height: 5),
-                              /* 내용 */
-                              ExpandableNotifier(
-                                child: Column(
-                                  children: [
-                                    /* 내용 텍스트가 길 경우 접었다 펼치기 기능 제공 */
-                                    Expandable(
-                                      collapsed: ExpandableButton(  // <-- Expands when tapped on the cover photo
-                                        /* 내용 텍스트(접힌 경우) */
-                                        child: Text("${result['dirary_screen_contents']}",
-                                            maxLines:3, overflow: TextOverflow.ellipsis, softWrap: false,// 공간을 넘는 글자는 쩜쩜쩜(...)으로 표기한다.
-                                            style: TextStyle(fontSize:15)
-                                        ),
-                                      ),
-                                      expanded: Column(
-                                          children: [
-                                            /* 내용 텍스트(펼친 경우) */
-                                            SelectableText("${result['dirary_screen_contents']}",  style: TextStyle(fontSize:15)),
-                                          ]
-                                      ),
-                                    ),
-                                  ],
+                              /* 제목 + 내용 */
+                              ExpandablePanel(
+                                theme: const ExpandableThemeData(
+                                  headerAlignment: ExpandablePanelHeaderAlignment.center,
                                 ),
+                                // 1. 제목
+                                header: Text("[${result['dirary_screen_title']}]", style: TextStyle(fontWeight: FontWeight.bold)),
+                                // 2. 내용 접었을 때
+                                collapsed: Text("${result['dirary_screen_contents']}",
+                                    maxLines:3, overflow: TextOverflow.ellipsis, softWrap: true,// 공간을 넘는 글자는 쩜쩜쩜(...)으로 표기한다.
+                                    style: TextStyle(fontSize:15)
+                                ),
+                                // 3. 내용 펼쳤을 때
+                                expanded:  SelectableText("${result['dirary_screen_contents']}",  style: TextStyle(fontSize:15)),
                               ),
+
+                              /* 사회적 거리두기 */
+                              SizedBox(height: 10),
+
+
+                              ViewVerses(index: index),
+
+
+
 
                               /* 사회적 거리두기 */
                               SizedBox(height: 10),
@@ -228,3 +227,91 @@ class MainWidget extends StatelessWidget {
     );
   }
 }
+
+
+
+
+//<서브위젯> 성경 카드 뿌려주기
+/* 아래부터 선택한 성경 카드로 보여주기 *///https://docs.getwidget.dev/gf-carousel/
+class ViewVerses extends StatelessWidget {
+  const ViewVerses({Key? key, this.index}) : super(key: key);
+
+  /* 일기 인덱스 받아오기 */
+  final index;
+
+  @override
+  Widget build(BuildContext context) {
+    return GFCarousel(
+      height: 180,
+      activeIndicator: GeneralCtr.MainColor,
+      passiveIndicator: Colors.white,
+      pagerSize: 7.0,// 이미지 하단 페이지 인디케이터 크기
+      enableInfiniteScroll: true, // 무한스크롤
+      viewportFraction: 0.8, // 전.후 이미지 보여주기 ( 1.0이면 안보여줌 )
+      aspectRatio: 20, // 사진 비율
+      enlargeMainPage: true, // 자동 확대
+      pagination: true, // 이미지 하단 페이지 인디케이터 표시여부
+      autoPlayInterval: Duration(milliseconds: 5000), // 자동 넘기기 주기(시간)
+      autoPlay: true, // 자동 넘기기 on/off
+      pauseAutoPlayOnTouch: Duration(milliseconds: 5000), // 클릭하면 자동넘기기 일시 정지
+
+      /* 선택된 구절 갯수만큼 카드 만들어주기 */
+      items: DiaryCtr.diary_view_contents[index]['dirary_screen_selected_verses_id'].map<Widget>(
+            (id) {
+
+          /* 필터링으로 구절정보 하나씩 가져오기 */
+          var contents_data = DiaryCtr.diary_view_selected_contents_data.where((f)=>f["_id"]==id).toList();
+          var diary_data = DiaryCtr.diary_view_contents[index];
+
+
+
+          /* 성경 구절 카드에 담아서 보여주기 */
+          /* 1. 정보가 "null"이 아니면, 구절 정보 담아서 보여준다 */
+          return Container(
+            decoration: BoxDecoration(
+              color: DiaryCtr.ColorCode[diary_data['dirary_screen_color_index']].withOpacity(0.4), // 카드 색깔
+              borderRadius: BorderRadius.circular(10),
+            ),
+            margin: EdgeInsets.fromLTRB(5, 0, 5, 0), // 좌우 카드끼리 간격 띄우기
+            child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    /* 사회적 거리두기 */
+                    SizedBox(height: 20),
+                    /* 구절정보 보여주기 */
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        /* 구절 정보 */
+                        Text(" $index [${contents_data[0]['국문']}(${contents_data[0]['영문']}) ${contents_data[0]['cnum']}장 ${contents_data[0]['vnum']}절]"),
+                      ],
+                    ),
+
+                    /* 성경 구절 메인 보여주기 */
+                    ClipRRect(
+                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                      /* 성경 구절 담기 */
+                      child: GFCard(
+                        padding: EdgeInsets.fromLTRB(5, 5, 5, 5), // 하얀카드 안쪽 텍스트 패딩
+                        margin: EdgeInsets.fromLTRB(0, 0, 0, 25), // 컨테이너 자체 마진
+                        boxFit: BoxFit.fitHeight,
+                        /* 구절 내영 */
+                        content: SelectableText('${contents_data[0][BibleCtr.Bible_choiced]}',style:TextStyle(height: 1.5)),
+                      ),
+                    ),
+                  ],
+                )
+            ),
+          );
+        },
+      ).toList(),
+      onPageChanged: (index) {
+        /* 카드 넘어갈때 이벤트 */
+      },
+    );
+  }
+}
+
+
+

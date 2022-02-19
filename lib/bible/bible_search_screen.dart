@@ -119,9 +119,9 @@ class MainWidget extends StatelessWidget {
                       padding: EdgeInsets.zero,
                       controller: BibleCtr.SearchtabController, // 컨트롤러 정의
                       //labelColor: GeneralCtr.MainColor, // 활성 탭 색
-                      labelStyle: TextStyle(fontSize: 17.0), // 활성 탭 스타일
+                      //labelStyle: TextStyle(fontSize: 17.0), // 활성 탭 스타일
+                      //unselectedLabelStyle: TextStyle(fontSize: 15.0), // 비활성 탭 스타일
                       unselectedLabelColor: Colors.white54, // 비활성 탭 색
-                      unselectedLabelStyle: TextStyle(fontSize: 15.0), // 비활성 탭 스타일
                       indicatorSize: TabBarIndicatorSize.label, // 아래 강조표시 길이
                       indicatorWeight: 3.0, // 아래 강조표시 두께
                       indicatorColor: Colors.white, // 아래 강조표시 색깔
@@ -327,16 +327,21 @@ class FreeSearchResult extends StatelessWidget {
 
                                             /* 구절 내용 보여주기 */
                                             SubstringHighlight(
+                                              // 일반 텍스트
                                               text: result[BibleCtr.Bible_choiced].toString(),
+                                              // 강조 텍스트
                                               term: BibleCtr.textController.text,
-                                              // 강조할 텍스트
+                                              // 일반 텍스트 스타일
                                               textStyle: TextStyle(
+                                                fontFamily: DefaultTextStyle.of(context).style.fontFamily,
                                                 color: Colors.black,
                                                 fontSize: GeneralCtr.Textsize,
                                                 height: GeneralCtr.Textheight,
                                               ),
+                                              // 강조 텍스트 스타일
                                               textStyleHighlight: TextStyle(
                                                 // highlight style
+                                                fontFamily: DefaultTextStyle.of(context).style.fontFamily,
                                                 color: GeneralCtr.MainColor,
                                                 decoration: TextDecoration.none,
                                                 fontWeight: FontWeight.bold,

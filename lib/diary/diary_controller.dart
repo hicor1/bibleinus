@@ -43,6 +43,8 @@ class DiaryController extends GetxController {
 
   var diary_view_contents = []; // 성경일기 뷰 페이지 _ 데이터 로드
   var diary_view_timediffer = []; // 성경일기 뷰 페이지 _ 시간경과 산출데이터 저장
+  var diary_view_selected_contents_data = []; // 성경일기 뷰 페이지 _ 보여줄 성경 구절 데이터 DB에서 받아와서 저장하기
+
 
   /* 칼라코드 정의 */
   var ColorCode = [Color(0xFFBFBFBF), // 젤 처음은 흑백 칼라
@@ -86,12 +88,6 @@ class DiaryController extends GetxController {
     dirary_screen_timetag_index = index;
     update();
   }
-
-  //<함수> 성경일기 작성스크린 _ 선택된 구절 아이디 초기화
-  void init_selected_verses_id(){
-    dirary_screen_selected_verses_id = [99999];
-    update();
-  }
   
   //<함수> 선택한 구절 id 정보 "추가(add)" 또는 "수정(replace)"하고 DB에서 재조회 하기
   Future<void> add_verses_id (int id) async {
@@ -123,10 +119,18 @@ class DiaryController extends GetxController {
 
   //<함수> "bible메인화면"에서 선택한 구절 id 리스트 정보 "추가(add)" 하고 DB에서 재조회 하기기
   Future<void> add_verses_idList() async {
+
     /* 선택된 구절 아이디 초기화 */
-    init_selected_verses_id();
+    diray_write_screen_init();
     /* Bible컨트롤러에서 선택한 구절 아이디 리스트 가져오기 */
     var idList = BibleCtr.ContentsIdList_clicked;
+    // 1. 구절 추가 가능한 최대갯수(10개)로 제한하기
+    if(idList.length > max_verse_length){
+      // 1-1. 10개로 짜르기
+      idList = idList.sublist(0,max_verse_length);
+      PopToast("최대 10개까지 선택가능합니다");
+    }else{}
+
     /* 더미(99999) 잠깐 지우기(순서 맞추기 위함) */
     dirary_screen_selected_verses_id.remove(99999);
     /* for문 돌면서 선택한 구절 id 담기 */
@@ -135,8 +139,13 @@ class DiaryController extends GetxController {
     }
     /* 중복값 제거하기 */
     dirary_screen_selected_verses_id = dirary_screen_selected_verses_id.toSet().toList();
-    /* 더미(99999) 다시 넣기 */
-    dirary_screen_selected_verses_id.add(99999);
+    /* 전체 구절이 10개를 넘지 않도록 제한, 10개가 넘을 경우 "추가"버튼의 트리거인 '99999'가 보이지 않게한다 */
+    if(dirary_screen_selected_verses_id.length < max_verse_length){
+      /* 더미(99999) 다시 넣기 */
+      dirary_screen_selected_verses_id.add(99999);
+    }else{
+      /* 총 10개가 넘었으므로 "추가"버튼의 트리거인 '99999'는 넣지 않는다 */
+    }
     /* 선택한 구절 DB 조회 */
     selected_contents_data = await BibleRepository.GetClickedVerses(dirary_screen_selected_verses_id, BibleCtr.Bible_choiced);
     update();
@@ -209,7 +218,7 @@ class DiaryController extends GetxController {
     /* 콜렉션 선택 */
     CollectionReference collection = firestore.collection('diary');
 
-    /* 사진 이름 만들기 */
+    /* 사진 이름만들기 + 파이어베이스 저장 + 호출 경로 만들기 */
     var docID = collection.doc().id; // 파이어 스토어에 저장되는 문서 ID, 파일 저장 경로로 활용한다.
     var ImgUrl = []; // 최종 파일 downloadURL 이 저장될 공간
     for(int i = 0; i < choiced_image_file.length; i++){
@@ -242,11 +251,15 @@ class DiaryController extends GetxController {
       }
     }
 
+    /* 더미데이터(99999) 제거(임시) */
+    dirary_screen_selected_verses_id.remove(99999);
+
     /* 데이터 세이브 */
     collection.add({
       "uid":MyCtr.uid,
-      "created_at":DateTime.now(),
-      "dirary_screen_selected_verses_id": dirary_screen_selected_verses_id, // John Doe
+      "created_at":DateTime.now(), // 최초 생성 시간
+      "updated_at":DateTime.now(), // 수정 시간
+      "dirary_screen_selected_verses_id": dirary_screen_selected_verses_id, // 더미 데이터 삭제
       "dirary_screen_color_index": dirary_screen_color_index, // Stokes and Sons
       "dirary_screen_title": dirary_screen_title,
       "dirary_screen_contents":dirary_screen_contents,
@@ -254,6 +267,9 @@ class DiaryController extends GetxController {
       "dirary_screen_timetag_index":dirary_screen_timetag_index,
       "dirary_screen_address":dirary_screen_address,
     });
+
+    /* 더미데이터(99999) 추가 */
+    dirary_screen_selected_verses_id.add(99999);
 
     // 일기 리스트 다시 불러오기
     LoadAction();
@@ -276,8 +292,6 @@ class DiaryController extends GetxController {
       /* 유효성검사를 통과했으므로 정상적인 저장 프로세스 진행 */
       Firebase_save();
       PopToast("일기가 등록되었어요!");// 안내메세지
-      /* 페이지 입력된 정보 초기화(성공적으로 저장했으므로) */
-      diray_write_screen_init();
     }
   }
 
@@ -307,6 +321,18 @@ class DiaryController extends GetxController {
 
     /* 데이터 로드(단순) _ 이거는 필요없는데, 이걸 넣어줘야 오류가 안남??...ㅜ 이유는 몰겠음..*/
     var documentSnapshot = await collection.doc("test1").get();
+
+    /* 성경구절 ID에 맞는 구절 DATA를 DB에서 조회해서 가져오기 */
+    // 0 . 임시 저장공간생성
+    var temp_verses_id_list = [];
+    // 1. 성경구절 id 합쳐주기
+    for(int i = 0; i < diary_view_contents.length; i++){
+      temp_verses_id_list.addAll(diary_view_contents[i]['dirary_screen_selected_verses_id']);
+    }
+    // 2. 성경구절 id 중복제거
+    temp_verses_id_list = temp_verses_id_list.toSet().toList();
+    // 3. DB에서 조회
+    diary_view_selected_contents_data = await BibleRepository.GetClickedVerses(temp_verses_id_list, BibleCtr.Bible_choiced);
 
     update();
     // 로딩화면 종료

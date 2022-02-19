@@ -461,7 +461,7 @@ class MainWidget extends StatelessWidget {
 
 
 
-//<서비위젯> 성경 카드 뿌려주기
+//<서브위젯> 성경 카드 뿌려주기
 /* 아래부터 선택한 성경 카드로 보여주기 *///https://docs.getwidget.dev/gf-carousel/
 class ViewVerses extends StatelessWidget {
   const ViewVerses({Key? key}) : super(key: key);

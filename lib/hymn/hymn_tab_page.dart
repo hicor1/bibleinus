@@ -90,9 +90,9 @@ class Mainwidget extends StatelessWidget {
                         },//
                         controller: HymnCtr.tabController, // 컨트롤러 정의
                         labelColor: GeneralCtr.MainColor, // 활성 탭 색
-                        labelStyle: TextStyle(fontSize: 17.0), // 활성 탭 스타일
+                        //labelStyle: TextStyle(fontSize: 17.0), // 활성 탭 스타일
+                        //unselectedLabelStyle:TextStyle(fontSize: 14.0), // 비활성 탭 스타일
                         unselectedLabelColor: Colors.grey, // 비활성 탭 색
-                        unselectedLabelStyle:TextStyle(fontSize: 14.0), // 비활성 탭 스타일
                         indicatorSize: TabBarIndicatorSize.label, // 아래 강조표시 길이
                         indicatorWeight: 3.0, // 아래 강조표시 두께
                         indicatorColor: GeneralCtr.MainColor, // 아래 강조표시 색깔

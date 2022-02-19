@@ -163,7 +163,7 @@ class MainWidget extends StatelessWidget {
 
                 /* 칼라코드 보여주기 */
                 Container(
-                    height: 45,
+                    height: 55,
                     width: MediaQuery.of(context).size.width,
                     margin: EdgeInsets.all(10),
                     child: Center(

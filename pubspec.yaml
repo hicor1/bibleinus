@@ -121,6 +121,14 @@ flutter:
     - family: cafe3
       fonts:
         - asset: assets/fonts/Cafe24Ssurround.ttf
+    - family: KOTRA
+      fonts:
+        - asset: assets/fonts/KOTRA_GOTHIC.ttf
+    - family: gangwon
+      fonts:
+        - asset: assets/fonts/gangwon_light.ttf
+
+
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

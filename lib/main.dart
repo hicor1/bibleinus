@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
             /* 전체 어플 테마 설정 */
             theme: ThemeData(
               scaffoldBackgroundColor: const Color(0xFFFFFFFF), // 전체 하얀 배경
-              fontFamily: 'cafe1', // 전체 폰트 설정
+              fontFamily: 'gangwon', // 전체 폰트 설정
               brightness: Brightness.light,
                 visualDensity: VisualDensity.adaptivePlatformDensity
             ),
