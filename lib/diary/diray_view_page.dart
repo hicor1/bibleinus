@@ -123,7 +123,7 @@ class MainWidget extends StatelessWidget {
                                           onSelected: (value) {
                                             /* 옵션 버튼에 따른 동작 지정 */
                                             switch(value){
-                                              case"수정": break;
+                                              case"수정": DiaryCtr.diary_modify(index); break;
                                               case"삭제": Delete_check_Dialog(context, result.id, index);break;
                                             }
 

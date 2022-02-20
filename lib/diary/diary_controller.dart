@@ -51,6 +51,10 @@ class DiaryController extends GetxController {
   var diary_view_timediffer = []; // 성경일기 뷰 페이지 _ 시간경과 산출데이터 저장
   var diary_view_selected_contents_data = []; // 성경일기 뷰 페이지 _ 보여줄 성경 구절 데이터 DB에서 받아와서 저장하기
 
+  /* 텍스트컨트롤러 정의 */
+  var TitletextController      = TextEditingController(); // 성경일기 작성 페이지 _ 일기 제목 ( title ) 컨트롤러
+  var ContentstextController   = TextEditingController(); // 성경일기 작성 페이지 _ 일기 내용 ( contents ) 컨트롤러
+
 
   /* 칼라코드 정의 */
   var ColorCode = [Color(0xFFBFBFBF), // 젤 처음은 흑백 칼라
@@ -377,14 +381,49 @@ class DiaryController extends GetxController {
   /* <함수> 일기쓰지 페이지 초기화 */
   void diray_write_screen_init(){
     dirary_screen_selected_verses_id = [99999];
-    dirary_screen_color_index = 0; //
-    dirary_screen_title = "";
-    dirary_screen_contents = "";
-    choiced_image_file = [File(""),File(""),File("")];
-    dirary_screen_timetag_index = 0;
-    dirary_screen_address = "";
+    dirary_screen_color_index        = 0; //
+    dirary_screen_title              = "";
+    dirary_screen_contents           = "";
+    choiced_image_file               = [File(""),File(""),File("")];
+    dirary_screen_timetag_index      = 0;
+    dirary_screen_address            = "";
 
     update();
   }
+
+  /* <함수> 일기 내용 수정버튼 초기화 */
+  Future<void> diary_modify(int index) async {
+    /* 데이터 입혀주기 */
+    dirary_screen_selected_verses_id = diary_view_contents[index]['dirary_screen_selected_verses_id'].cast<int>();
+    dirary_screen_color_index        = diary_view_contents[index]['dirary_screen_color_index'];
+    dirary_screen_title              = diary_view_contents[index]['dirary_screen_title'];
+    dirary_screen_contents           = diary_view_contents[index]['dirary_screen_contents'];
+    //choiced_image_file               = diary_view_contents[index]['choiced_image_file'];
+    dirary_screen_timetag_index      = diary_view_contents[index]['dirary_screen_timetag_index'];
+    dirary_screen_address            = diary_view_contents[index]['dirary_screen_address'];
+
+    /* 선택한 구절 DB 조회 */
+    selected_contents_data = await BibleRepository.GetClickedVerses(dirary_screen_selected_verses_id, BibleCtr.Bible_choiced);
+
+    /* 제목 & 내용 삽입 */
+    TitletextController.text     = diary_view_contents[index]['dirary_screen_title'];
+    ContentstextController.text  = diary_view_contents[index]['dirary_screen_contents'];
+
+    /* 작성하기 페이지로 이동 */
+    Get.to(() => DiaryWriteScreen());
+
+    update();
+  }
+
+
+
+
+
+
+
+
+
+
+
 
 }

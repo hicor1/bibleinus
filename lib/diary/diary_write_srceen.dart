@@ -11,7 +11,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/elusive_icons.dart';
 import 'package:fluttericon/entypo_icons.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
+import 'package:fluttericon/typicons_icons.dart';
 import 'package:fluttericon/web_symbols_icons.dart';
 import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
@@ -56,7 +58,7 @@ class MainWidget extends StatelessWidget {
               iconTheme: IconThemeData(
                 color: GeneralCtr.MainColor
               ),
-              title: Text("기록남기기", style: TextStyle(color: GeneralCtr.MainColor),),
+              title: Text("기록남기기", style: GeneralCtr.Style_title),
               backgroundColor: Colors.transparent,
               elevation: 0,
               centerTitle: true,
@@ -180,6 +182,7 @@ class MainWidget extends StatelessWidget {
 
                                 /* 제목 입력 */
                                 TextFormField(
+                                  controller: DiaryCtr.TitletextController,
                                   /* 저장 버튼("_formKey.save()" 눌렀을 때 이벤트 정의 */
                                   onSaved: (val){
                                     DiaryCtr.dirary_screen_title = val!; // 이메일 값 저장
@@ -216,6 +219,7 @@ class MainWidget extends StatelessWidget {
                                     color: Colors.grey.withOpacity(0.1),
                                   ),
                                   child: TextFormField(
+                                    controller: DiaryCtr.ContentstextController,
                                     maxLines: 10,
                                     /* 저장 버튼("_formKey.save()" 눌렀을 때 이벤트 정의 */
                                     onSaved: (val){
@@ -506,7 +510,7 @@ class ViewVerses extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           /* 구절 정보 */
-                          Text("  [${result[0]['국문']}(${result[0]['영문']}) ${result[0]['cnum']}장 ${result[0]['vnum']}절]"),
+                          Text("  [${result[0]['국문']}(${result[0]['영문']}) ${result[0]['cnum']}장 ${result[0]['vnum']}절]", style: TextStyle(fontSize: GeneralCtr.fontsize_normal),),
                           /* 옵션 버튼 */
                           PopupMenuButton(
                               icon: Icon(Icons.more_vert_sharp, size: GeneralCtr.Textsize*1.2, color: Colors.black54), // pop메뉴 아이콘
@@ -539,11 +543,11 @@ class ViewVerses extends StatelessWidget {
                               /* 옵션 버튼 _ 하위 메뉴 스타일 */
                               itemBuilder: (context) => [
                                 /*검색*/
-                                PopupMenuItem(child: Row(children: [Icon(Entypo.search, size: 20), Text(" 검색", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "검색"),
+                                PopupMenuItem(child: Row(children: [Icon(Entypo.search, size: GeneralCtr.fontsize_normal), Text(" 검색", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9))]), value: "검색"),
                                 /*즐겨찾기*/
-                                PopupMenuItem(child: Row(children: [Icon(FontAwesome.bookmark_empty, size: 20), Text(" 즐겨찾기", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "즐겨찾기"),
+                                PopupMenuItem(child: Row(children: [Icon(Typicons.star, size: GeneralCtr.fontsize_normal), Text(" 즐겨찾기", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9))]), value: "즐겨찾기"),
                                 /*삭제*/
-                                PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: 20), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "삭제"),
+                                PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: GeneralCtr.fontsize_normal), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9))]), value: "삭제"),
 
                               ]
                           )
@@ -564,7 +568,7 @@ class ViewVerses extends StatelessWidget {
                           /* 구절 내영 */
                           content: SizedBox(
                               height: 80,
-                              child: SelectableText('${result[0][BibleCtr.Bible_choiced]}',style:TextStyle(height: 1.5))),
+                              child: SelectableText('${result[0][BibleCtr.Bible_choiced]}',style: TextStyle(fontSize: GeneralCtr.fontsize_normal))),
                         ),
                       ),
                     ],

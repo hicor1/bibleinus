@@ -191,7 +191,7 @@ class FreeSearchResult extends StatelessWidget {
                         flex: 6, // 남은 공간을 비율로 조정함
                         child: Scrollbar(
                           controller: BibleCtr.BookCountScroller,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
-                          isAlwaysShown: true,   //화면에 항상 스크롤바가 나오도록 한다
+                          isAlwaysShown: false,   //화면에 항상 스크롤바가 나오도록 한다
                           child: ListView.builder(
                             controller: BibleCtr.BookCountScroller,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
                               itemCount: BibleCtr.FreeSearchResultCount.length,
@@ -236,7 +236,7 @@ class FreeSearchResult extends StatelessWidget {
                         flex: 2, // 남은 공간을 비율로 조정함
                         child: Scrollbar(
                           controller: BibleCtr.BookCountScroller,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
-                          isAlwaysShown: true,   //화면에 항상 스크롤바가 나오도록 한다
+                          isAlwaysShown: false,   //화면에 항상 스크롤바가 나오도록 한다
                           child: ListView.builder(
                               controller: BibleCtr.BookCountScroller,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
                               itemCount: BibleCtr.FreeSearchResultCount_cnum.length,
@@ -281,7 +281,7 @@ class FreeSearchResult extends StatelessWidget {
                         flex: 13, // 남은 공간을 비율로 조정함
                         child: Scrollbar(
                           controller: BibleCtr.ContentsScroller,
-                          isAlwaysShown: true,   //화면에 항상 스크롤바가 나오도록 한다
+                          isAlwaysShown: false,   //화면에 항상 스크롤바가 나오도록 한다
                           child: ListView.builder(
                               shrinkWrap: false,
                               controller: BibleCtr.ContentsScroller,// 스크롤 조작이 필요하다면 할당 ㄱㄱ

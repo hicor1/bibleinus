@@ -53,7 +53,7 @@ class MainWidget extends StatelessWidget {
                           snap: false, // 잠깐다시올릴때 앱바 보여주기
                           // 앱바 액숀 버튼
                           actions: [
-                            /* 작성하기 버튼 */
+                            /* 작성하기(+) 버튼 */
                             Padding(
                               padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
                               child: IconButton(
