@@ -31,7 +31,7 @@ class HymnScorePage extends StatelessWidget {
                       children: [
                         Text("[${HymnCtr.selected_type_name}] ${HymnCtr.selected_hymn_number}. ${HymnCtr.selected_hymn_name}",
                             style: TextStyle(
-                                fontSize: GeneralCtr.Textsize+5,
+                                fontSize: GeneralCtr.fontsize_normal+5,
 
                             ), textAlign: TextAlign.center),
                       ],

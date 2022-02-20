@@ -1,4 +1,5 @@
 import 'package:bible_in_us/bible/bible_controller.dart';
+import 'package:bible_in_us/diary/diary_component.dart';
 import 'package:bible_in_us/diary/diary_controller.dart';
 import 'package:bible_in_us/diary/diary_write_srceen.dart';
 import 'package:bible_in_us/general/general_controller.dart';
@@ -83,7 +84,7 @@ class MainWidget extends StatelessWidget {
                                     children: [
                                       /* 프로필 사진 */
                                       Container(
-                                          margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                                          margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
                                           width: 40.0,
                                           height: 40.0,
                                           decoration: BoxDecoration(
@@ -100,8 +101,8 @@ class MainWidget extends StatelessWidget {
                                       Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text("${MyCtr.displayName}"),
-                                          Text("${result['dirary_screen_address']}", style: TextStyle(color: Colors.grey)),
+                                          Text("${MyCtr.displayName}", style: TextStyle(fontSize: GeneralCtr.fontsize_normal)),
+                                          Text("${result['dirary_screen_address']}", style: TextStyle(color: Colors.grey, fontSize: GeneralCtr.fontsize_normal*0.8)),
                                         ],
                                       )
                                     ],
@@ -110,9 +111,9 @@ class MainWidget extends StatelessWidget {
                                   Row(
                                     children: [
                                       /* 경과시간 표기 */
-                                      Text("${DiaryCtr.diary_view_timediffer[index]}", style: TextStyle(fontSize: 13, color: Colors.grey),),
+                                      Text("${DiaryCtr.diary_view_timediffer[index]}", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.8, color: Colors.grey),),
                                       PopupMenuButton(
-                                          icon: Icon(Icons.more_vert_sharp, size: GeneralCtr.Textsize*1.2, color: Colors.black54), // pop메뉴 아이콘
+                                          icon: Icon(Icons.more_vert_sharp, size: GeneralCtr.fontsize_normal, color: Colors.black54), // pop메뉴 아이콘
                                           shape: RoundedRectangleBorder(
                                               borderRadius: BorderRadius.circular(5)),
                                           padding: EdgeInsets.zero,
@@ -120,15 +121,20 @@ class MainWidget extends StatelessWidget {
                                           color: Colors.white, // pop메뉴 배경색
                                           elevation: 10,// pop메뉴 그림자
                                           onSelected: (value) {
+                                            /* 옵션 버튼에 따른 동작 지정 */
+                                            switch(value){
+                                              case"수정": break;
+                                              case"삭제": Delete_check_Dialog(context, result.id, index);break;
+                                            }
 
                                           },
 
                                           /* 옵션 버튼 _ 하위 메뉴 스타일 */
                                           itemBuilder: (context) => [
                                             /*삭제*/
-                                            PopupMenuItem(child: Row(children: [Icon(FontAwesome5.eraser, size: 20), Text(" 수정", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "수정"),
+                                            PopupMenuItem(child: Row(children: [Icon(FontAwesome5.eraser, size: GeneralCtr.fontsize_normal), Text(" 수정", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9))]), value: "수정"),
                                             /*수정*/
-                                            PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: 20), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "삭제"),
+                                            PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: GeneralCtr.fontsize_normal), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9))]), value: "삭제"),
                                           ]
                                       ),
                                     ],
@@ -136,87 +142,57 @@ class MainWidget extends StatelessWidget {
                                 ],
                               ),
 
-                              /* 사회적 거리두기 */
-                              SizedBox(height: 15),
+
                               /* 제목 + 내용 */
                               ExpandablePanel(
                                 theme: const ExpandableThemeData(
                                   headerAlignment: ExpandablePanelHeaderAlignment.center,
                                 ),
                                 // 1. 제목
-                                header: Text("[${result['dirary_screen_title']}]", style: TextStyle(fontWeight: FontWeight.bold)),
+                                header:
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text("${result['dirary_screen_title']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: GeneralCtr.fontsize_normal)),
+                                        /* 사회적 거리두기 */
+                                        SizedBox(height: 10)
+                                      ],
+                                    ),
+
                                 // 2. 내용 접었을 때
                                 collapsed: Text("${result['dirary_screen_contents']}",
                                     maxLines:3, overflow: TextOverflow.ellipsis, softWrap: true,// 공간을 넘는 글자는 쩜쩜쩜(...)으로 표기한다.
-                                    style: TextStyle(fontSize:15)
+                                    style: TextStyle(fontSize:GeneralCtr.fontsize_normal)
                                 ),
                                 // 3. 내용 펼쳤을 때
-                                expanded:  SelectableText("${result['dirary_screen_contents']}",  style: TextStyle(fontSize:15)),
+                                expanded:  Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    /* 일기 내용(본문, contents)보여주기 */
+                                    SelectableText("${result['dirary_screen_contents']}",  style: TextStyle(fontSize:GeneralCtr.fontsize_normal)),
+                                    /* 사회적 거리두기 */
+                                    SizedBox(height: 20),
+                                    /* 성경구절 보여주는 위젯 */
+                                    ViewVerses(index: index),
+                                  ],
+                                )
+
                               ),
 
-                              /* 사회적 거리두기 */
-                              SizedBox(height: 10),
-
-
-                              ViewVerses(index: index),
-
-
-
-
-                              /* 사회적 거리두기 */
                               SizedBox(height: 10),
                               /* 사진보여주기 */
-                              if (result['choiced_image_file'].length>0)
-                                GFCarousel(
-                                //height: 330, // 고정사이즈 적용, 아래 페이저가 보이도록
-                                pagination: true,
-                                enableInfiniteScroll: false,
-                                activeIndicator: GeneralCtr.MainColor,
-                                passiveIndicator: Colors.grey.withOpacity(0.5),
-                                pagerSize: 7.0,// 이미지 하단 페이지 인디케이터 크기
-                                viewportFraction: 1.0, // 전.후 이미지 보여주기 ( 1.0이면 안보여줌 )
-                                items: result['choiced_image_file'].map<Widget>(
-                                      (url) {
-                                    return Container(
-                                      //padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
-                                      width: MediaQuery.of(context).size.width,
-                                      margin: EdgeInsets.zero,
-                                      child: ClipRRect(
-                                        //borderRadius: BorderRadius.all(Radius.circular(15.0)),
-                                        child: Image.network(
-                                          url,
-                                          fit: BoxFit.fitWidth, // 높이제한이 있으므로 이미지가 뭉게지지 않기위해서는 높이에 맞춘다
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ).toList(),
-                                onPageChanged: (index) {
-                                },
-                              ),
-                              SizedBox(height: 10),
-                              /* 타임태그 */
-                              Row(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.fromLTRB(7, 3, 7, 1),
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(10),
-                                      color: Colors.white,
-                                      boxShadow: [
-                                        BoxShadow(color: Colors.grey, spreadRadius: 1),
-                                      ],
-                                    ),
-                                    child:Text("# ${DiaryCtr.TimeTag[result['dirary_screen_timetag_index']]}"),
-                                  )
-                                ],
-                              ),
+                              ViewPhoto(result: result),
                               /* 사회적 거리두기 */
                               SizedBox(height: 10),
+                              /* 타임태그 */
+                              ViewTimeTag(result: result),
+                              /* 사회적 거리두기 */
+                              SizedBox(height: 10),
+                              /* 38도선 */
                               Divider(thickness: 1)
                             ],
                           ),
-                        ); // "=>"이 아닌 "{}"을 쓸때는 반드시 return을 써줘야한다!!
+                        );
                       }
                   )
                 ],
@@ -231,7 +207,7 @@ class MainWidget extends StatelessWidget {
 
 
 
-//<서브위젯> 성경 카드 뿌려주기
+//<서브위젯> 성경 카드 위젯
 /* 아래부터 선택한 성경 카드로 보여주기 *///https://docs.getwidget.dev/gf-carousel/
 class ViewVerses extends StatelessWidget {
   const ViewVerses({Key? key, this.index}) : super(key: key);
@@ -248,7 +224,7 @@ class ViewVerses extends StatelessWidget {
       pagerSize: 7.0,// 이미지 하단 페이지 인디케이터 크기
       enableInfiniteScroll: true, // 무한스크롤
       viewportFraction: 0.8, // 전.후 이미지 보여주기 ( 1.0이면 안보여줌 )
-      aspectRatio: 20, // 사진 비율
+      aspectRatio: 0, // 사진 비율
       enlargeMainPage: true, // 자동 확대
       pagination: true, // 이미지 하단 페이지 인디케이터 표시여부
       autoPlayInterval: Duration(milliseconds: 5000), // 자동 넘기기 주기(시간)
@@ -262,8 +238,6 @@ class ViewVerses extends StatelessWidget {
           /* 필터링으로 구절정보 하나씩 가져오기 */
           var contents_data = DiaryCtr.diary_view_selected_contents_data.where((f)=>f["_id"]==id).toList();
           var diary_data = DiaryCtr.diary_view_contents[index];
-
-
 
           /* 성경 구절 카드에 담아서 보여주기 */
           /* 1. 정보가 "null"이 아니면, 구절 정보 담아서 보여준다 */
@@ -284,20 +258,24 @@ class ViewVerses extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         /* 구절 정보 */
-                        Text(" $index [${contents_data[0]['국문']}(${contents_data[0]['영문']}) ${contents_data[0]['cnum']}장 ${contents_data[0]['vnum']}절]"),
+                        Text("  [${contents_data[0]['국문']}(${contents_data[0]['영문']}) ${contents_data[0]['cnum']}장 ${contents_data[0]['vnum']}절]"),
                       ],
                     ),
+                    /* 사회적 거리두기 */
+                    SizedBox(height: 5),
 
                     /* 성경 구절 메인 보여주기 */
                     ClipRRect(
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                      //borderRadius: BorderRadius.all(Radius.circular(0.0)),
                       /* 성경 구절 담기 */
                       child: GFCard(
                         padding: EdgeInsets.fromLTRB(5, 5, 5, 5), // 하얀카드 안쪽 텍스트 패딩
                         margin: EdgeInsets.fromLTRB(0, 0, 0, 25), // 컨테이너 자체 마진
                         boxFit: BoxFit.fitHeight,
                         /* 구절 내영 */
-                        content: SelectableText('${contents_data[0][BibleCtr.Bible_choiced]}',style:TextStyle(height: 1.5)),
+                        content: SizedBox(
+                            height: 95,
+                            child: SelectableText('${contents_data[0][BibleCtr.Bible_choiced]}',style:TextStyle(height: 1.5))),
                       ),
                     ),
                   ],
@@ -312,6 +290,79 @@ class ViewVerses extends StatelessWidget {
     );
   }
 }
+
+
+//<서브위젯> 사진 보여주기 위젯
+class ViewPhoto extends StatelessWidget {
+  const ViewPhoto({Key? key, this.result}) : super(key: key);
+
+  final result; // 결과값 받아오기
+
+  @override
+  Widget build(BuildContext context) {
+    /* 저장된 사진이 있는 경우 */
+    if (result['choiced_image_file'].length>0) {
+      return GFCarousel(
+        //height: 330, // 고정사이즈 적용, 아래 페이저가 보이도록
+        pagination: true,
+        enableInfiniteScroll: false,
+        activeIndicator: GeneralCtr.MainColor,
+        passiveIndicator: Colors.grey.withOpacity(0.5),
+        pagerSize: 7.0,// 이미지 하단 페이지 인디케이터 크기
+        viewportFraction: 1.0, // 전.후 이미지 보여주기 ( 1.0이면 안보여줌 )
+        items: result['choiced_image_file'].map<Widget>(
+              (url) {
+            return Container(
+              //padding: EdgeInsets.fromLTRB(0, 20, 0, 20),
+              width: MediaQuery.of(context).size.width,
+              margin: EdgeInsets.zero,
+              child: ClipRRect(
+                //borderRadius: BorderRadius.all(Radius.circular(15.0)),
+                child: Image.network(
+                  url,
+                  fit: BoxFit.fitWidth, // 높이제한이 있으므로 이미지가 뭉게지지 않기위해서는 높이에 맞춘다
+                ),
+              ),
+            );
+          },
+        ).toList(),
+        onPageChanged: (index) {
+        },
+      );
+    } else {
+      /* 저장된 사진이 없는 경우 */
+      return SizedBox(height: 0);
+    }
+  }
+}
+
+
+//<서브위젯> 시간 태그 보여주기 위젯
+class ViewTimeTag extends StatelessWidget {
+  const ViewTimeTag({Key? key, this.result}) : super(key: key);
+
+  final result;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          padding: EdgeInsets.fromLTRB(7, 3, 7, 1),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(color: Colors.grey, spreadRadius: 1),
+            ],
+          ),
+          child:Text("# ${DiaryCtr.TimeTag[result['dirary_screen_timetag_index']]}"),
+        )
+      ],
+    );
+  }
+}
+
 
 
 

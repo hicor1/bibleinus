@@ -20,6 +20,7 @@ class BibleController extends GetxController {
     NEWorOLD_choice(NEWorOLD_choiced);  //초반 권(book)불러오기
     Book_choice(Book_choiced); // 초반 챕터번호 선택해놓기
     FloatingAB_init(); // 플로팅 액션버튼 초기화
+    Get_color_count(); // 색깔별 즐겨찾기 몇개인지 쿼리
   }
 
   /* SharedPrefs 저장하기(save) */
@@ -56,6 +57,9 @@ class BibleController extends GetxController {
   /* <변수> 각종 변수 정의  */
   late TabController tabController; // 메인페이지 탭 컨트롤러 정의
   late TabController SearchtabController; // 자유검색페이지 탭 컨트롤러 정의
+
+  /* 메인페이지 성경 스크롤 컨트롤러 정의 */
+  final ScrollController BibleScroller    = ScrollController(keepScrollOffset: true); // 모달창 스크롤 컨트롤러 선언
 
   /* 메인 페이지 모달창 스크롤 컨트롤러 정의 */
   final ScrollController BookScroller    = ScrollController(keepScrollOffset: true); // 모달창 스크롤 컨트롤러 선언
@@ -268,6 +272,9 @@ class BibleController extends GetxController {
     }
     // 플로팅 액션버튼 초기화
     FloatingAB_init();
+
+    // 스크롤 젤위로 초기화
+    BibleScroller.jumpTo(0);
 
     // 성경구절 재조회
     Getcontents();

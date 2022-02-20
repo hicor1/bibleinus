@@ -38,7 +38,7 @@ class HymnMainWidget extends StatelessWidget {
                     },
                     controller: HymnCtr.searchtextController, // 텍스트값을 가져오기 위해 컨트롤러 할당
                     autofocus: false, // 자동으로 클릭할것인가
-                    style: TextStyle(fontSize: GeneralCtr.Textsize),
+                    style: TextStyle(fontSize: GeneralCtr.fontsize_normal),
                     decoration: InputDecoration(
                         prefixIcon: Icon(Icons.search),
                         suffixIcon: IconButton(
@@ -145,11 +145,11 @@ class HymnMainWidget extends StatelessWidget {
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
                                                 Text("${result['number']}. ",
-                                                  style: TextStyle(fontSize: GeneralCtr.Textsize, height: GeneralCtr.Textheight),),
+                                                  style: TextStyle(fontSize: GeneralCtr.fontsize_normal),),
                                                 //Icon(Entypo.note, size: GeneralCtr.Textsize*0.8),
                                                 Flexible(
                                                   child: Text("${result['title']}",
-                                                    style: TextStyle(fontSize: GeneralCtr.Textsize, height: GeneralCtr.Textheight),),
+                                                    style: TextStyle(fontSize: GeneralCtr.fontsize_normal),),
                                                 )
                                               ],
                                             )

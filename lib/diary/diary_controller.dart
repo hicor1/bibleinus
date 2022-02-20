@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
@@ -17,6 +18,11 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 final BibleCtr = Get.put(BibleController());
 final MyCtr = Get.put(MyController());
+
+/* 파이어스토어 객체 생성 */
+FirebaseFirestore firestore    = FirebaseFirestore.instance;
+/* 콜렉션 선택 */
+CollectionReference collection = firestore.collection('diary'); // diary 콜렉션 사용
 
 class DiaryController extends GetxController {
 
@@ -213,11 +219,6 @@ class DiaryController extends GetxController {
     // 로딩화면 띄우기
     EasyLoading.show(status: 'loading...');
 
-    /* 파이어스토어 객체 생성 */
-    FirebaseFirestore firestore    = FirebaseFirestore.instance;
-    /* 콜렉션 선택 */
-    CollectionReference collection = firestore.collection('diary');
-
     /* 사진 이름만들기 + 파이어베이스 저장 + 호출 경로 만들기 */
     var docID = collection.doc().id; // 파이어 스토어에 저장되는 문서 ID, 파일 저장 경로로 활용한다.
     var ImgUrl = []; // 최종 파일 downloadURL 이 저장될 공간
@@ -266,7 +267,11 @@ class DiaryController extends GetxController {
       "choiced_image_file":ImgUrl,
       "dirary_screen_timetag_index":dirary_screen_timetag_index,
       "dirary_screen_address":dirary_screen_address,
-    });
+    }).then((value) => PopToast("일기가 등록되었어요!")
+    );// 안내메세지
+
+
+    //PopToast("일기가 등록되었어요!")
 
     /* 더미데이터(99999) 추가 */
     dirary_screen_selected_verses_id.add(99999);
@@ -291,8 +296,16 @@ class DiaryController extends GetxController {
     }else{
       /* 유효성검사를 통과했으므로 정상적인 저장 프로세스 진행 */
       Firebase_save();
-      PopToast("일기가 등록되었어요!");// 안내메세지
     }
+  }
+
+  /* <함수> 삭제버튼 눌렀을 때 파이어베이스로 저장하기 */
+  Future<void> DeleteAction(Docid, index)  async {
+    /* 파이어스토어에서 삭제 */
+    collection.doc(Docid).delete();
+    /* 지우고 DB재조회 하지말고, 불러온 리스트에서만 수정하자 */
+    diary_view_contents.removeAt(index);
+    update();
   }
 
 
@@ -301,38 +314,37 @@ class DiaryController extends GetxController {
     // 로딩화면 띄우기
     EasyLoading.show(status: 'loading...');
 
-    /* 파이어스토어 객체 생성 */
-    FirebaseFirestore firestore    = FirebaseFirestore.instance;
-    /* 콜렉션 선택 */
-    CollectionReference collection = firestore.collection('diary');
     /* 데이터 로드(조건) */
     collection
         .where("uid", isEqualTo: MyCtr.uid) // 본인이 작성한 글만 보이게
         .orderBy("created_at", descending:true) // 날짜로 내림차순 정렬
-        .get().then((QuerySnapshot ds) {
+        /* ↓정상적으로 로드가 되었다면 아래 수행↓ */
+        .get().then((QuerySnapshot ds) async {
           /*  불러온 데이터 할당 */
-      diary_view_contents = ds.docs;
-      /* 시간경과 산출 */
-      diary_view_timediffer = []; // 시간 경과 저장 리스트 초기화
-      for(int i = 0; i < diary_view_contents.length; i++){
-        diary_view_timediffer.add(cal_time_differ(diary_view_contents[i]["created_at"]));
-      }
-    });// 필드명에 단어 포함
+          diary_view_contents = ds.docs;
+
+          /* 시간경과 산출 */
+          diary_view_timediffer = []; // 시간 경과 저장 리스트 초기화
+          for(int i = 0; i < diary_view_contents.length; i++){
+            diary_view_timediffer.add(cal_time_differ(diary_view_contents[i]["created_at"]));
+          }
+          /* 성경구절 ID에 맞는 구절 DATA를 DB에서 조회해서 가져오기 */
+          // 0 . 임시 저장공간생성
+          var temp_verses_id_list = [];
+          // 1. 성경구절 id 합쳐주기
+          for(int i = 0; i < diary_view_contents.length; i++){
+            temp_verses_id_list.addAll(diary_view_contents[i]['dirary_screen_selected_verses_id']);
+          }
+          // 2. 성경구절 id 중복제거
+          temp_verses_id_list = temp_verses_id_list.toSet().toList();
+          // 3. DB에서 조회
+          diary_view_selected_contents_data = await BibleRepository.GetClickedVerses(temp_verses_id_list, BibleCtr.Bible_choiced);
+    }
+    );// 필드명에 단어 포함
+
 
     /* 데이터 로드(단순) _ 이거는 필요없는데, 이걸 넣어줘야 오류가 안남??...ㅜ 이유는 몰겠음..*/
-    var documentSnapshot = await collection.doc("test1").get();
-
-    /* 성경구절 ID에 맞는 구절 DATA를 DB에서 조회해서 가져오기 */
-    // 0 . 임시 저장공간생성
-    var temp_verses_id_list = [];
-    // 1. 성경구절 id 합쳐주기
-    for(int i = 0; i < diary_view_contents.length; i++){
-      temp_verses_id_list.addAll(diary_view_contents[i]['dirary_screen_selected_verses_id']);
-    }
-    // 2. 성경구절 id 중복제거
-    temp_verses_id_list = temp_verses_id_list.toSet().toList();
-    // 3. DB에서 조회
-    diary_view_selected_contents_data = await BibleRepository.GetClickedVerses(temp_verses_id_list, BibleCtr.Bible_choiced);
+    var documentSnapshot = await collection.doc("diary").get();
 
     update();
     // 로딩화면 종료

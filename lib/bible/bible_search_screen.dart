@@ -59,6 +59,10 @@ class MainWidget extends StatelessWidget {
             length: 2,
             child: Scaffold(
               appBar: AppBar(
+                iconTheme: IconThemeData(
+                  color: GeneralCtr.MainColor, //change your color here
+                ),
+                elevation: 1.5,
                 title: TextField(
                   textAlignVertical: TextAlignVertical.center,
                   controller: BibleCtr.textController, // 텍스트값을 가져오기 위해 컨트롤러 할당
@@ -81,11 +85,11 @@ class MainWidget extends StatelessWidget {
                     }
                   },
                   autofocus: false, // 자동으로 클릭할것인가
-                  style: TextStyle(fontSize: GeneralCtr.Textsize),
+                  style: TextStyle(fontSize: GeneralCtr.fontsize_normal),
                   decoration: InputDecoration(
                     //prefixIcon: Icon(Icons.search),
                       suffixIcon: IconButton(
-                        icon: Icon(Icons.clear),
+                        icon: Icon(Icons.clear, color: GeneralCtr.MainColor),
                         /* 클리어 버튼(X) 눌렀을 때 텍스트 비우기 */
                         onPressed: () {
                           BibleCtr.textController.clear();
@@ -95,7 +99,7 @@ class MainWidget extends StatelessWidget {
                       hintText: '검색어를 입력해주세요',
                       border: InputBorder.none),
                 ),
-                backgroundColor: GeneralCtr.MainColor,
+                backgroundColor: Colors.white,
                 // 앱바 액숀 버튼
                 actions: [
                   // 셋팅 버튼
@@ -106,13 +110,13 @@ class MainWidget extends StatelessWidget {
                         /* 셋팅화면 띄워주기 */
                         openPopup(context);
                       },
-                      icon: Icon(Typicons.cog_outline, size: 25.0, color: Colors.black.withOpacity(0.6)),
+                      icon: Icon(Typicons.cog_outline, size: 25.0, color: GeneralCtr.MainColor),
                     ),
                   )
                 ],
                 // "TabBar"는 기본적으로 Evenly 정렬이므로, 좌측정렬이 안됨. 따라서 PreferredSize를 사용해서 인위적으로 좌측 정렬 시킴
                 bottom: PreferredSize(
-                  preferredSize: Size.fromHeight(40),
+                  preferredSize: Size.fromHeight(30),
                   child: Align(
                     alignment: Alignment.centerLeft, // 탭 메뉴들 왼쪽 정렬
                     child: TabBar(
@@ -124,11 +128,11 @@ class MainWidget extends StatelessWidget {
                       unselectedLabelColor: Colors.white54, // 비활성 탭 색
                       indicatorSize: TabBarIndicatorSize.label, // 아래 강조표시 길이
                       indicatorWeight: 3.0, // 아래 강조표시 두께
-                      indicatorColor: Colors.white, // 아래 강조표시 색깔
+                      indicatorColor: GeneralCtr.MainColor, // 아래 강조표시 색깔
                       isScrollable: true, // 수평으로 스크롤가능여부
                       tabs: [
-                        Tab(child: Text("검색결과")),
-                        Tab(child: Text('최근검색')),
+                        Tab(child: Text("검색결과", style: GeneralCtr.Style_tab)),
+                        Tab(child: Text('최근검색', style: GeneralCtr.Style_tab)),
                       ],
                     ),
                   ),
@@ -167,7 +171,7 @@ class FreeSearchResult extends StatelessWidget {
                 Container(
                   child: Text(
                     '검색어 : "${BibleCtr.textController.text}" 에 대한 검색결과 ${NumberFormat('##,###').format(BibleCtr.FreeSearchResult.length)} 건',
-                    style: TextStyle(fontSize: GeneralCtr.Textsize*0.9),),
+                    style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9),),
                   margin: EdgeInsets.fromLTRB(0,5,0,5),
                   padding: EdgeInsets.fromLTRB(50,2,50,2),
                   decoration: BoxDecoration(
@@ -319,11 +323,11 @@ class FreeSearchResult extends StatelessWidget {
                                             Text(
                                                 "${result['국문']} (${result['영문']})  ${result['cnum']}:${result['vnum']}",
                                                 style: TextStyle(
-                                                    fontSize: GeneralCtr.Textsize*0.8,
+                                                    fontSize: GeneralCtr.fontsize_normal,
                                                     color: Colors.grey)),
 
                                             /* 사회적 거리두기*/
-                                            SizedBox(height: 5),
+                                            SizedBox(height: 2),
 
                                             /* 구절 내용 보여주기 */
                                             SubstringHighlight(
@@ -411,14 +415,14 @@ class History extends StatelessWidget {
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        Icon(Elusive.search, size: GeneralCtr.Textsize*0.9, color: GeneralCtr.MainColor),
+                                        Icon(Elusive.search, size: GeneralCtr.fontsize_normal*0.9, color: GeneralCtr.MainColor),
                                         Flexible(
                                           child: Text("   ${BibleCtr.FreeSearch_history_query[index]}    ",
-                                              style: TextStyle(fontSize: GeneralCtr.Textsize, color: Colors.black)),
+                                              style: TextStyle(fontSize: GeneralCtr.fontsize_normal, color: Colors.black)),
                                         ),
-                                        Icon(FontAwesome5.bible, size: GeneralCtr.Textsize*0.9, color: Colors.grey.withOpacity(0.8)),
+                                        Icon(FontAwesome5.bible, size: GeneralCtr.fontsize_normal*0.9, color: Colors.grey.withOpacity(0.8)),
                                         Text(" ${BibleCtr.FreeSearch_history_bible[index]}",
-                                            style: TextStyle(fontSize: GeneralCtr.Textsize*0.85, color: Colors.grey.withOpacity(0.8))),
+                                            style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.85, color: Colors.grey.withOpacity(0.8))),
                                       ],
                                     ),
                                   ),
@@ -444,11 +448,11 @@ class History extends StatelessWidget {
                                           break;
                                       }
                                     },
-                                    icon: Icon(Icons.more_vert_sharp, size: GeneralCtr.Textsize*1.2), // pop메뉴 아이콘
+                                    icon: Icon(Icons.more_vert_sharp, size: GeneralCtr.fontsize_normal*1.2), // pop메뉴 아이콘
                                     /* 하위 메뉴 스타일 */
                                     itemBuilder: (context) => [
-                                      PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: GeneralCtr.Textsize*0.9), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "삭제"),
-                                      PopupMenuItem(child: Row(children: [Icon(WebSymbols.cancel_circle, size: GeneralCtr.Textsize*0.9), Text(" 전체 삭제", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "전체 삭제"),
+                                      PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: GeneralCtr.fontsize_normal*0.9), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9))]), value: "삭제"),
+                                      PopupMenuItem(child: Row(children: [Icon(WebSymbols.cancel_circle, size: GeneralCtr.fontsize_normal*0.9), Text(" 전체 삭제", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9))]), value: "전체 삭제"),
                                     ]
                                   )
                                 ],

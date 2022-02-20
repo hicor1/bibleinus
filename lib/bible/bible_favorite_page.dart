@@ -79,7 +79,6 @@ class MainWidget extends StatelessWidget {
                                       case "diary" : // 2. diary앱 에서 호출한 경우
                                         IsMoveDialog_from_diary(context, result, index); break;
                                     }
-
                                   },
                                   child: Container(
                                     width: MediaQuery.of(context).size.width, // 요건 필수
@@ -101,9 +100,9 @@ class MainWidget extends StatelessWidget {
                                                 children: [
                                                   /* 메모 추가를 위한 체크박스 _ 플로팅 액숀버튼 띄우기 */
                                                   GFCheckbox(
-                                                    size: GeneralCtr.Textsize*1.1, // 박스 사이즈
-                                                    activeIcon: Icon(Typicons.ok, size: GeneralCtr.Textsize*1.1, color: BibleCtr.ColorCode[result['highlight_color_index']]), // 활성 아이콘
-                                                    inactiveIcon: Icon(Typicons.ok_outline, size: GeneralCtr.Textsize*1.1, color: Colors.white), // 비활성 아이콘
+                                                    size: GeneralCtr.fontsize_normal*1.1, // 박스 사이즈
+                                                    activeIcon: Icon(Typicons.ok, size: GeneralCtr.fontsize_normal, color: BibleCtr.ColorCode[result['highlight_color_index']]), // 활성 아이콘
+                                                    inactiveIcon: Icon(Typicons.ok_outline, size: GeneralCtr.fontsize_normal, color: Colors.white), // 비활성 아이콘
                                                     type: GFCheckboxType.circle, // 아이콘 모양(사각형, 원형 등등)
                                                     activeBgColor: Colors.transparent, // 활성 아이콘 배경 색깔
                                                     activeBorderColor: BibleCtr.ColorCode[result['highlight_color_index']], // 활성 아이콘 테두리 색깔
@@ -122,7 +121,7 @@ class MainWidget extends StatelessWidget {
                                                   Container(
                                                     color: checker ? BibleCtr.ColorCode[result['highlight_color_index']] : Colors.transparent,
                                                     child: Text("${result['국문']} (${result['영문']}): ${result['cnum']}장 ${result['vnum']}절 ",
-                                                        style: TextStyle(fontSize: GeneralCtr.Textsize*0.8,
+                                                        style: TextStyle(fontSize: GeneralCtr.fontsize_normal,
                                                             color: checker ? Colors.white :BibleCtr.ColorCode[result['highlight_color_index']],
                                                             fontWeight: FontWeight.bold)
                                                     ),
@@ -136,7 +135,7 @@ class MainWidget extends StatelessWidget {
                                               children: [
                                                 /* 경과시간 표기 */
                                                 Text("${BibleCtr.Favorite_timediffer_list[index]}",
-                                                    style: TextStyle(fontSize: GeneralCtr.Textsize*0.8, color: Colors.grey, fontWeight: FontWeight.bold)),
+                                                    style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.8, color: Colors.grey, fontWeight: FontWeight.bold)),
                                               ],
                                             )
                                           ],
@@ -197,10 +196,11 @@ class MainWidget extends StatelessWidget {
                                   children: [
                                     /* 아이콘 배치(색깔에 맞게), 아이콘을 겹쳐서 강조표기해주기 */
                                     Stack(
+                                      alignment: Alignment.center,
                                       children:[
                                         /* 색깔 아이콘 */
                                         Icon(
-                                            index != 0 ? FontAwesome5.highlighter : Entypo.cancel,
+                                            index != 0 ? FontAwesome5.star : Entypo.cancel,
                                             color: BibleCtr.ColorCode[index], size: 25
                                         ),
                                         /* 색깔 선택 아이콘 */
@@ -213,7 +213,7 @@ class MainWidget extends StatelessWidget {
                                     /* 색깔별 갯수 배치 (0번 인덱스는 갯수 표기 안함) */
                                     Text(
                                         index == 0 ? "취소" :  // 0번째 인덱스는 "취소"표기
-                                        "${color_count}", style: TextStyle(color: BibleCtr.ColorCode[index], fontSize: 15),
+                                        " ${color_count}", style: TextStyle(color: BibleCtr.ColorCode[index], fontSize: GeneralCtr.fontsize_normal),
                                     )
                                   ],
                                 ),

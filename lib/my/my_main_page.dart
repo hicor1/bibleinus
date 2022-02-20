@@ -42,7 +42,7 @@ class MainWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('프로필', style: TextStyle(color: GeneralCtr.MainColor, fontSize: 25, fontWeight: FontWeight.bold)),
+          title: Text('프로필', style: GeneralCtr.Style_title),
           backgroundColor: Colors.white,
           elevation: 0,
         ),
@@ -68,7 +68,7 @@ class MainWidget extends StatelessWidget {
                       )
                   ),
                   /* 닉네임 */
-                  Text("${MyCtr.displayName}", style: TextStyle(color: Colors.black)),
+                  Text("${MyCtr.displayName}", style: TextStyle(color: Colors.black, fontSize: GeneralCtr.fontsize_normal)),
                 ],
               ),
 
@@ -87,7 +87,7 @@ class MainWidget extends StatelessWidget {
                             /* 프로필 스크린으로 이동 */
                             Get.to(() => MyProfileScreen());
                           },
-                          child: Text("프로필 변경하기", style: TextStyle(color: Colors.grey)))
+                          child: Text("프로필 변경하기", style: TextStyle(color: Colors.black54, fontSize: GeneralCtr.fontsize_normal)))
                     ],
                   ),
                   Divider(),
@@ -103,7 +103,7 @@ class MainWidget extends StatelessWidget {
                       SizedBox(width: Icon_text_space),
                       TextButton(
                           onPressed: (){FirebaseAuth.instance.signOut();},
-                          child: Text("로그아웃", style: TextStyle(color: Colors.grey)))
+                          child: Text("로그아웃", style: TextStyle(color: Colors.black54, fontSize: GeneralCtr.fontsize_normal)))
                     ],
                   ),
                   Divider(),

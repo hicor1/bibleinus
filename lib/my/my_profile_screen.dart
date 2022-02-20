@@ -41,8 +41,12 @@ class MainWidget extends StatelessWidget {
         builder: (_){
           return Scaffold(
             appBar: AppBar(
-              title: Text("프로필 변경하기"),
-              backgroundColor: GeneralCtr.MainColor,
+              title: Text("프로필 변경하기", style: GeneralCtr.Style_title),
+              backgroundColor: Colors.white,
+              iconTheme: IconThemeData(
+                color: GeneralCtr.MainColor, //change your color here
+              ),
+              elevation: 1.5,
             ),
             body: Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
@@ -56,7 +60,7 @@ class MainWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
 
-                      Text("  유저정보"),
+                      Text("  유저정보", style: TextStyle(fontSize: GeneralCtr.fontsize_normal)),
                       /* 유저 정보 보여주기 컨테이터 */
                       Container(
                         decoration: BoxDecoration(
@@ -75,8 +79,8 @@ class MainWidget extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text("닉네임"),
-                                Text("${MyCtr.displayName}")
+                                Text("닉네임", style: TextStyle(fontSize: GeneralCtr.fontsize_normal)),
+                                Text("${MyCtr.displayName}", style: TextStyle(fontSize: GeneralCtr.fontsize_normal))
                               ],
                             ),
                             Divider(),
@@ -84,8 +88,8 @@ class MainWidget extends StatelessWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text("이메일"),
-                                Text("${MyCtr.email}")
+                                Text("이메일", style: TextStyle(fontSize: GeneralCtr.fontsize_normal)),
+                                Text("${MyCtr.email}", style: TextStyle(fontSize: GeneralCtr.fontsize_normal))
                               ],
                             ),
                           ],
@@ -122,8 +126,8 @@ class MainWidget extends StatelessWidget {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text("프로필 이미지 수정"),
-                                  Icon(Icons.chevron_right)
+                                  Text("프로필 이미지 수정", style: TextStyle(fontSize: GeneralCtr.fontsize_normal)),
+                                  Icon(Icons.chevron_right, size:  GeneralCtr.fontsize_normal)
                                 ],
                               ),
                             ),
@@ -147,8 +151,8 @@ class MainWidget extends StatelessWidget {
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text("닉네임 수정"),
-                                  Icon(Icons.chevron_right)
+                                  Text("닉네임 수정", style: TextStyle(fontSize: GeneralCtr.fontsize_normal)),
+                                  Icon(Icons.chevron_right, size:  GeneralCtr.fontsize_normal)
                                 ],
                               ),
                             ),
@@ -189,7 +193,7 @@ class DisplayNameModalWigdet extends StatelessWidget {
 
               /* 안내 텍스트 */
               Text("멋진 닉네임으로 변경해보세요",
-                  style: TextStyle(fontSize: 13),
+                  style: TextStyle(fontSize: GeneralCtr.fontsize_normal),
                   textAlign: TextAlign.center),
 
               /* 사회적 거리두기 */
@@ -211,13 +215,13 @@ class DisplayNameModalWigdet extends StatelessWidget {
                         },
                         /* 스타일 정의 */
                         decoration: InputDecoration(
-                          prefixIcon: Icon(Iconic.user, size: 15, color: Colors.grey.withOpacity(0.7)), // 전방배치 아이콘
+                          prefixIcon: Icon(Iconic.user, size: GeneralCtr.fontsize_normal, color: Colors.grey.withOpacity(0.7)), // 전방배치 아이콘
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(color: Colors.blueAccent, width: 1),
                           ),
                           labelText: '닉네임', // 라벨
-                          labelStyle: TextStyle(color: Colors.grey.withOpacity(0.7), fontSize: 13, ), // 라벨 스타일
-                          floatingLabelStyle: TextStyle(fontSize: 15), // 포커스된 라벨 스타일
+                          labelStyle: TextStyle(color: Colors.grey.withOpacity(0.7), fontSize: GeneralCtr.fontsize_normal, ), // 라벨 스타일
+                          floatingLabelStyle: TextStyle(fontSize: GeneralCtr.fontsize_normal), // 포커스된 라벨 스타일
                         ),
                         /* 닉네임 유효성 검사 */
                         validator: (val) {
@@ -240,7 +244,7 @@ class DisplayNameModalWigdet extends StatelessWidget {
                         minimumSize: Size.fromHeight(50), // 좌우로 쫙 늘리고 높이는 지정
                         primary: GeneralCtr.MainColor,
                       ),
-                      child: Text("확인", style: TextStyle(fontSize: 13)),
+                      child: Text("확인", style: TextStyle(fontSize: GeneralCtr.fontsize_normal)),
                       onPressed: (){
                         /* 닉네임 재설정 모듈 작동 */
                         // 텍스트폼필드의 상태가 적합한지 확인

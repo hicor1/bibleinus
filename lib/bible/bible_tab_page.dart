@@ -74,7 +74,7 @@ class Mainwidget extends StatelessWidget {
               return <Widget>[
                 // 수직으로 스크롤 가능하도록 설정
                 SliverAppBar(
-                  title: Text('성경', style: TextStyle(color: GeneralCtr.MainColor, fontSize: 25, fontWeight: FontWeight.bold)),
+                  title: Text('성경', style: GeneralCtr.Style_title),
                   backgroundColor: Colors.white,
                   floating: true, // 최상단 앱바까지 감출지 여부
                   pinned: true, // 탭까지 모두 감출지 여부
@@ -127,9 +127,9 @@ class Mainwidget extends StatelessWidget {
                         indicatorColor: GeneralCtr.MainColor, // 아래 강조표시 색깔
                         isScrollable: true, // 수평으로 스크롤가능여부
                         tabs: [
-                          Tab(child: Text('성경읽기')),
-                          Tab(child: Text('즐겨찾기')),
-                          Tab(child: Text('메모')),
+                          Tab(child: Text('성경읽기', style: GeneralCtr.Style_tab)),
+                          Tab(child: Text('즐겨찾기', style: GeneralCtr.Style_tab)),
+                          Tab(child: Text('메모', style: GeneralCtr.Style_tab)),
                         ],
                       ),
                     ),
@@ -228,7 +228,7 @@ class FlotingActionButton extends StatelessWidget {
                         height: 60,
                         child: Column(
                           children: [
-                            Icon(Elusive.bookmark_empty, color: Colors.white, size: 30),
+                            Icon(FontAwesome5.star, color: Colors.white, size: 28),
                             SizedBox(height: 3),
                             Text('즐겨찾기', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                           ],

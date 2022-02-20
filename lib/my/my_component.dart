@@ -1,14 +1,16 @@
 
 
 // 검색 글자수 모자람 경고창 띄우기
+import 'package:bible_in_us/general/general_controller.dart';
 import 'package:bible_in_us/my/my_main_page.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:flutter/material.dart';
 import 'package:fluttericon/elusive_icons.dart';
 import 'package:fluttericon/entypo_icons.dart';
+import 'package:get/get.dart';
 
-
+final GeneralCtr = Get.put(GeneralController());
 
 /* 프로필 이미지 수정 팝업창 */
 void FlutterDialog(context) {
@@ -41,8 +43,8 @@ void FlutterDialog(context) {
                 },
                 child: Row(
                   children: [
-                    Icon(Entypo.picture, color: Colors.grey),
-                    Text("    새 이미지 선택"),
+                    Icon(Entypo.picture, color: Colors.grey, size: GeneralCtr.fontsize_normal),
+                    Text("    새 이미지 선택", style: TextStyle(fontSize: GeneralCtr.fontsize_normal)),
                   ],
                 ),
               ),
@@ -60,8 +62,8 @@ void FlutterDialog(context) {
                 },
                 child: Row(
                   children: [
-                    Icon(Elusive.trash, color: Colors.grey),
-                    Text("    이미지 제거"),
+                    Icon(Elusive.trash, color: Colors.grey, size: GeneralCtr.fontsize_normal),
+                    Text("    이미지 제거", style: TextStyle(fontSize: GeneralCtr.fontsize_normal)),
                   ],
                 ),
               ),

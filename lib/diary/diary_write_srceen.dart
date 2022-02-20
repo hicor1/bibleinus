@@ -550,6 +550,9 @@ class ViewVerses extends StatelessWidget {
                         ],
                       ),
 
+                      /* 사회적 거리두기 */
+                      SizedBox(height: 5),
+
                       /* 성경 구절 메인 보여주기 */
                       ClipRRect(
                         borderRadius: BorderRadius.all(Radius.circular(5.0)),
@@ -559,7 +562,9 @@ class ViewVerses extends StatelessWidget {
                           margin: EdgeInsets.fromLTRB(0, 0, 0, 25), // 컨테이너 자체 마진
                           boxFit: BoxFit.fitHeight,
                           /* 구절 내영 */
-                          content: SelectableText('${result[0][BibleCtr.Bible_choiced]}',style:TextStyle(height: 1.5)),
+                          content: SizedBox(
+                              height: 80,
+                              child: SelectableText('${result[0][BibleCtr.Bible_choiced]}',style:TextStyle(height: 1.5))),
                         ),
                       ),
                     ],

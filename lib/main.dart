@@ -1,12 +1,11 @@
-import 'package:bible_in_us/bible/bible_controller.dart';
 import 'package:bible_in_us/auth/auth_check_page.dart';
+import 'package:bible_in_us/bible/bible_controller.dart';
 import 'package:bible_in_us/diary/diary_controller.dart';
 import 'package:bible_in_us/general/general_controller.dart';
-import 'package:bible_in_us/my/my_controller.dart';
-import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get.dart';
 
 
 
@@ -52,9 +51,16 @@ class MyApp extends StatelessWidget {
 
             /* 전체 어플 테마 설정 */
             theme: ThemeData(
-              scaffoldBackgroundColor: const Color(0xFFFFFFFF), // 전체 하얀 배경
-              fontFamily: 'gangwon', // 전체 폰트 설정
-              brightness: Brightness.light,
+                scaffoldBackgroundColor: const Color(0xFFFFFFFF), // 전체 하얀 배경
+                fontFamily: 'gangwon', // 전체 폰트 설정
+                textTheme: TextTheme(
+                  titleSmall: TextStyle(backgroundColor: Colors.red),
+                  //titleMedium: TextStyle(backgroundColor: Colors.red),
+                  //titleLarge: TextStyle(backgroundColor: Colors.red),
+                  //bodyText2: TextStyle(backgroundColor: Colors.red),
+                  //bodyMedium:  TextStyle(backgroundColor: Colors.red),
+                ),
+                // brightness: Brightness.light,
                 visualDensity: VisualDensity.adaptivePlatformDensity
             ),
             // 디버그 모드 해제

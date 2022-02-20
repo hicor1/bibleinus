@@ -87,7 +87,7 @@ class MainWidget extends StatelessWidget {
                                   children: [
                                     /* 경과 시간 표기 */
                                     Text("${BibleCtr.Memo_timediffer_list[index]}",
-                                        style: TextStyle(fontSize: GeneralCtr.Textsize*0.7, color: Colors.grey, fontWeight: FontWeight.bold)
+                                        style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7, color: Colors.grey, fontWeight: FontWeight.bold)
                                     ),
 
                                     /* 옵션 버튼(편집, 삭제 등) _ DPopupMenuButton */
@@ -113,11 +113,11 @@ class MainWidget extends StatelessWidget {
                                               break;
                                           }
                                         },
-                                        icon: Icon(Icons.more_vert_sharp,size: GeneralCtr.Textsize*1.2), // pop메뉴 아이콘
+                                        icon: Icon(Icons.more_vert_sharp,size: GeneralCtr.fontsize_normal*1.2), // pop메뉴 아이콘
                                         /* 하위 메뉴 스타일 */
                                         itemBuilder: (context) => [
-                                          PopupMenuItem(child: Row(children: [Icon(ModernPictograms.edit, size: GeneralCtr.Textsize*0.9), Text(" 편집", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "편집"),
-                                          PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: GeneralCtr.Textsize*0.9), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "삭제"),
+                                          PopupMenuItem(child: Row(children: [Icon(ModernPictograms.edit, size: GeneralCtr.fontsize_normal*0.9), Text(" 편집", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9))]), value: "편집"),
+                                          PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: GeneralCtr.fontsize_normal*0.9), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9))]), value: "삭제"),
                                         ]
                                     )
                                   ],
@@ -141,7 +141,7 @@ class MainWidget extends StatelessWidget {
                                               children: [
 
                                                 SelectableText("${verse['국문']} (${verse['영문']}): ${verse['cnum']}장 ${verse['vnum']}절 ",
-                                                    style: TextStyle(fontSize: GeneralCtr.Textsize*0.8, color: Colors.grey, fontWeight: FontWeight.bold)),
+                                                    style: TextStyle(fontSize: GeneralCtr.fontsize_normal, color: Colors.grey, fontWeight: FontWeight.bold)),
                                               ],
                                             ),
                                             /* 구절 내용 */

@@ -94,6 +94,7 @@ class MainWidget extends StatelessWidget {
                   // 성경이 담길 공간
                   Flexible(
                     child: SingleChildScrollView(
+                      controller: BibleCtr.BibleScroller,
                       child: Column(
                         children: [
                           /* [제목]성경 정&절(bible, chapter) 뿌려주기 */
@@ -125,7 +126,7 @@ class MainWidget extends StatelessWidget {
                             // 모달창을 위로 올리라는 아이콘
                             Text(
                               "${BibleCtr.Book_choiced} ${BibleCtr.Chapter_choiced} 장",
-                              style: TextStyle(color: GeneralCtr.BlueColor, fontSize: GeneralCtr.Textsize),
+                              style: TextStyle(color: GeneralCtr.BlueColor, fontSize: GeneralCtr.fontsize_normal),
                             ),
                           ],
                         ),
@@ -185,7 +186,7 @@ class ModalWigdet extends StatelessWidget {
                       },
                       controller: BibleCtr.ModaltextController, // 텍스트값을 가져오기 위해 컨트롤러 할당
                       autofocus: false, // 자동으로 클릭할것인가
-                      style: TextStyle(fontSize: GeneralCtr.Textsize),
+                      style: TextStyle(fontSize: GeneralCtr.fontsize_normal),
                       decoration: InputDecoration(
                           prefixIcon: Icon(Icons.search),
                           suffixIcon: IconButton(

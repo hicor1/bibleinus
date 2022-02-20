@@ -488,7 +488,7 @@ void AddFavorite(context) {
                                         Stack(
                                             children:[
                                               Icon(
-                                                  index != 0 ? FontAwesome5.highlighter : Entypo.cancel,
+                                                  index != 0 ? FontAwesome5.star : Entypo.cancel,
                                                   color: BibleCtr.ColorCode[index], size: 25
                                               ),
                                               Icon(
@@ -500,7 +500,7 @@ void AddFavorite(context) {
                                         /* 색깔별 갯수 배치 (0번 인덱스는 갯수 표기 안함) */
                                         Text(
                                           index == 0 ? "취소" :
-                                          "${colorCount}", style: TextStyle(color: BibleCtr.ColorCode[index], fontSize: 15),
+                                          " ${colorCount}", style: TextStyle(color: BibleCtr.ColorCode[index], fontSize: 15),
                                         )
                                       ],
                                     ),

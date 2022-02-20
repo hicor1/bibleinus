@@ -46,7 +46,7 @@ class MainWidget extends StatelessWidget {
                       return <Widget>[
                         // 수직으로 스크롤 가능하도록 설정
                         SliverAppBar(
-                          title: Text('일기', style: TextStyle(color: GeneralCtr.MainColor, fontSize: 25, fontWeight: FontWeight.bold)),
+                          title: Text('일기', style: GeneralCtr.Style_title),
                           backgroundColor: Colors.white,
                           floating: true, // 최상단 앱바까지 감출지 여부
                           pinned: true, // 탭까지 모두 감출지 여부
@@ -86,8 +86,8 @@ class MainWidget extends StatelessWidget {
                                 indicatorColor: GeneralCtr.MainColor, // 아래 강조표시 색깔
                                 isScrollable: true, // 수평으로 스크롤가능여부
                                 tabs: [
-                                  Tab(child: Text('나의 일기')),
-                                  Tab(child: Text('무엇을 할꼬')),
+                                  Tab(child: Text('나의 일기', style: GeneralCtr.Style_tab)),
+                                  Tab(child: Text('무엇을 할꼬', style: GeneralCtr.Style_tab)),
                                 ],
                               ),
                             ),
