@@ -1,20 +1,24 @@
-import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui';
+
 import 'package:bible_in_us/bible/bible_component.dart';
 import 'package:bible_in_us/bible/bible_controller.dart';
+import 'package:bible_in_us/bible/bible_repository.dart';
 import 'package:bible_in_us/diary/diary_component.dart';
 import 'package:bible_in_us/diary/diary_write_srceen.dart';
 import 'package:bible_in_us/my/my_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:get/get.dart';
-import 'package:bible_in_us/bible/bible_repository.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:http/http.dart' as http;
+
 
 final BibleCtr = Get.put(BibleController());
 final MyCtr = Get.put(MyController());
@@ -46,10 +50,13 @@ class DiaryController extends GetxController {
   var mode_select                 = ""; // "add" or "replace" 중 모드 선택
   var selected_contents_data      = []; //dirary_screen_selected_verses_id DB에서 조회한 선택된 구절 정보 담는공간
   var choiced_image_file = [File(""),File(""),File("")]; // 선택된 사진 3장 경로 저장(빈경로), ( 3장으로 제한 )
+  var choiced_image_file_URL = ["","",""];// "수정"모드에서는 이미지를 URL로 가져오므로 URL리스트로 저장
 
   var diary_view_contents = []; // 성경일기 뷰 페이지 _ 데이터 로드
   var diary_view_timediffer = []; // 성경일기 뷰 페이지 _ 시간경과 산출데이터 저장
   var diary_view_selected_contents_data = []; // 성경일기 뷰 페이지 _ 보여줄 성경 구절 데이터 DB에서 받아와서 저장하기
+  var NewOrModify = "";// 모드선택 ( 신규(new) 또는 수정(modify) )
+  var selected_document_id = "";// 수정하기 위해 선택한 파이어스토어 문서 아이디
 
   /* 텍스트컨트롤러 정의 */
   var TitletextController      = TextEditingController(); // 성경일기 작성 페이지 _ 일기 제목 ( title ) 컨트롤러
@@ -194,26 +201,53 @@ class DiaryController extends GetxController {
     /* 이미지 피커 객체 불러오기 */
     final ImagePicker _picker = ImagePicker();
     /* 갤러리에서 이미지 선택하기(용량을 줄이기 위해 이미지 리사이즈 시전) */
-    final XFile? image =
-    await _picker.pickImage(
+    final XFile? image = await _picker.pickImage(// https://firebase.flutter.dev/docs/storage/usage/
         source: ImageSource.gallery,
+    );
+
+    /* 이미지 자르기 */ https://pub.dev/packages/image_cropper/example
+    File? croppedFile = await ImageCropper().cropImage(
+        sourcePath: image!.path,
         // 저장효율을 위해 이미지 크기 밎 퀄리티 제한
-        maxHeight: 900,
-        maxWidth: 1200,
-    ); // https://firebase.flutter.dev/docs/storage/usage/
-    /* 이미지 파일 임시 할당 */
-    var _imageFile = File(image!.path);
+        maxWidth: 600, // 4:3 맞추자
+        maxHeight: 450, // 4:3 맞추자
+        compressQuality: 50,
+        /* 1. 안드로이드인 경우 */
+        aspectRatioPresets: Platform.isAndroid
+            ? [
+          CropAspectRatioPreset.ratio4x3
+        ]
+        /* 2. 그 외 경우 */
+            : [
+          CropAspectRatioPreset.ratio4x3,
+        ],
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: '사진 자르기',
+            toolbarColor: Colors.black,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: true),
+        iosUiSettings: IOSUiSettings(
+          title: 'Cropper',
+        )
+    );
+
 
     /* 이미지 경로 할당 */
-    choiced_image_file[index] = _imageFile;
+    choiced_image_file[index] = croppedFile!;
     update();
   }
 
 
   /* <함수> 사진 삭제버튼 클릭 */
   Future<void> DeleteImg( index)  async {
-    /* 해당 인덱스 이미지 파일 초기화 */
-    choiced_image_file[index] = File('');
+    /* "신규" 또는 "수정"으로 구분해서 사진데이터 삭제한다 */
+    if(NewOrModify=="new"){
+      choiced_image_file[index] = File('');/* 해당 인덱스 이미지 파일 초기화 */
+    }else if(NewOrModify=="modify"){
+      //choiced_image_file_URL.removeAt(index);// 해당 인덱스 URL 삭제
+      choiced_image_file_URL[index] = "";// 해당 인덱스 URL 초기화
+    }
     update();
   }
 
@@ -299,7 +333,8 @@ class DiaryController extends GetxController {
       DiaryDialog(context, "최소 1개 이상의 성경 구절을 선택해주세요");
     }else{
       /* 유효성검사를 통과했으므로 정상적인 저장 프로세스 진행 */
-      Firebase_save();
+      /* 이때, "신규저장"인지 "수정"인지에 따라 액션 구분 */
+      Save_check_Dialog(context); // 저장할건지 묻는 안내창 팝
     }
   }
 
@@ -382,8 +417,8 @@ class DiaryController extends GetxController {
   void diray_write_screen_init(){
     dirary_screen_selected_verses_id = [99999];
     dirary_screen_color_index        = 0; //
-    dirary_screen_title              = "";
-    dirary_screen_contents           = "";
+    TitletextController.text         = "";
+    ContentstextController.text      = "";
     choiced_image_file               = [File(""),File(""),File("")];
     dirary_screen_timetag_index      = 0;
     dirary_screen_address            = "";
@@ -391,19 +426,32 @@ class DiaryController extends GetxController {
     update();
   }
 
-  /* <함수> 일기 내용 수정버튼 초기화 */
-  Future<void> diary_modify(int index) async {
+  /* <함수> 모드선택 ( 신규(new) 또는 수정(modify) ) */
+  void select_NewOrModify(String mode){
+    NewOrModify = mode;
+    update();
+  }
+
+  /* <함수> 일기 내용 수정버튼 눌렀을 떄 */
+  Future<void> diary_modify_call(int index) async {
+    /* 모드선택 ( 신규(new) 또는 수정(modify) ) */
+    select_NewOrModify("modify");
+    /* 선택한 파이어스토어 문서 번호_아이디(documentID) 저장 */
+    selected_document_id = diary_view_contents[index].id;
+
     /* 데이터 입혀주기 */
     dirary_screen_selected_verses_id = diary_view_contents[index]['dirary_screen_selected_verses_id'].cast<int>();
     dirary_screen_color_index        = diary_view_contents[index]['dirary_screen_color_index'];
     dirary_screen_title              = diary_view_contents[index]['dirary_screen_title'];
     dirary_screen_contents           = diary_view_contents[index]['dirary_screen_contents'];
-    //choiced_image_file               = diary_view_contents[index]['choiced_image_file'];
+    //choiced_image_file_URL           = diary_view_contents[index]['choiced_image_file']; // 임시 할당 ( URL에서 파일로 변환해서 재할당 예정 )
     dirary_screen_timetag_index      = diary_view_contents[index]['dirary_screen_timetag_index'];
     dirary_screen_address            = diary_view_contents[index]['dirary_screen_address'];
 
     /* 선택한 구절 DB 조회 */
     selected_contents_data = await BibleRepository.GetClickedVerses(dirary_screen_selected_verses_id, BibleCtr.Bible_choiced);
+    /* 더미(99999) 다시 넣기 */
+    dirary_screen_selected_verses_id.add(99999);
 
     /* 제목 & 내용 삽입 */
     TitletextController.text     = diary_view_contents[index]['dirary_screen_title'];
@@ -412,13 +460,52 @@ class DiaryController extends GetxController {
     /* 작성하기 페이지로 이동 */
     Get.to(() => DiaryWriteScreen());
 
+    /* 사진 URL 삽입 */
+    var temp_image_list = diary_view_contents[index]['choiced_image_file'];
+    for(int i = 0; i < temp_image_list.length; i++){
+      choiced_image_file_URL[i] = temp_image_list[i];
+    }
+
+
+
     update();
   }
 
+  /* <함수> 일기 내용 "수정"상태에서 "저장" 눌렀을 떄 */
+  Future<void> diary_modify_save() async {
 
+    // 로딩화면 띄우기
+    EasyLoading.show(status: 'loading...');
 
+    /* 더미데이터(99999) 제거(임시) */
+    dirary_screen_selected_verses_id.remove(99999);
 
+    /* 데이터 세이브 */
+    collection.doc(selected_document_id).update({
+      "updated_at":DateTime.now(), // 수정 시간
+      "dirary_screen_selected_verses_id": dirary_screen_selected_verses_id, // 더미 데이터 삭제
+      "dirary_screen_color_index": dirary_screen_color_index, // Stokes and Sons
+      "dirary_screen_title": dirary_screen_title,
+      "dirary_screen_contents":dirary_screen_contents,
+      //"choiced_image_file":ImgUrl,
+      "dirary_screen_timetag_index":dirary_screen_timetag_index,
+      "dirary_screen_address":dirary_screen_address,
+    }).then((value) => PopToast("일기가 수정되었어요!")
+    );
 
+    // 일기 리스트 다시 불러오기
+    LoadAction();
+
+    update();
+
+    // 로딩화면 종료
+    EasyLoading.dismiss();
+
+    // 이전 페이지로 돌아가기
+    Get.back();
+
+  }
+  
 
 
 

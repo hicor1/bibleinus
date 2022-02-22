@@ -133,3 +133,54 @@ Future<void> Delete_check_Dialog(context, Docid, index) async {
         );
       });
 }
+
+
+
+// 일기 작성페이지에서 "수정 또는 저장" 할건지 한번더 묻는 안내창
+Future<void> Save_check_Dialog(context) async {
+  await showDialog(
+      context: context,
+      //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5.0)),
+          //Dialog Main Title
+          title: Column(
+            children: <Widget>[
+              new Text("안내 메세지"),
+            ],
+          ),
+          content: Text("일기를 저장 하시겠습니까?"),
+          actions: <Widget>[
+            OutlinedButton(
+              child: new Text("확인"),
+              onPressed: () {
+                // 1. 저장 모듈 작동
+                // 1-1. 신규 저장인경우
+                if(DiaryCtr.NewOrModify=="new"){
+                  DiaryCtr.Firebase_save();
+                // 1-2. 수정 저장인경우
+                }else if(DiaryCtr.NewOrModify=="modify"){
+                  DiaryCtr.diary_modify_save();
+                }
+
+                // 2. 안내 메세지
+                PopToast("삭제 안료");
+                // 3. 팝업창 닫기
+                Navigator.pop(context);
+              },
+            ),
+            ElevatedButton(
+              child: new Text("취소"),
+              onPressed: () {
+                // "취소"인 경우, 바로 액션없이 팝업창 내리기
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      });
+}

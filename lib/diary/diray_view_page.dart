@@ -123,7 +123,7 @@ class MainWidget extends StatelessWidget {
                                           onSelected: (value) {
                                             /* 옵션 버튼에 따른 동작 지정 */
                                             switch(value){
-                                              case"수정": DiaryCtr.diary_modify(index); break;
+                                              case"수정": DiaryCtr.diary_modify_call(index); break;
                                               case"삭제": Delete_check_Dialog(context, result.id, index);break;
                                             }
 
@@ -222,13 +222,13 @@ class ViewVerses extends StatelessWidget {
       activeIndicator: GeneralCtr.MainColor,
       passiveIndicator: Colors.white,
       pagerSize: 7.0,// 이미지 하단 페이지 인디케이터 크기
-      enableInfiniteScroll: true, // 무한스크롤
-      viewportFraction: 0.8, // 전.후 이미지 보여주기 ( 1.0이면 안보여줌 )
+      enableInfiniteScroll: false, // 무한스크롤
+      viewportFraction: 0.9, // 전.후 이미지 보여주기 ( 1.0이면 안보여줌 )
       aspectRatio: 0, // 사진 비율
       enlargeMainPage: true, // 자동 확대
       pagination: true, // 이미지 하단 페이지 인디케이터 표시여부
       autoPlayInterval: Duration(milliseconds: 5000), // 자동 넘기기 주기(시간)
-      autoPlay: true, // 자동 넘기기 on/off
+      autoPlay: false, // 자동 넘기기 on/off
       pauseAutoPlayOnTouch: Duration(milliseconds: 5000), // 클릭하면 자동넘기기 일시 정지
 
       /* 선택된 구절 갯수만큼 카드 만들어주기 */

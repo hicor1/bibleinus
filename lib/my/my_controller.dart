@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
@@ -78,13 +79,51 @@ class MyController extends GetxController {
 
     /* 이미지 피커 객체 불러오기 */
     final ImagePicker _picker = ImagePicker();
-    /* 갤러리에서 이미지 선택하기 */
+    /* 갤러리에서 이미지 선택하기 */ // https://firebase.flutter.dev/docs/storage/usage/
     final XFile? image = await _picker.pickImage(
-        source: ImageSource.gallery,
-        maxHeight: 500,
-        maxWidth: 500); // https://firebase.flutter.dev/docs/storage/usage/
+        source: ImageSource.gallery
+    );
+
+    /* 이미지 자르기 */ https://pub.dev/packages/image_cropper/example
+    File? croppedFile = await ImageCropper().cropImage(
+        sourcePath: image!.path,
+        // 저장효율을 위해 이미지 크기 밎 퀄리티 제한
+        maxWidth: 500, // 1:1 맞추자
+        maxHeight: 500, // 1:1 맞추자
+        compressQuality: 50,
+        /* 1. 안드로이드인 경우 */
+        aspectRatioPresets: Platform.isAndroid
+            ? [
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio16x9
+        ]
+        /* 2. 그 외 경우 */
+            : [
+          CropAspectRatioPreset.original,
+          CropAspectRatioPreset.square,
+          CropAspectRatioPreset.ratio3x2,
+          CropAspectRatioPreset.ratio4x3,
+          CropAspectRatioPreset.ratio5x3,
+          CropAspectRatioPreset.ratio5x4,
+          CropAspectRatioPreset.ratio7x5,
+          CropAspectRatioPreset.ratio16x9
+        ],
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: '사진 자르기',
+            toolbarColor: Colors.black,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.original,
+            lockAspectRatio: false),
+        iosUiSettings: IOSUiSettings(
+          title: 'Cropper',
+        )
+    );
+
     /* 이미지 파일 임시 할당 */
-    var _imageFile = File(image!.path);
+    var _imageFile = croppedFile;
     /* 이미지 파일 저장할 이름 */
     var ImgName = user!.uid; // 저장할 파일이름은 사용자 고유번호인, UID로 한다.
     /* 이미지 파일 저장경로 */
@@ -96,7 +135,7 @@ class MyController extends GetxController {
       await firebase_storage.FirebaseStorage.instance
           .ref()
           .child(ImgSavePath) // 저장 경로 설정, 파일이름은 UID로 한다. 사람당 1개만 저장해줄것이므로
-          .putFile(_imageFile); // 저장할 이미지 파일 지정
+          .putFile(_imageFile!); // 저장할 이미지 파일 지정
     } on FirebaseException catch (e) {
       // e.g, e.code == 'canceled'
     }

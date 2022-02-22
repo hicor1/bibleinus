@@ -48,6 +48,12 @@
        </activity>
 
 
+       <!-- 이미지 자르기 (이미지 크로퍼 설치) -->
+       <activity
+           android:name="com.yalantis.ucrop.UCropActivity"
+           android:screenOrientation="portrait"
+           android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+
 
     </application>
     <!-- 페이스북 로그인 요소 추가 -->

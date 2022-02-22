@@ -58,6 +58,8 @@ class MainWidget extends StatelessWidget {
                               padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
                               child: IconButton(
                                 onPressed: (){
+                                  //모드선택 ( 신규(new) 또는 수정(modify) )
+                                  DiaryCtr.select_NewOrModify("new");
                                   // 작성하기 스크린으로 이동
                                   Get.to(() => DiaryWriteScreen());
                                 },

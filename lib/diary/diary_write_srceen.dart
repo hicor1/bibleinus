@@ -9,6 +9,7 @@ import 'package:bible_in_us/my/my_controller.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:fluttericon/elusive_icons.dart';
 import 'package:fluttericon/entypo_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
@@ -63,7 +64,8 @@ class MainWidget extends StatelessWidget {
               elevation: 0,
               centerTitle: true,
               actions: [
-                /* 초기화 버튼 */
+                /* 초기화 버튼 => 모드선택 ( 신규(new) 또는 수정(modify) ) */
+                DiaryCtr.NewOrModify == "new" ? // 수정 모드에서는 초기화 버튼 안보이도록
                 TextButton(
                   onPressed: (){
                     /* 초기화 묻는 안내창 띄우기 */
@@ -75,8 +77,8 @@ class MainWidget extends StatelessWidget {
                     padding: EdgeInsets.zero,
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                ),
-                /* 저장 버튼 */
+                ): SizedBox(),
+                /* 저장 또는 수정 버튼 */
                 TextButton(
                     onPressed: (){
                       /* 저장버튼 클릭 이벤트 */
@@ -86,12 +88,9 @@ class MainWidget extends StatelessWidget {
                         _formKey.currentState!.save();
                         /* 관련정보 넘기기 */
                         DiaryCtr.SaveAction(context);
-
-
                       } else return null;
-
                     },
-                    child: Text("저장")
+                    child: Text(DiaryCtr.NewOrModify=="new" ? "저장" : "수정")
                 )
               ],
             ),
@@ -254,85 +253,8 @@ class MainWidget extends StatelessWidget {
                           ),
                         ),
 
-                        /* 사진 추가 하는곳 */
-                        Container(
-                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                            height: 150,
-                            width: MediaQuery.of(context).size.width,
-                            child: ListView.builder(
-                                physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
-                                shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
-                                scrollDirection: Axis.horizontal, // 수직(vertical)  수평(horizontal) 배열 선택
-                                //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
-                                itemCount: 3,
-                                itemBuilder: (context, index) {
-                                  var result = DiaryCtr.choiced_image_file[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
-                                  if (result.path.isEmpty == false) {
-
-                                    /* 1. 유효한 이미지 경로가 있는경우 */
-                                    return Row(
-                                      children: [
-                                        Stack( // 사진 위에 취소(cancel)버튼 겹치기
-                                          alignment: Alignment.topRight,
-                                          children: [
-                                            SizedBox(
-                                              height : MediaQuery.of(context).size.width / 3.6,
-                                              width  : MediaQuery.of(context).size.width / 3.6,
-                                              child  : Image.file(result),
-                                            ),
-                                            IconButton(
-                                                padding: EdgeInsets.zero,
-                                                constraints: BoxConstraints(),
-                                                splashColor: Colors.blueAccent,
-                                                onPressed: () {
-                                                  /* 이미지 삭제 모듈 */
-                                                  DiaryCtr.DeleteImg(index);
-                                                },
-                                                icon: Icon(
-                                                    WebSymbols.cancel_circle,
-                                                    color: Colors.black.withOpacity(0.7), size: 20))
-                                          ],
-                                        ),
-                                        SizedBox(width: 5.5)
-                                      ],
-                                    );
-                                  } else {
-
-                                    /* 2. 유효한 이미지 경로가 없는경우 */
-                                    return Row(
-                                      children: [
-                                        /* 사진이 미입력된 컨테이너 */
-                                        Material(
-                                          child: InkWell(
-                                            onTap : (){
-                                              /* 갤러리 이미지피커 모듈 */
-                                              DiaryCtr.galleryImagePicker(index);
-                                            },
-                                            child: DottedBorder(
-                                              borderType: BorderType.RRect,
-                                              radius: Radius.circular(4),
-                                              color: Colors.grey.withOpacity(0.4),
-                                              strokeWidth: 1,
-                                              child: SizedBox(
-                                                height: MediaQuery.of(context).size.width/3.6,
-                                                width: MediaQuery.of(context).size.width/3.6,
-                                                child: Column(
-                                                  mainAxisAlignment: MainAxisAlignment.center,
-                                                  children: [
-                                                    Icon(Icons.add,color: Colors.grey.withOpacity(0.4))
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(width: 5.5)
-                                      ],
-                                    );
-                                  }
-                                }
-                            )
-                        ),
+                        /* 사진 추가 하는곳 : 모드선택 ( 신규(new) 또는 수정(modify) )*/
+                        DiaryCtr.NewOrModify == "new" ? AddPhoto_new() : AddPhoto_modify(),
 
                         /* 사회적 거리두기 */
                         SizedBox(height: 20),
@@ -645,4 +567,182 @@ class AddVerses extends StatelessWidget {
       ),
     );
   }
+}
+
+//<서브위젯> 사진추가(new) (일기 "신규"작성인 경우)
+class AddPhoto_new extends StatelessWidget {
+  const AddPhoto_new({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+        height: 150,
+        width: MediaQuery.of(context).size.width,
+        child: ListView.builder(
+            physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
+            shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
+            scrollDirection: Axis.horizontal, // 수직(vertical)  수평(horizontal) 배열 선택
+            //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
+            itemCount: 3,
+            itemBuilder: (context, index) {
+              var result = DiaryCtr.choiced_image_file[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
+              if (result.path.isEmpty == false) {
+
+                /* 1. 유효한 이미지 경로가 있는경우 */
+                return File_Img_view(context, result, index);
+              } else {
+
+                /* 2. 유효한 이미지 경로가 없는경우 */
+                return Img_Add(context, index);
+              }
+            }
+        )
+    );
+  }
+}
+
+//<서브위젯> 사진추가(modify) (일기 "수정"작성인 경우)
+class AddPhoto_modify extends StatelessWidget {
+  const AddPhoto_modify({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+        height: 150,
+        width: MediaQuery
+            .of(context)
+            .size
+            .width,
+        child: ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
+            shrinkWrap: true,
+            //"hassize" 같은 ㅈ같은 오류 방지
+            scrollDirection: Axis.horizontal,
+            // 수직(vertical)  수평(horizontal) 배열 선택
+            //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
+            itemCount: 3,
+            itemBuilder: (context, index) {
+              /* 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능 */
+              var result = DiaryCtr.choiced_image_file_URL[index];
+              /* URL이 있는지 없는지 확인해서 이미지 뿌리기 */
+              if (result != "") {
+                /* 1. 유효한 이미지 경로가 있는경우 */
+                return Url_Img_view(context, result, index);
+              } else {
+
+                /* 2. 유효한 이미지 경로가 없는경우 */
+                return Img_Add(context, index);
+              }
+            }
+        )
+    );
+  }
+}
+
+
+
+//<서브위젯> 사진 모듈 ( 이미지가 URL 인 경우 )
+Widget Url_Img_view(context, result, index){
+  return Row(
+    children: [
+      Stack( // 사진 위에 취소(cancel)버튼 겹치기
+        alignment: Alignment.topRight,
+        children: [
+          SizedBox(
+            height : MediaQuery.of(context).size.width / 4.8, // 4:3맞추기
+            width  : MediaQuery.of(context).size.width / 3.6, // 4:3맞추기
+            child  : Image.network(result),
+          ),
+          IconButton(
+              padding: EdgeInsets.zero,
+              constraints: BoxConstraints(),
+              splashColor: Colors.blueAccent,
+              onPressed: () {
+                /* 이미지 삭제 모듈 */
+                DiaryCtr.DeleteImg(index);
+              },
+              icon: Icon(
+                  WebSymbols.cancel_circle,
+                  color: Colors.black.withOpacity(0.7), size: 20))
+        ],
+      ),
+      SizedBox(width: 5.5)
+    ],
+  );
+}
+
+
+//<서브위젯> 사진 모듈 ( 이미지가 파일(file) 인 경우 )
+Widget File_Img_view(context, result, index){
+  return Row(
+    children: [
+      Stack( // 사진 위에 취소(cancel)버튼 겹치기
+        alignment: Alignment.topRight,
+        children: [
+          SizedBox(
+            height : MediaQuery.of(context).size.width / 4.8, // 4:3맞추기
+            width  : MediaQuery.of(context).size.width / 3.6, // 4:3맞추기
+            child  : Image.file(result),
+          ),
+          IconButton(
+              padding: EdgeInsets.zero,
+              constraints: BoxConstraints(),
+              splashColor: Colors.blueAccent,
+              onPressed: () {
+                /* 이미지 삭제 모듈 */
+                DiaryCtr.DeleteImg(index);
+              },
+              icon: Icon(
+                  WebSymbols.cancel_circle,
+                  color: Colors.black.withOpacity(0.7), size: 20))
+        ],
+      ),
+      SizedBox(width: 5.5)
+    ],
+  );
+}
+
+
+//<서브위젯> 사진 추가 모듈 ( 이미지가 없는 경우 )
+Widget Img_Add(context, index){
+  return Row(
+    children: [
+      /* 사진이 미입력된 컨테이너 */
+      Material(
+        child: InkWell(
+          onTap: () {
+            /* 갤러리 이미지피커 모듈 */
+            DiaryCtr.galleryImagePicker(index);
+          },
+          child: DottedBorder(
+            borderType: BorderType.RRect,
+            radius: Radius.circular(4),
+            color: Colors.grey.withOpacity(0.4),
+            strokeWidth: 1,
+            child: SizedBox(
+              height: MediaQuery
+                  .of(context)
+                  .size
+                  .width / 4.8,
+              width: MediaQuery
+                  .of(context)
+                  .size
+                  .width / 3.6,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.add,
+                      color: Colors.grey.withOpacity(0.4))
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+      SizedBox(width: 5.5)
+    ],
+  );
 }
