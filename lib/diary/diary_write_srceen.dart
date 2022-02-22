@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bible_in_us/bible/bible_component.dart';
 import 'package:bible_in_us/bible/bible_controller.dart';
 import 'package:bible_in_us/bible/bible_favorite_screen.dart';
@@ -59,7 +61,9 @@ class MainWidget extends StatelessWidget {
               iconTheme: IconThemeData(
                 color: GeneralCtr.MainColor
               ),
-              title: Text("기록남기기", style: GeneralCtr.Style_title),
+              title: Text(DiaryCtr.NewOrModify == "new" ? "기록 남기기" : "기록 수정하기",
+                  style: GeneralCtr.Style_title
+              ),
               backgroundColor: Colors.transparent,
               elevation: 0,
               centerTitle: true,
@@ -254,7 +258,7 @@ class MainWidget extends StatelessWidget {
                         ),
 
                         /* 사진 추가 하는곳 : 모드선택 ( 신규(new) 또는 수정(modify) )*/
-                        DiaryCtr.NewOrModify == "new" ? AddPhoto_new() : AddPhoto_modify(),
+                        Photo_Control_widget(),
 
                         /* 사회적 거리두기 */
                         SizedBox(height: 20),
@@ -569,9 +573,10 @@ class AddVerses extends StatelessWidget {
   }
 }
 
-//<서브위젯> 사진추가(new) (일기 "신규"작성인 경우)
-class AddPhoto_new extends StatelessWidget {
-  const AddPhoto_new({Key? key}) : super(key: key);
+
+//<서브위젯> 사진 추가 & 수정 작업 ("신규", "수정" 작성인 경우 모두 포함)
+class Photo_Control_widget extends StatelessWidget {
+  const Photo_Control_widget({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -583,58 +588,32 @@ class AddPhoto_new extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
             shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
             scrollDirection: Axis.horizontal, // 수직(vertical)  수평(horizontal) 배열 선택
-            //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
-            itemCount: 3,
-            itemBuilder: (context, index) {
-              var result = DiaryCtr.choiced_image_file[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
-              if (result.path.isEmpty == false) {
-
-                /* 1. 유효한 이미지 경로가 있는경우 */
-                return File_Img_view(context, result, index);
-              } else {
-
-                /* 2. 유효한 이미지 경로가 없는경우 */
-                return Img_Add(context, index);
-              }
-            }
-        )
-    );
-  }
-}
-
-//<서브위젯> 사진추가(modify) (일기 "수정"작성인 경우)
-class AddPhoto_modify extends StatelessWidget {
-  const AddPhoto_modify({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-        height: 150,
-        width: MediaQuery
-            .of(context)
-            .size
-            .width,
-        child: ListView.builder(
-            physics: const NeverScrollableScrollPhysics(),
-            // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
-            shrinkWrap: true,
-            //"hassize" 같은 ㅈ같은 오류 방지
-            scrollDirection: Axis.horizontal,
-            // 수직(vertical)  수평(horizontal) 배열 선택
-            //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
             itemCount: 3,
             itemBuilder: (context, index) {
               /* 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능 */
-              var result = DiaryCtr.choiced_image_file_URL[index];
-              /* URL이 있는지 없는지 확인해서 이미지 뿌리기 */
-              if (result != "") {
+              var result = DiaryCtr.choiced_image_file[index];
+              /* 타입정보로부터  파일타입(신규등록)인지, URL string타입(수정) 구분한다 */
+              var type = result.runtimeType;
+              /* 1. URL string타입(수정)인 경우 사진 보여주는 방식 */
+              if (type == String) {
+                if(result != ""){
+                  /* 1. 유효한 이미지 경로가 있는경우 */
+                  return Url_Img_view(context, result, index);
+                }else{
+                  /* 2. 유효한 이미지 경로가 없는경우 */
+                  return Img_Add(context, index);
+                }
+              }
+              /* 2. 파일타입(신규등록)인 경우 사진 보여주는 방식 */
+              else {
                 /* 1. 유효한 이미지 경로가 있는경우 */
-                return Url_Img_view(context, result, index);
-              } else {
-
-                /* 2. 유효한 이미지 경로가 없는경우 */
-                return Img_Add(context, index);
+                if (result.path.isEmpty == false) {
+                  /* 1. 유효한 이미지 경로가 있는경우 */
+                  return File_Img_view(context, result, index);
+                } else {
+                  /* 2. 유효한 이미지 경로가 없는경우 */
+                  return Img_Add(context, index);
+                }
               }
             }
         )
@@ -723,14 +702,8 @@ Widget Img_Add(context, index){
             color: Colors.grey.withOpacity(0.4),
             strokeWidth: 1,
             child: SizedBox(
-              height: MediaQuery
-                  .of(context)
-                  .size
-                  .width / 4.8,
-              width: MediaQuery
-                  .of(context)
-                  .size
-                  .width / 3.6,
+              height: MediaQuery.of(context).size.width / 4.8,
+              width: MediaQuery.of(context).size.width / 3.6,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [

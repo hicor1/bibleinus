@@ -49,7 +49,8 @@ class DiaryController extends GetxController {
   var Temp_selected_contents_id   = 0; // 구절 id 수정을 위한  선택된 구절 아이디값 임시저장
   var mode_select                 = ""; // "add" or "replace" 중 모드 선택
   var selected_contents_data      = []; //dirary_screen_selected_verses_id DB에서 조회한 선택된 구절 정보 담는공간
-  var choiced_image_file = [File(""),File(""),File("")]; // 선택된 사진 3장 경로 저장(빈경로), ( 3장으로 제한 )
+  // 선택된 사진 3장 경로 저장(빈경로), ( 3장으로 제한 ), File과 URL string 두 개의 타입이 복합적으로 사용돠어야하므로 "dynamic"으로 선언!!
+  List<dynamic> choiced_image_file = [File(""),File(""),File("")];
   var choiced_image_file_URL = ["","",""];// "수정"모드에서는 이미지를 URL로 가져오므로 URL리스트로 저장
 
   var diary_view_contents = []; // 성경일기 뷰 페이지 _ 데이터 로드
@@ -240,17 +241,43 @@ class DiaryController extends GetxController {
 
 
   /* <함수> 사진 삭제버튼 클릭 */
-  Future<void> DeleteImg( index)  async {
+  Future<void> DeleteImg(index)  async {
     /* "신규" 또는 "수정"으로 구분해서 사진데이터 삭제한다 */
-    if(NewOrModify=="new"){
+    var type = choiced_image_file[index].runtimeType;
+    /* 1. URL string타입(수정)인 경우 삭제 방식 */
+    if (type == String){
+      choiced_image_file[index] = "";// 해당 인덱스 URL 초기화
+    }else{
+    /* 2. 파일타입(신규등록)인 경우 삭제 방식 */
       choiced_image_file[index] = File('');/* 해당 인덱스 이미지 파일 초기화 */
-    }else if(NewOrModify=="modify"){
-      //choiced_image_file_URL.removeAt(index);// 해당 인덱스 URL 삭제
-      choiced_image_file_URL[index] = "";// 해당 인덱스 URL 초기화
     }
     update();
   }
 
+
+  /* <함수> 파이어베이스 파일업로드 및 파일 호출경로 받는 함수 */
+  Future<String> Firebase_ImgSaveNGetUrl(docID, _imageFile, i)  async {
+
+    /* 경로 만들기 */
+    var ImgSavePath = "${'diaryImg/${MyCtr.uid}/$docID/$i'}"; // 사용자UID → 문서ID → 이미지 순서 로 저장한다
+    /* 파이어베이스 storage에 이미지 파일 업로드(https://firebase.flutter.dev/docs/storage/usage/) */
+    try {
+      /* 파이어베이스 스토리지 객체 가져오기 */
+      await firebase_storage.FirebaseStorage.instance
+          .ref()
+          .child(ImgSavePath) // 저장 경로 설정, 파일이름은$docID/$i로 한다. 최대 3개만 저장가능하도록
+          .putFile(_imageFile); // 저장할 이미지 파일 지정
+    } on FirebaseException catch (e) {
+      // e.g, e.code == 'canceled'
+    }
+
+    /* 위에서 저장한 이미지를 불러올 수 있는 URL 가져오기 */
+    String downloadURL = await firebase_storage.FirebaseStorage.instance
+        .ref(ImgSavePath)
+        .getDownloadURL();
+
+    return downloadURL;
+  }
 
   /* <함수> 파이어베이스 데이터 저장 모듈  */
   Future<void> Firebase_save()  async {
@@ -264,6 +291,10 @@ class DiaryController extends GetxController {
       /* 이미지 경로가 비어있지 않다면 */
       var _imageFile = choiced_image_file[i]; // 이미지 파일 할당
       if(_imageFile.path.isEmpty == false){
+
+
+
+        /* <함수> 파이어베이스 파일업로드 및 파일 호출경로 받는 함수 */
         /* 경로 만들기 */
         var ImgSavePath = "${'diaryImg/${MyCtr.uid}/$docID/$i'}"; // 사용자UID → 문서ID → 이미지 순서 로 저장한다
         /* 파이어베이스 storage에 이미지 파일 업로드(https://firebase.flutter.dev/docs/storage/usage/) */
@@ -276,11 +307,12 @@ class DiaryController extends GetxController {
         } on FirebaseException catch (e) {
           // e.g, e.code == 'canceled'
         }
-
         /* 위에서 저장한 이미지를 불러올 수 있는 URL 가져오기 */
         String downloadURL = await firebase_storage.FirebaseStorage.instance
             .ref(ImgSavePath)
             .getDownloadURL();
+
+
 
         /* 경로 모아주기 */
         ImgUrl.add(downloadURL);
@@ -309,8 +341,6 @@ class DiaryController extends GetxController {
     );// 안내메세지
 
 
-    //PopToast("일기가 등록되었어요!")
-
     /* 더미데이터(99999) 추가 */
     dirary_screen_selected_verses_id.add(99999);
 
@@ -337,6 +367,7 @@ class DiaryController extends GetxController {
       Save_check_Dialog(context); // 저장할건지 묻는 안내창 팝
     }
   }
+
 
   /* <함수> 삭제버튼 눌렀을 때 파이어베이스로 저장하기 */
   Future<void> DeleteAction(Docid, index)  async {
@@ -432,7 +463,7 @@ class DiaryController extends GetxController {
     update();
   }
 
-  /* <함수> 일기 내용 수정버튼 눌렀을 떄 */
+  /* <함수> 일기 내용 수정버튼 눌렀을 떄 보여줄 데이터 맵핑 */
   Future<void> diary_modify_call(int index) async {
     /* 모드선택 ( 신규(new) 또는 수정(modify) ) */
     select_NewOrModify("modify");
@@ -444,7 +475,6 @@ class DiaryController extends GetxController {
     dirary_screen_color_index        = diary_view_contents[index]['dirary_screen_color_index'];
     dirary_screen_title              = diary_view_contents[index]['dirary_screen_title'];
     dirary_screen_contents           = diary_view_contents[index]['dirary_screen_contents'];
-    //choiced_image_file_URL           = diary_view_contents[index]['choiced_image_file']; // 임시 할당 ( URL에서 파일로 변환해서 재할당 예정 )
     dirary_screen_timetag_index      = diary_view_contents[index]['dirary_screen_timetag_index'];
     dirary_screen_address            = diary_view_contents[index]['dirary_screen_address'];
 
@@ -460,22 +490,65 @@ class DiaryController extends GetxController {
     /* 작성하기 페이지로 이동 */
     Get.to(() => DiaryWriteScreen());
 
-    /* 사진 URL 삽입 */
+    /* 사진 URL 삽입(3개 갯수 맞춰야하므로 바로 할당하지 않고, For문으로 하나씩 할당) */
     var temp_image_list = diary_view_contents[index]['choiced_image_file'];
     for(int i = 0; i < temp_image_list.length; i++){
-      choiced_image_file_URL[i] = temp_image_list[i];
+      choiced_image_file[i] = temp_image_list[i];
     }
-
-
-
     update();
   }
 
   /* <함수> 일기 내용 "수정"상태에서 "저장" 눌렀을 떄 */
   Future<void> diary_modify_save() async {
-
     // 로딩화면 띄우기
     EasyLoading.show(status: 'loading...');
+
+
+
+    /* 사진 이름만들기 + 파이어베이스 저장 + 호출 경로 만들기 */
+    var docID = selected_document_id; // 수정 문서 번호 입력
+    var ImgUrl = []; // 최종 파일 downloadURL 이 저장될 공간
+    for(int i = 0; i < choiced_image_file.length; i++){
+      /* 이미지 경로가 비어있지 않다면 */
+      var _imageFile = choiced_image_file[i]; // 이미지 파일 할당
+      var type = _imageFile.runtimeType;
+      /* 1. 이미지데이터가 String*(URL)인 경우, 수정된게 없는 상태이므로 경로만 그대로 추가해준다 */
+      if(type == String){
+        /* 경로 추가해주기 */
+        ImgUrl.add(choiced_image_file[i]);
+      }else{
+      /* 2. 이미지데이터가 File인 경우, 수정되었으므로 파이어스토어에 업로드 후, 다운경로를 추가해준다. */
+        if(_imageFile.path.isEmpty == false){
+
+
+          /* <함수> 파이어베이스 파일업로드 및 파일 호출경로 받는 함수 */
+          /* 경로 만들기 */
+          var ImgSavePath = "${'diaryImg/${MyCtr.uid}/$docID/$i'}"; // 사용자UID → 문서ID → 이미지 순서 로 저장한다
+          /* 파이어베이스 storage에 이미지 파일 업로드(https://firebase.flutter.dev/docs/storage/usage/) */
+          try {
+            /* 파이어베이스 스토리지 객체 가져오기 */
+            await firebase_storage.FirebaseStorage.instance
+                .ref()
+                .child(ImgSavePath) // 저장 경로 설정, 파일이름은$docID/$i로 한다. 최대 3개만 저장가능하도록
+                .putFile(_imageFile); // 저장할 이미지 파일 지정
+          } on FirebaseException catch (e) {
+            // e.g, e.code == 'canceled'
+          }
+          /* 위에서 저장한 이미지를 불러올 수 있는 URL 가져오기 */
+          String downloadURL = await firebase_storage.FirebaseStorage.instance
+              .ref(ImgSavePath)
+              .getDownloadURL();
+
+
+          /* 경로 모아주기 */
+          ImgUrl.add(downloadURL);
+        }else{
+          /* 이미지 경로가 비어있다면 */
+          null;
+        }
+      }
+    }
+
 
     /* 더미데이터(99999) 제거(임시) */
     dirary_screen_selected_verses_id.remove(99999);
@@ -487,7 +560,7 @@ class DiaryController extends GetxController {
       "dirary_screen_color_index": dirary_screen_color_index, // Stokes and Sons
       "dirary_screen_title": dirary_screen_title,
       "dirary_screen_contents":dirary_screen_contents,
-      //"choiced_image_file":ImgUrl,
+      "choiced_image_file":ImgUrl,
       "dirary_screen_timetag_index":dirary_screen_timetag_index,
       "dirary_screen_address":dirary_screen_address,
     }).then((value) => PopToast("일기가 수정되었어요!")

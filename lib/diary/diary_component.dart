@@ -153,10 +153,10 @@ Future<void> Save_check_Dialog(context) async {
               new Text("안내 메세지"),
             ],
           ),
-          content: Text("일기를 저장 하시겠습니까?"),
+          content: Text(DiaryCtr.NewOrModify == "new" ? "일기를 새로 등록 하시겠습니까?" : "일기를 수정 하시겠습니까?"),
           actions: <Widget>[
             OutlinedButton(
-              child: new Text("확인"),
+              child: Text("확인"),
               onPressed: () {
                 // 1. 저장 모듈 작동
                 // 1-1. 신규 저장인경우
