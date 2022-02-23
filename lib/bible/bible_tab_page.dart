@@ -193,6 +193,8 @@ class FlotingActionButton extends StatelessWidget {
                         ),
                       ),
                       onPressed: () {
+                        DiaryCtr.select_NewOrModify("new"); // 신규 작성모드로 변경
+                        DiaryCtr.diray_write_screen_init();// 일기 쓰기 페이지 초기화
                         /* 일기쓰기 모듈 불러오기 */
                         DiaryCtr.add_verses_idList();
                       }

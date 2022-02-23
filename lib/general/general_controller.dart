@@ -29,13 +29,13 @@ class GeneralController extends GetxController {
     var BlueColor = Color(0xff536dfe); // 블루계열 색상 # 0xff2196f3 # 0xff2196f3 # 0xff2979ff
 
     /* 메인 텍스트 스타일 정의 */
-    var Style_title       = TextStyle(color: Color(0xff9966ff), fontSize: 25, fontWeight: FontWeight.bold);
-    var Style_tab         = TextStyle(color: Color(0xff9966ff), fontSize: 17, fontWeight: FontWeight.normal);
-    var fontsize_normal   = 17.0;
+    var Style_title       = TextStyle(color: Color(0xff9966ff), fontSize: 28, fontWeight: FontWeight.bold);
+    var Style_tab         = TextStyle(color: Color(0xff9966ff), fontSize: 23, fontWeight: FontWeight.normal);
+    var fontsize_normal   = 20.0;
 
     /* 모달창 텍스트 스타일 */
-    var TextStyle_normal_accent = TextStyle(fontSize: 15, color: Colors.black, fontWeight: FontWeight.w900); // 일반적인 텍스트 스타일 정의
-    var TextStyle_normal_disable = TextStyle(fontSize: 15, color: Colors.grey, fontWeight: FontWeight.w300); // 일반적인 텍스트 스타일 정의
+    var TextStyle_normal_accent = TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.w900); // 일반적인 텍스트 스타일 정의
+    var TextStyle_normal_disable = TextStyle(fontSize: 18, color: Colors.grey, fontWeight: FontWeight.w300); // 일반적인 텍스트 스타일 정의
 
     /*  메인에 보여지는 성경구절 스타일 */
     var Textsize = 15.0; // 팝업창에서 설정할 전체 텍스트 사이즈

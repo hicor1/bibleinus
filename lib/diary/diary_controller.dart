@@ -51,13 +51,14 @@ class DiaryController extends GetxController {
   var selected_contents_data      = []; //dirary_screen_selected_verses_id DB에서 조회한 선택된 구절 정보 담는공간
   // 선택된 사진 3장 경로 저장(빈경로), ( 3장으로 제한 ), File과 URL string 두 개의 타입이 복합적으로 사용돠어야하므로 "dynamic"으로 선언!!
   List<dynamic> choiced_image_file = [File(""),File(""),File("")];
-  var choiced_image_file_URL = ["","",""];// "수정"모드에서는 이미지를 URL로 가져오므로 URL리스트로 저장
 
   var diary_view_contents = []; // 성경일기 뷰 페이지 _ 데이터 로드
   var diary_view_timediffer = []; // 성경일기 뷰 페이지 _ 시간경과 산출데이터 저장
   var diary_view_selected_contents_data = []; // 성경일기 뷰 페이지 _ 보여줄 성경 구절 데이터 DB에서 받아와서 저장하기
   var NewOrModify = "";// 모드선택 ( 신규(new) 또는 수정(modify) )
   var selected_document_id = "";// 수정하기 위해 선택한 파이어스토어 문서 아이디
+
+  var GalleryOrCam = "";// 사진첨부에서 "사진첩(gallery)" 또는 "카메라(camera)" 선택
 
   /* 텍스트컨트롤러 정의 */
   var TitletextController      = TextEditingController(); // 성경일기 작성 페이지 _ 일기 제목 ( title ) 컨트롤러
@@ -203,7 +204,7 @@ class DiaryController extends GetxController {
     final ImagePicker _picker = ImagePicker();
     /* 갤러리에서 이미지 선택하기(용량을 줄이기 위해 이미지 리사이즈 시전) */
     final XFile? image = await _picker.pickImage(// https://firebase.flutter.dev/docs/storage/usage/
-        source: ImageSource.gallery,
+        source: GalleryOrCam == "gallery" ? ImageSource.gallery : ImageSource.camera ,
     );
 
     /* 이미지 자르기 */ https://pub.dev/packages/image_cropper/example
@@ -491,6 +492,9 @@ class DiaryController extends GetxController {
     Get.to(() => DiaryWriteScreen());
 
     /* 사진 URL 삽입(3개 갯수 맞춰야하므로 바로 할당하지 않고, For문으로 하나씩 할당) */
+    //1. 리스트 초기화
+    choiced_image_file = ["","",""];
+    //2. 리스트 입히기
     var temp_image_list = diary_view_contents[index]['choiced_image_file'];
     for(int i = 0; i < temp_image_list.length; i++){
       choiced_image_file[i] = temp_image_list[i];
@@ -514,11 +518,13 @@ class DiaryController extends GetxController {
       var type = _imageFile.runtimeType;
       /* 1. 이미지데이터가 String*(URL)인 경우, 수정된게 없는 상태이므로 경로만 그대로 추가해준다 */
       if(type == String){
-        /* 경로 추가해주기 */
-        ImgUrl.add(choiced_image_file[i]);
+        if(_imageFile != "") { // 빈경로가 아닌경우만 추가한다.
+          /* 경로 추가해주기 */
+          ImgUrl.add(_imageFile);
+        }
       }else{
       /* 2. 이미지데이터가 File인 경우, 수정되었으므로 파이어스토어에 업로드 후, 다운경로를 추가해준다. */
-        if(_imageFile.path.isEmpty == false){
+        if(_imageFile.path.isEmpty == false){ // 빈경로가 아닌경우만 추가한다.
 
 
           /* <함수> 파이어베이스 파일업로드 및 파일 호출경로 받는 함수 */
@@ -581,6 +587,11 @@ class DiaryController extends GetxController {
   
 
 
+  /* <함수> 사진첩("gallery") 또는 카메라("camera") 모드 선택 */
+  void GalleryOrCam_choice(String mode){
+    GalleryOrCam = mode;
+    update();
+  }
 
 
 

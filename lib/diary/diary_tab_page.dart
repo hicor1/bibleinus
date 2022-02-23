@@ -89,7 +89,7 @@ class MainWidget extends StatelessWidget {
                                 isScrollable: true, // 수평으로 스크롤가능여부
                                 tabs: [
                                   Tab(child: Text('나의 일기', style: GeneralCtr.Style_tab)),
-                                  Tab(child: Text('무엇을 할꼬', style: GeneralCtr.Style_tab)),
+                                  Tab(child: Text('Live 일기', style: GeneralCtr.Style_tab)),
                                 ],
                               ),
                             ),

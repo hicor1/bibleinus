@@ -1,10 +1,12 @@
 // 검색 글자수 모자람 경고창 띄우기
 import 'package:bible_in_us/bible/bible_component.dart';
 import 'package:bible_in_us/diary/diary_controller.dart';
+import 'package:bible_in_us/general/general_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 final DiaryCtr   = Get.put(DiaryController());
+final GeneralCtr = Get.put(GeneralController());
 
 /* 안내창 띄우기 */
 void DiaryDialog(context, String msg) {
@@ -153,7 +155,7 @@ Future<void> Save_check_Dialog(context) async {
               new Text("안내 메세지"),
             ],
           ),
-          content: Text(DiaryCtr.NewOrModify == "new" ? "일기를 새로 등록 하시겠습니까?" : "일기를 수정 하시겠습니까?"),
+          content: Text(DiaryCtr.NewOrModify == "new" ? "새로운 일기를 등록 하시겠습니까?" : "일기를 수정 하시겠습니까?"),
           actions: <Widget>[
             OutlinedButton(
               child: Text("확인"),
@@ -181,6 +183,64 @@ Future<void> Save_check_Dialog(context) async {
               },
             ),
           ],
+        );
+      });
+}
+
+
+// <위젯> 카메 또는 갤러리 선택 모듈
+Future<void> GalleryOrCam(context, index) async {
+  await showDialog(
+      context: context,
+      //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return SizedBox(
+          child: AlertDialog(
+            // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(5.0)),
+            //Dialog Main Title
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text("사진/카메라", style: TextStyle(fontSize: GeneralCtr.fontsize_normal, fontWeight:FontWeight.bold)),
+              ],
+            ),
+            content: SizedBox(
+              height: 100,
+              child: Column(
+                children: [
+                  InkWell(
+                    onTap: (){
+                      /* 갤러리 열기 */
+                      DiaryCtr.GalleryOrCam_choice("gallery");
+                      DiaryCtr.galleryImagePicker(index);
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                        padding: EdgeInsets.all(15),
+                        width: MediaQuery.of(context).size.width,
+                        child: Text("앨범에서 사진 선택", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.8))
+                    ),
+                  ),
+                  InkWell(
+                    onTap: (){
+                      /* 카메라 열기 */
+                      DiaryCtr.GalleryOrCam_choice("camera");
+                      DiaryCtr.galleryImagePicker(index);
+                      Navigator.pop(context);
+                    },
+                    child: Container(
+                        padding: EdgeInsets.all(15),
+                        width: MediaQuery.of(context).size.width,
+                        child: Text("카메라에서 사진 촬영", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.8))
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
         );
       });
 }

@@ -424,7 +424,7 @@ class ViewVerses extends StatelessWidget {
             return Container(
               decoration: BoxDecoration(
                 color: DiaryCtr.ColorCode[DiaryCtr.dirary_screen_color_index].withOpacity(0.4), // 카드 색깔
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(5),
               ),
               margin: EdgeInsets.fromLTRB(5, 0, 5, 0), // 좌우 카드끼리 간격 띄우기
               child: SingleChildScrollView(
@@ -436,7 +436,7 @@ class ViewVerses extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           /* 구절 정보 */
-                          Text("  [${result[0]['국문']}(${result[0]['영문']}) ${result[0]['cnum']}장 ${result[0]['vnum']}절]", style: TextStyle(fontSize: GeneralCtr.fontsize_normal),),
+                          SelectableText("  [${result[0]['국문']}(${result[0]['영문']}) ${result[0]['cnum']}장 ${result[0]['vnum']}절]", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9),),
                           /* 옵션 버튼 */
                           PopupMenuButton(
                               icon: Icon(Icons.more_vert_sharp, size: GeneralCtr.Textsize*1.2, color: Colors.black54), // pop메뉴 아이콘
@@ -469,11 +469,11 @@ class ViewVerses extends StatelessWidget {
                               /* 옵션 버튼 _ 하위 메뉴 스타일 */
                               itemBuilder: (context) => [
                                 /*검색*/
-                                PopupMenuItem(child: Row(children: [Icon(Entypo.search, size: GeneralCtr.fontsize_normal), Text(" 검색", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9))]), value: "검색"),
+                                PopupMenuItem(child: Row(children: [Icon(Entypo.search, size: GeneralCtr.fontsize_normal*0.7), Text(" 검색", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "검색"),
                                 /*즐겨찾기*/
-                                PopupMenuItem(child: Row(children: [Icon(Typicons.star, size: GeneralCtr.fontsize_normal), Text(" 즐겨찾기", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9))]), value: "즐겨찾기"),
+                                PopupMenuItem(child: Row(children: [Icon(Typicons.star, size: GeneralCtr.fontsize_normal*0.7), Text(" 즐겨찾기", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "즐겨찾기"),
                                 /*삭제*/
-                                PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: GeneralCtr.fontsize_normal), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9))]), value: "삭제"),
+                                PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: GeneralCtr.fontsize_normal*0.7), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "삭제"),
 
                               ]
                           )
@@ -491,10 +491,10 @@ class ViewVerses extends StatelessWidget {
                           padding: EdgeInsets.fromLTRB(5, 5, 5, 5), // 하얀카드 안쪽 텍스트 패딩
                           margin: EdgeInsets.fromLTRB(0, 0, 0, 25), // 컨테이너 자체 마진
                           boxFit: BoxFit.fitHeight,
-                          /* 구절 내영 */
+                          /* 구절 내용 */
                           content: SizedBox(
                               height: 80,
-                              child: SelectableText('${result[0][BibleCtr.Bible_choiced]}',style: TextStyle(fontSize: GeneralCtr.fontsize_normal))),
+                              child: SelectableText('${result[0][BibleCtr.Bible_choiced]}',style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9))),
                         ),
                       ),
                     ],
@@ -693,8 +693,8 @@ Widget Img_Add(context, index){
       Material(
         child: InkWell(
           onTap: () {
-            /* 갤러리 이미지피커 모듈 */
-            DiaryCtr.galleryImagePicker(index);
+            /* 갤러리 또는 카메라 팝업창 모듈 */
+            GalleryOrCam(context, index);
           },
           child: DottedBorder(
             borderType: BorderType.RRect,
