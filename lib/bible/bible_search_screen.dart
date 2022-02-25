@@ -131,8 +131,8 @@ class MainWidget extends StatelessWidget {
                       indicatorColor: GeneralCtr.MainColor, // 아래 강조표시 색깔
                       isScrollable: true, // 수평으로 스크롤가능여부
                       tabs: [
-                        Tab(child: Text("검색결과", style: GeneralCtr.Style_tab)),
-                        Tab(child: Text('최근검색', style: GeneralCtr.Style_tab)),
+                        Tab(child: Text("검색결과", style: TextStyle(fontSize: GeneralCtr.fontsize_normal))),
+                        Tab(child: Text('최근검색', style: TextStyle(fontSize: GeneralCtr.fontsize_normal))),
                       ],
                     ),
                   ),

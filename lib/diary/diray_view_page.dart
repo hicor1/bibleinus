@@ -61,7 +61,8 @@ class MainWidget extends StatelessWidget {
                       },
                     )
                   else
-                  /*  작성한 일기기 있는 경우 */
+                  /*  ↓작성한 일기가 있는 경우↓ */
+                  /* 일기 리스트로 보여주기 */
                   ListView.builder(
                       physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
                       shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지

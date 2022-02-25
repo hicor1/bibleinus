@@ -197,35 +197,46 @@ class AuthLoginPage extends StatelessWidget {
                     ),
 
                     /* SNS로그인 버튼 배치 */
-                    Column(
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         /* 구글 로그인 */
-                        SignInButton(
-                          Buttons.Google,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                            side: BorderSide(
-                              width: 2,
-                              color: Colors.transparent,
-                              style: BorderStyle.solid,
+                        SizedBox(
+                          width: 150,
+                          child: SignInButton(
+                            Buttons.Google,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                              side: BorderSide(
+                                width: 1,
+                                color: Colors.transparent,
+                                style: BorderStyle.solid,
+                              ),
                             ),
+                            text: "Google 로그인",
+                            onPressed: signInWithGoogle,
                           ),
-                          text: "Google 로그인",
-                          onPressed: signInWithGoogle,
                         ),
+
+                        /* 사회적 거리두기 */
+                        SizedBox(width: 10),
+
                         /* 페이스북 로그인 */
-                        SignInButton(
-                          Buttons.FacebookNew,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(5),
-                            side: BorderSide(
-                              width: 2,
-                              color: Colors.transparent,
-                              style: BorderStyle.solid,
+                        SizedBox(
+                          width: 150,
+                          child: SignInButton(
+                            Buttons.FacebookNew,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(5),
+                              side: BorderSide(
+                                width: 1,
+                                color: Colors.transparent,
+                                style: BorderStyle.solid,
+                              ),
                             ),
+                            text: "Facebook 로그인",
+                            onPressed: signInWithFacebook,
                           ),
-                          text: "Facebook 로그인",
-                          onPressed: signInWithFacebook,
                         ),
                       ],
                     ),

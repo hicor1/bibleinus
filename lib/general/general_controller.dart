@@ -30,7 +30,6 @@ class GeneralController extends GetxController {
 
     /* 메인 텍스트 스타일 정의 */
     var Style_title       = TextStyle(color: Color(0xff9966ff), fontSize: 28, fontWeight: FontWeight.bold);
-    var Style_tab         = TextStyle(color: Color(0xff9966ff), fontSize: 23, fontWeight: FontWeight.normal);
     var fontsize_normal   = 20.0;
 
     /* 모달창 텍스트 스타일 */

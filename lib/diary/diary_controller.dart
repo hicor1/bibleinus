@@ -60,6 +60,9 @@ class DiaryController extends GetxController {
 
   var GalleryOrCam = "";// 사진첨부에서 "사진첩(gallery)" 또는 "카메라(camera)" 선택
 
+  List<Meeting> meetings = <Meeting>[]; // 성경일기 달력 스크린 _ 일정담아둘 공간
+
+
   /* 텍스트컨트롤러 정의 */
   var TitletextController      = TextEditingController(); // 성경일기 작성 페이지 _ 일기 제목 ( title ) 컨트롤러
   var ContentstextController   = TextEditingController(); // 성경일기 작성 페이지 _ 일기 내용 ( contents ) 컨트롤러
@@ -576,16 +579,12 @@ class DiaryController extends GetxController {
     LoadAction();
 
     update();
-
     // 로딩화면 종료
     EasyLoading.dismiss();
-
     // 이전 페이지로 돌아가기
     Get.back();
 
   }
-  
-
 
   /* <함수> 사진첩("gallery") 또는 카메라("camera") 모드 선택 */
   void GalleryOrCam_choice(String mode){
@@ -594,7 +593,37 @@ class DiaryController extends GetxController {
   }
 
 
+  /* 일기 정보 달력에 맵핑해주기 (https://pub.dev/packages/syncfusion_flutter_calendar)*/
+  void calendar_data_mapping(){
+    //초기화
+    meetings = [];
+    // "Meeting"클래스에 데이터를 담고, "meetings"리스트에 쌓기
+    for(int i = 0; i < diary_view_contents.length; i++){
+      var title = diary_view_contents[i]["dirary_screen_title"];
+      var date = diary_view_contents[i]["created_at"].toDate();
+      var date_convert = DateTime(date.year, date.month, date.day);
+      var color = ColorCode[diary_view_contents[i]["dirary_screen_color_index"]];
+      //"meetings"리스트에 쌓기
+      meetings.add(Meeting(title, date_convert, date_convert, color, true));
+    }
+  }
 
 
 
+
+}
+
+
+
+
+
+
+/* <서브 클래스> 달력정보만들기에 필요한 클래스 정의 */
+class Meeting {
+  Meeting(this.eventName, this.from, this.to, this.background, this.isAllDay);
+  String eventName;
+  DateTime from;
+  DateTime to;
+  Color background;
+  bool isAllDay;
 }

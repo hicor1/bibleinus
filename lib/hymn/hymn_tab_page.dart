@@ -89,7 +89,7 @@ class Mainwidget extends StatelessWidget {
 
                         },//
                         controller: HymnCtr.tabController, // 컨트롤러 정의
-                        labelColor: GeneralCtr.MainColor, // 활성 탭 색
+                        labelColor: Colors.black, // 활성 탭 색
                         //labelStyle: TextStyle(fontSize: 17.0), // 활성 탭 스타일
                         //unselectedLabelStyle:TextStyle(fontSize: 14.0), // 비활성 탭 스타일
                         unselectedLabelColor: Colors.grey, // 비활성 탭 색
@@ -98,8 +98,8 @@ class Mainwidget extends StatelessWidget {
                         indicatorColor: GeneralCtr.MainColor, // 아래 강조표시 색깔
                         isScrollable: true, // 수평으로 스크롤가능여부
                         tabs: [
-                          Tab(child: Text('찬송가', style: GeneralCtr.Style_tab)),
-                          Tab(child: Text('악보', style: GeneralCtr.Style_tab)),
+                          Tab(child: Text('찬송가', style: TextStyle(fontSize: GeneralCtr.fontsize_normal))),
+                          Tab(child: Text('악보', style: TextStyle(fontSize: GeneralCtr.fontsize_normal))),
                         ],
                       ),
                     ),

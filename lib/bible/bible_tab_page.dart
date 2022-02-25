@@ -118,18 +118,18 @@ class Mainwidget extends StatelessWidget {
                           BibleCtr.FloatingAB_init(); // 탭 이동시 플로팅액션버튼 초기화
                         },//
                         controller: BibleCtr.tabController, // 컨트롤러 정의
-                        labelColor: GeneralCtr.MainColor, // 활성 탭 색
-                        //labelStyle: TextStyle(fontSize: 17.0), // 활성 탭 스타일
-                        //unselectedLabelStyle:TextStyle(fontSize: 14.0), // 비활성 탭 스타일
+                        labelColor: Colors.black, // 활성 탭 색
+                        //labelStyle: GeneralCtr.Style_tab, // 활성 탭 스타일
+                        //unselectedLabelStyle:GeneralCtr.Style_tab_unselected, // 비활성 탭 스타일
                         unselectedLabelColor: Colors.grey, // 비활성 탭 색
                         indicatorSize: TabBarIndicatorSize.label, // 아래 강조표시 길이
                         indicatorWeight: 3.0, // 아래 강조표시 두께
                         indicatorColor: GeneralCtr.MainColor, // 아래 강조표시 색깔
                         isScrollable: true, // 수평으로 스크롤가능여부
                         tabs: [
-                          Tab(child: Text('성경읽기', style: GeneralCtr.Style_tab)),
-                          Tab(child: Text('즐겨찾기', style: GeneralCtr.Style_tab)),
-                          Tab(child: Text('메모', style: GeneralCtr.Style_tab)),
+                          Tab(child: Text('성경읽기', style: TextStyle(fontSize: GeneralCtr.fontsize_normal))),
+                          Tab(child: Text('즐겨찾기', style: TextStyle(fontSize: GeneralCtr.fontsize_normal))),
+                          Tab(child: Text('메모', style: TextStyle(fontSize: GeneralCtr.fontsize_normal))),
                         ],
                       ),
                     ),

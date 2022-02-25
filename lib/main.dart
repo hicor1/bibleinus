@@ -6,6 +6,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:syncfusion_localizations/syncfusion_localizations.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 
 
@@ -49,6 +51,16 @@ class MyApp extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.done) {
           return GetMaterialApp(
 
+            /* 달력어플을 위한 한글언어 설정 */
+            localizationsDelegates: [
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+              SfGlobalLocalizations.delegate
+            ],
+            supportedLocales: [Locale('ko')],
+            locale: Locale('ko'),
+
             /* 전체 어플 테마 설정 */
             theme: ThemeData(
                 scaffoldBackgroundColor: const Color(0xFFFFFFFF), // 전체 하얀 배경
@@ -63,6 +75,7 @@ class MyApp extends StatelessWidget {
                 // brightness: Brightness.light,
                 visualDensity: VisualDensity.adaptivePlatformDensity
             ),
+
             // 디버그 모드 해제
             debugShowCheckedModeBanner: false,
             title: 'Echo',
