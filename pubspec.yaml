@@ -75,6 +75,9 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
+  hashtager: ^1.0.3 # 해시태그
+
+
 
 dev_dependencies:
   flutter_test:

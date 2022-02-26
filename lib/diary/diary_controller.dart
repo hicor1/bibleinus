@@ -15,9 +15,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:get/get.dart';
+import 'package:hashtager/hashtager.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 
 final BibleCtr = Get.put(BibleController());
@@ -66,6 +68,7 @@ class DiaryController extends GetxController {
   /* 텍스트컨트롤러 정의 */
   var TitletextController      = TextEditingController(); // 성경일기 작성 페이지 _ 일기 제목 ( title ) 컨트롤러
   var ContentstextController   = TextEditingController(); // 성경일기 작성 페이지 _ 일기 내용 ( contents ) 컨트롤러
+  var HashTagController        = TextEditingController(); // 성경일기 작성 페이지 _ 일기 내용 ( contents ) 컨트롤러
 
 
   /* 칼라코드 정의 */
@@ -341,6 +344,7 @@ class DiaryController extends GetxController {
       "choiced_image_file":ImgUrl,
       "dirary_screen_timetag_index":dirary_screen_timetag_index,
       "dirary_screen_address":dirary_screen_address,
+      "dirary_screen_hashtag":get_hash_tag_list(),
     }).then((value) => PopToast("일기가 등록되었어요!")
     );// 안내메세지
 
@@ -353,7 +357,8 @@ class DiaryController extends GetxController {
 
     // 로딩화면 종료
     EasyLoading.dismiss();
-
+    //안내 메세지
+    PopToast("등록 안료");
     // 이전 페이지로 돌아가기
     Get.back();
   }
@@ -431,17 +436,21 @@ class DiaryController extends GetxController {
     var _toDay = DateTime.now();
     // 비교시간을 timestamp -> date로 형식 변환
     var target_date = date.toDate();
+    // 날짜 표기방식(#format, #포맷 )
+    var newFormat = DateFormat("M월 d일");
     // 1. 시간 산출결과 임시 저장공간
     var time_differ = "";
     // 2. 시간차이 계산 ( 분 기준으로 )
     int time_difference = int.parse(_toDay.difference(target_date).inMinutes.toString());
     // 3. 조건에 맞게 시간 재지정
     if(time_difference<=0){time_differ = "방금 전";} // 1분 미만
-    else if (0 < time_difference &&  time_difference < 60){time_differ = "${time_difference}분 전";} // 1시간 미만
-    else if (60 < time_difference &&  time_difference < 60*24){time_differ = "${(time_difference/60).round()}시간 전";} // 1일 미만
-    else if (60*24 < time_difference &&  time_difference < 60*24*30){time_differ = "${(time_difference/(60*24)).round()}일 전";} // 1달 미만
-    else if (60*24*30 < time_difference &&  time_difference < 60*24*30*12){time_differ = "${(time_difference/(60*24*30)).round()}달 전";} // 1년 미만
-    else if (60*24*30*12 < time_difference){time_differ = "${(time_difference/(60*24*30*12)).round()}년 전";} // 1년 초과
+    else if (0 <= time_difference &&  time_difference < 60){time_differ = "${time_difference}분 전";} // 1시간 미만
+    else if (60 <= time_difference &&  time_difference < 60*24){time_differ = "${(time_difference/60).floor()}시간 전";} // 1일 미만
+    else if (60*24 <= time_difference &&  time_difference < 60*24*7){time_differ = "${(time_difference/(60*24)).floor()}일 전";} // 1주일 미만
+    else if (60*24*7 <= time_difference){time_differ = "${newFormat.format(target_date)}";} // 1주일 초과 시, 날짜 그대로 표현
+    //else if (60*24 < time_difference &&  time_difference < 60*24*30){time_differ = "${(time_difference/(60*24)).round()}일 전";} // 1달 미만
+    //else if (60*24*30 < time_difference &&  time_difference < 60*24*30*12){time_differ = "${(time_difference/(60*24*30)).round()}달 전";} // 1년 미만
+    //else if (60*24*30*12 < time_difference){time_differ = "${(time_difference/(60*24*30*12)).round()}년 전";} // 1년 초과
 
 
     /* 결과 리턴 */
@@ -457,6 +466,7 @@ class DiaryController extends GetxController {
     choiced_image_file               = [File(""),File(""),File("")];
     dirary_screen_timetag_index      = 0;
     dirary_screen_address            = "";
+    HashTagController.text           = "";
 
     update();
   }
@@ -490,6 +500,18 @@ class DiaryController extends GetxController {
     /* 제목 & 내용 삽입 */
     TitletextController.text     = diary_view_contents[index]['dirary_screen_title'];
     ContentstextController.text  = diary_view_contents[index]['dirary_screen_contents'];
+
+    /* 해시태그 입혀주기 */
+
+    var temp = ""; /* 태그 텍스트 저장공간(임시) */
+
+    var target = diary_view_contents[index]['dirary_screen_hashtag']; /* 태그만으로 구성된 리스트 가져오기 */
+    /* 태그 텍스트로 변경 */
+    for(int i = 0; i < target.length; i++){
+      temp = temp + " " + target[i];}
+    /* 클리닝된 텍스트를 대신 삽입해주기 */
+    HashTagController.text = temp;
+
 
     /* 작성하기 페이지로 이동 */
     Get.to(() => DiaryWriteScreen());
@@ -572,6 +594,7 @@ class DiaryController extends GetxController {
       "choiced_image_file":ImgUrl,
       "dirary_screen_timetag_index":dirary_screen_timetag_index,
       "dirary_screen_address":dirary_screen_address,
+      "dirary_screen_hashtag":get_hash_tag_list(),
     }).then((value) => PopToast("일기가 수정되었어요!")
     );
 
@@ -581,6 +604,8 @@ class DiaryController extends GetxController {
     update();
     // 로딩화면 종료
     EasyLoading.dismiss();
+    //안내 메세지
+    PopToast("수정 안료");
     // 이전 페이지로 돌아가기
     Get.back();
 
@@ -593,25 +618,52 @@ class DiaryController extends GetxController {
   }
 
 
-  /* 일기 정보 달력에 맵핑해주기 (https://pub.dev/packages/syncfusion_flutter_calendar)*/
+  /* <함수> 일기 정보 달력에 맵핑해주기 (https://pub.dev/packages/syncfusion_flutter_calendar)*/
   void calendar_data_mapping(){
     //초기화
     meetings = [];
     // "Meeting"클래스에 데이터를 담고, "meetings"리스트에 쌓기
     for(int i = 0; i < diary_view_contents.length; i++){
-      var title = diary_view_contents[i]["dirary_screen_title"];
+      var contents = diary_view_contents[i]["dirary_screen_title"] ;
       var date = diary_view_contents[i]["created_at"].toDate();
       var date_convert = DateTime(date.year, date.month, date.day);
       var color = ColorCode[diary_view_contents[i]["dirary_screen_color_index"]];
       //"meetings"리스트에 쌓기
-      meetings.add(Meeting(title, date_convert, date_convert, color, true));
+      meetings.add(Meeting(contents, date_convert, date_convert, color, true));
     }
+  }
+
+
+  /* <함수> 해시태그 가져와서 태그만 분류하기(https://pub.dev/packages/hashtager) */
+  List<String> get_hash_tag_list(){
+    /* 컨트롤러로부터 텍스트 가져오기 */
+    var target = HashTagController.text;
+    /* 해시태그만 추출하기(리스트) */
+    final List<String> hashTags = extractHashTags(target);
+    /* 추출된 태그만 리턴 */
+    return hashTags;
+  }
+
+  /* <함수> 해시태그 클리닝 _ 태그만 남기고 다 지우기 */
+  void hash_tag_cleaning(){
+    /* 태그 텍스트 저장공간(임시) */
+    var temp = "";
+    /* 태그만으로 구성된 리스트 가져오기 */
+    var target = get_hash_tag_list();
+    /* 태그 텍스트로 변경 */
+    for(int i = 0; i < target.length; i++){
+      temp = temp + " " + target[i];
+    }
+    /* 클리닝된 텍스트를 대신 삽입해주기 */
+    HashTagController.text = temp;
+
   }
 
 
 
 
-}
+
+} // 여기가 전체 클래스 끝 부분!!
 
 
 

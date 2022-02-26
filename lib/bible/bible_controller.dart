@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'dart:convert';
+import 'package:intl/intl.dart';
 
 // Gex컨트롤러 객체 초기화
 final GeneralCtr = Get.put(GeneralController());
@@ -21,6 +22,7 @@ class BibleController extends GetxController {
     Book_choice(Book_choiced); // 초반 챕터번호 선택해놓기
     FloatingAB_init(); // 플로팅 액션버튼 초기화
     Get_color_count(); // 색깔별 즐겨찾기 몇개인지 쿼리
+    GetFavorite_list();// 색깔별 즐겨찾기 쿼리
   }
 
   /* SharedPrefs 저장하기(save) */
@@ -518,18 +520,25 @@ class BibleController extends GetxController {
     for(int i = 0; i < Favorite_list.length; i++){
       var date = Favorite_list[i]['bookmark_updated_at'];
       // 1. 시간 산출결과 임시 저장공간
-      var temp = "";
+      var time_differ = "";
+      // 비교시간을 timestamp -> date로 형식 변환
+      var target_date = DateTime.parse(date);
+      // 날짜 표기방식(#format, #포맷 )
+      var newFormat = DateFormat("M월 d일");
       // 2. 시간차이 계산 ( 분 기준으로 )
-      int time_difference = int.parse(_toDay.difference(DateTime.parse(date)).inMinutes.toString());
+      int time_difference = int.parse(_toDay.difference(target_date).inMinutes.toString());
       // 3. 조건에 맞게 시간 재지정
-      if(time_difference<=0){temp = "방금 전";} // 1분 미만
-      else if (0 < time_difference &&  time_difference < 60){temp = "${time_difference}분 전";} // 1시간 미만
-      else if (60 < time_difference &&  time_difference < 60*24){temp = "${(time_difference/60).round()}시간 전";} // 1일 미만
-      else if (60*24 < time_difference &&  time_difference < 60*24*30){temp = "${(time_difference/(60*24)).round()}일 전";} // 1달 미만
-      else if (60*24*30 < time_difference &&  time_difference < 60*24*30*12){temp = "${(time_difference/(60*24*30)).round()}달 전";} // 1년 미만
-      else if (60*24*30*12 < time_difference){temp = "${(time_difference/(60*24*30*12)).round()}년 전";} // 1년 초과
+      if(time_difference<=0){time_differ = "방금 전";} // 1분 미만
+      else if (0 <= time_difference &&  time_difference < 60){time_differ = "${time_difference}분 전";} // 1시간 미만
+      else if (60 <= time_difference &&  time_difference < 60*24){time_differ = "${(time_difference/60).floor()}시간 전";} // 1일 미만
+      else if (60*24 <= time_difference &&  time_difference < 60*24*7){time_differ = "${(time_difference/(60*24)).floor()}일 전";} // 1주일 미만
+      else if (60*24*7 <= time_difference){time_differ = "${newFormat.format(target_date)}";} // 1주일 초과 시, 날짜 그대로 표현
+      //else if (60*24 < time_difference &&  time_difference < 60*24*30){time_differ = "${(time_difference/(60*24)).round()}일 전";} // 1달 미만
+      //else if (60*24*30 < time_difference &&  time_difference < 60*24*30*12){time_differ = "${(time_difference/(60*24*30)).round()}달 전";} // 1년 미만
+      //else if (60*24*30*12 < time_difference){time_differ = "${(time_difference/(60*24*30*12)).round()}년 전";} // 1년 초과
+
       // 4. 결과 담기
-      Favorite_timediffer_list.add(temp);
+      Favorite_timediffer_list.add(time_differ);
     }
     // 즐겨찾기 색깔별 갯수 가져오기
     Get_color_count();
@@ -593,18 +602,24 @@ class BibleController extends GetxController {
     for(int i = 0; i < Memo_list.length; i++){
       var date = Memo_list[i]['updated_at'];
       // 1. 시간 산출결과 임시 저장공간
-      var temp = "";
+      var time_differ = "";
+      // 비교시간을 timestamp -> date로 형식 변환
+      var target_date = DateTime.parse(date);
+      // 날짜 표기방식(#format, #포맷 )
+      var newFormat = DateFormat("M월 d일");
       // 2. 시간차이 계산 ( 분 기준으로 )
-      int time_difference = int.parse(_toDay.difference(DateTime.parse(date)).inMinutes.toString());
+      int time_difference = int.parse(_toDay.difference(target_date).inMinutes.toString());
       // 3. 조건에 맞게 시간 재지정
-      if(time_difference<=0){temp = "방금 전";} // 1분 미만
-      else if (0 < time_difference &&  time_difference < 60){temp = "${time_difference}분 전";} // 1시간 미만
-      else if (60 < time_difference &&  time_difference < 60*24){temp = "${(time_difference/60).round()}시간 전";} // 1일 미만
-      else if (60*24 < time_difference &&  time_difference < 60*24*30){temp = "${(time_difference/(60*24)).round()}일 전";} // 1달 미만
-      else if (60*24*30 < time_difference &&  time_difference < 60*24*30*12){temp = "${(time_difference/(60*24*30)).round()}달 전";} // 1년 미만
-      else if (60*24*30*12 < time_difference){temp = "${(time_difference/(60*24*30*12)).round()}년 전";} // 1년 초과
+      if(time_difference<=0){time_differ = "방금 전";} // 1분 미만
+      else if (0 <= time_difference &&  time_difference < 60){time_differ = "${time_difference}분 전";} // 1시간 미만
+      else if (60 <= time_difference &&  time_difference < 60*24){time_differ = "${(time_difference/60).floor()}시간 전";} // 1일 미만
+      else if (60*24 <= time_difference &&  time_difference < 60*24*7){time_differ = "${(time_difference/(60*24)).floor()}일 전";} // 1주일 미만
+      else if (60*24*7 <= time_difference){time_differ = "${newFormat.format(target_date)}";} // 1주일 초과 시, 날짜 그대로 표현
+      //else if (60*24 < time_difference &&  time_difference < 60*24*30){time_differ = "${(time_difference/(60*24)).round()}일 전";} // 1달 미만
+      //else if (60*24*30 < time_difference &&  time_difference < 60*24*30*12){time_differ = "${(time_difference/(60*24*30)).round()}달 전";} // 1년 미만
+      //else if (60*24*30*12 < time_difference){time_differ = "${(time_difference/(60*24*30*12)).round()}년 전";} // 1년 초과
       // 4. 결과 담기
-      Memo_timediffer_list.add(temp);
+      Memo_timediffer_list.add(time_differ);
     }
     update();
   }

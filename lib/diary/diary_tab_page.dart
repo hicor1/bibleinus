@@ -119,7 +119,7 @@ class MainWidget extends StatelessWidget {
                       children: <Widget>[
                         /* Tab메뉴 전환시 보여줄 메인 */
                         DiaryViewPage(),
-                        Text("메인2"),
+                        Text("준비중인 기능입니다."),
 
                       ],
                     ),

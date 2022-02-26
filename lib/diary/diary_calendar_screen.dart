@@ -56,7 +56,7 @@ Widget MainWidget(){
         builder: (_){
           return Scaffold(
             appBar: AppBar(
-              title: Text("달력으로 보기", style: GeneralCtr.Style_title),
+              title: Text("일기 달력", style: GeneralCtr.Style_title),
               iconTheme: IconThemeData(
                   color: GeneralCtr.MainColor
               ),
@@ -66,14 +66,15 @@ Widget MainWidget(){
               padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
               child: SfCalendar(
                 view: CalendarView.month,
-                allowViewNavigation: true, // 이건 당최뭐지
+                allowViewNavigation: false, // 클릭하면 상세내용으로 이동
                 showNavigationArrow: true, // 날짜 전환 화살표 포함 여부
-                allowedViews: [CalendarView.month, CalendarView.schedule],
+                allowedViews: [CalendarView.month, CalendarView.schedule], // "월", "일정" 등 옵션버튼
                 dataSource: MeetingDataSource(DiaryCtr.meetings),
                 viewHeaderHeight: 50, // 날짜와 아래 달력 거리
                 headerDateFormat: 'M', // 년월 표기 서식
                 monthViewSettings: MonthViewSettings(
-                    appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+                  //appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+                  showAgenda: true,
                 ),
                 scheduleViewSettings: ScheduleViewSettings(
                   hideEmptyScheduleWeek: true,

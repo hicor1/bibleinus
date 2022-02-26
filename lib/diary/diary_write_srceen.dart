@@ -1,6 +1,4 @@
-import 'dart:io';
 
-import 'package:bible_in_us/bible/bible_component.dart';
 import 'package:bible_in_us/bible/bible_controller.dart';
 import 'package:bible_in_us/bible/bible_favorite_screen.dart';
 import 'package:bible_in_us/bible/bible_search_screen.dart';
@@ -11,7 +9,7 @@ import 'package:bible_in_us/my/my_controller.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttericon/elusive_icons.dart';
 import 'package:fluttericon/entypo_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
@@ -21,7 +19,8 @@ import 'package:fluttericon/web_symbols_icons.dart';
 import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:kpostal/kpostal.dart';
-import 'package:word_break_text/word_break_text.dart';
+import 'package:hashtager/hashtager.dart';
+import 'package:hashtager/widgets/hashtag_text_field.dart';
 
 // Gex컨트롤러 객체 초기화
 final GeneralCtr = Get.put(GeneralController());
@@ -92,7 +91,10 @@ class MainWidget extends StatelessWidget {
                         _formKey.currentState!.save();
                         /* 관련정보 넘기기 */
                         DiaryCtr.SaveAction(context);
-                      } else return null;
+                      /*2. 입력정보 유효성검증이 안될경우, 안내창 띄우기 */
+                      } else {
+                        DiaryDialog(context, "필수입력 정보 확인");
+                      }
                     },
                     child: Text(DiaryCtr.NewOrModify=="new" ? "저장" : "수정")
                 )
@@ -124,7 +126,7 @@ class MainWidget extends StatelessWidget {
                     ),
                     padding: EdgeInsets.zero,
 
-                    height: 800, // 전체 스크롤 크기 ( 상당히 중요함! )
+                    //height: 800, // 전체 스크롤 크기 ( 상당히 중요함! )
                     width: MediaQuery.of(context).size.width,
                     child: Column(
                       children: [
@@ -190,6 +192,10 @@ class MainWidget extends StatelessWidget {
                                   onSaved: (val){
                                     DiaryCtr.dirary_screen_title = val!; // 이메일 값 저장
                                   },
+                                  /* 최대 입력가능한 글자 수 제한 */
+                                  inputFormatters: [LengthLimitingTextInputFormatter(30)],
+                                  /* 사람이 입력하는 텍스트 스타일 지정 */
+                                  style: TextStyle(color: Colors.black, fontSize: GeneralCtr.fontsize_normal),
                                   /* 스타일 정의 */
                                   decoration: InputDecoration(
                                     prefixIcon: Icon(Elusive.pencil, size: 15, color: Colors.grey.withOpacity(0.7)), // 전방배치 아이콘
@@ -222,13 +228,21 @@ class MainWidget extends StatelessWidget {
                                     color: Colors.grey.withOpacity(0.1),
                                   ),
                                   child: TextFormField(
+                                    /* 최대 입력가능한 글자 수 제한 */
+                                    inputFormatters: [LengthLimitingTextInputFormatter(1500)],
                                     controller: DiaryCtr.ContentstextController,
-                                    maxLines: 10,
+                                    keyboardType: TextInputType.multiline, // 줄바꿈이 있는 키도드 보여주기
+                                    minLines: 10,
+                                    maxLines: null,
+                                    autofocus: true,
+                                    autocorrect: true,
+                                    //maxLines: 10,
                                     /* 저장 버튼("_formKey.save()" 눌렀을 때 이벤트 정의 */
                                     onSaved: (val){
                                       DiaryCtr.dirary_screen_contents = val!; // 일기 내용(contents) 저장
                                     },
-                                    style: TextStyle(color: Colors.black),
+                                    /* 사람이 입력하는 텍스트 스타일 지정 */
+                                    style: TextStyle(color: Colors.black, fontSize: GeneralCtr.fontsize_normal),
                                     /* 스타일 정의 */
                                     decoration: InputDecoration(
                                       hintText: '내용을 적어주세요', // 라벨,
@@ -260,8 +274,11 @@ class MainWidget extends StatelessWidget {
                         /* 사진 추가 하는곳 : 모드선택 ( 신규(new) 또는 수정(modify) )*/
                         Photo_Control_widget(),
 
+                        /* 해쉬태그 추가하는곳(#hashtag  #해시 # 태그) */
+                        HashTag(context),
+
                         /* 사회적 거리두기 */
-                        SizedBox(height: 20),
+                        SizedBox(height: 25),
 
                         /* 이 시간에 추천해요  */
                         Container(
@@ -376,9 +393,11 @@ class MainWidget extends StatelessWidget {
                               ],
                             )
                         ),
+                        /* 최하단 사회적 거리두기 */
+                        SizedBox(height: 150)
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -718,4 +737,47 @@ Widget Img_Add(context, index){
       SizedBox(width: 5.5)
     ],
   );
+}
+
+
+//<서브위젯> 해시태그 입력 모듈
+Widget HashTag(context){
+  return
+    Container(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("#해시태그", style: TextStyle(fontWeight: FontWeight.bold)),
+            /* 해시태그 텍스트필드가 포커스 바뀔때마다 태그 유효성 검증 및 변경 */
+            FocusScope(
+              onFocusChange: (value) {
+                if (!value) {
+                  /* 변경 액션 _ 태그 클리닝 */
+                  DiaryCtr.hash_tag_cleaning();
+                }
+              },
+              child: HashTagTextField(
+                /* 해시태그 작성 완료 버튼 누를 때마다 태그 유효성 검사 ㄱㄱ */
+                onEditingComplete: (){DiaryCtr.hash_tag_cleaning();},
+                /* 컨트롤러 할당 _ 결과값 저장을 위함 */
+                controller:DiaryCtr.HashTagController,
+                /* 해시태그 최대글자 수 제한 */
+                inputFormatters: [LengthLimitingTextInputFormatter(35)],
+                /* 스타일 정의 */
+                decoration: InputDecoration(
+                  isDense: false,
+                  contentPadding: EdgeInsets.fromLTRB(0, 7, 0, 0),// 텍스트필드 패딩 없애기
+                  labelText: '#해시 #태그 #추가', // 라벨
+                  labelStyle: TextStyle(color: Colors.grey.withOpacity(0.7), fontSize: GeneralCtr.fontsize_normal*0.8), // 라벨 스타일
+                  floatingLabelStyle: TextStyle(fontSize: 15), // 포커스된 라벨 스타일
+                ),
+                decoratedStyle: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.85, color: Colors.blueAccent), // #해시태그 텍스트 스타일
+                basicStyle: TextStyle(fontSize: GeneralCtr.fontsize_normal, color: Colors.black), // 일반 텍스트 스타일
+              ),
+            ),
+          ],
+        )
+    );
 }

@@ -169,9 +169,7 @@ Future<void> Save_check_Dialog(context) async {
                   DiaryCtr.diary_modify_save();
                 }
 
-                // 2. 안내 메세지
-                PopToast("삭제 안료");
-                // 3. 팝업창 닫기
+                // 2. 팝업창 닫기
                 Navigator.pop(context);
               },
             ),

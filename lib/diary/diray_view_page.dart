@@ -12,6 +12,7 @@ import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:get/get.dart';
 import 'package:getwidget/getwidget.dart';
 import 'package:expandable/expandable.dart';
+import 'package:hashtager/hashtager.dart';
 import 'package:word_break_text/word_break_text.dart';
 
 
@@ -145,6 +146,9 @@ class MainWidget extends StatelessWidget {
                                 ],
                               ),
 
+                              /* 해시태그 삽입 */
+                              HashTagView(result),
+
                               /* 사회적 거리두기 */
                               SizedBox(height: 10),
 
@@ -174,10 +178,19 @@ class MainWidget extends StatelessWidget {
                                                 /* 접었다 폈다 토글동작 */
                                                 controller.toggle();
                                               },
-                                              child: Text("${result['dirary_screen_contents']}",
-                                                  maxLines:3, overflow: TextOverflow.ellipsis, softWrap: true,// 공간을 넘는 글자는 쩜쩜쩜(...)으로 표기한다.
-                                                  style: TextStyle(fontSize:GeneralCtr.fontsize_normal)
-                                              ),
+                                              child: 
+                                                  Column(
+                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                    children: [
+                                                      Text("${result['dirary_screen_contents']}",
+                                                          maxLines:3, overflow: TextOverflow.ellipsis, softWrap: true,// 공간을 넘는 글자는 쩜쩜쩜(...)으로 표기한다.
+                                                          style: TextStyle(fontSize:GeneralCtr.fontsize_normal)
+                                                      ),
+                                                      Text("..더 보기", style: TextStyle(color: Colors.grey,fontSize:GeneralCtr.fontsize_normal))
+                                                      
+                                                    ],
+                                                  )
+                                              
                                             ),
                                             // 3. 내용 펼쳤을 때
                                             expanded:  Column(
@@ -384,6 +397,33 @@ class ViewTimeTag extends StatelessWidget {
       ],
     );
   }
+}
+
+
+//<서브위젯> 해시태그 입력 모듈
+Widget HashTagView(result){
+  return
+    SizedBox(
+      height: GeneralCtr.fontsize_normal*0.9, // 아래 텍스트 크기와 동일하게 높이를 맞춰준다
+      child: ListView.builder(
+          physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
+          shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
+          scrollDirection: Axis.horizontal, // 수직(vertical)  수평(horizontal) 배열 선택
+          //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
+          itemCount: result['dirary_screen_hashtag'] != null ? result['dirary_screen_hashtag'].length : 0,
+          itemBuilder: (context, index) {
+            return TextButton(
+              onPressed: (){},
+              child: Text("${result['dirary_screen_hashtag'][index]}", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.85)),
+              style: TextButton.styleFrom(
+                minimumSize: Size.zero,
+                padding: EdgeInsets.zero,
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              ),
+            ); // "=>"이 아닌 "{}"을 쓸때는 반드시 return을 써줘야한다!!
+          }
+      ),
+    );
 }
 
 
