@@ -74,7 +74,7 @@ class MainWidget extends StatelessWidget {
                     /* 초기화 묻는 안내창 띄우기 */
                     IsInit(context);
                     },
-                  child: Text("초기화"),
+                  child: Text("초기화", style: TextStyle(fontSize: GeneralCtr.fontsize_normal)),
                   style: TextButton.styleFrom(
                     minimumSize: Size.zero,
                     padding: EdgeInsets.zero,
@@ -96,7 +96,7 @@ class MainWidget extends StatelessWidget {
                         DiaryDialog(context, "필수입력 정보 확인");
                       }
                     },
-                    child: Text(DiaryCtr.NewOrModify=="new" ? "저장" : "수정")
+                    child: Text(DiaryCtr.NewOrModify=="new" ? "저장" : "수정", style: TextStyle(fontSize: GeneralCtr.fontsize_normal))
                 )
               ],
             ),

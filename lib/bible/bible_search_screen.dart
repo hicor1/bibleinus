@@ -7,7 +7,9 @@ import 'package:flutter/widgets.dart';
 import 'package:fluttericon/elusive_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
+import 'package:fluttericon/linecons_icons.dart';
 import 'package:fluttericon/modern_pictograms_icons.dart';
+import 'package:fluttericon/octicons_icons.dart';
 import 'package:fluttericon/typicons_icons.dart';
 import 'package:fluttericon/web_symbols_icons.dart';
 import 'package:get/get.dart';
@@ -64,6 +66,7 @@ class MainWidget extends StatelessWidget {
                 ),
                 elevation: 1.5,
                 title: TextField(
+
                   textAlignVertical: TextAlignVertical.center,
                   controller: BibleCtr.textController, // 텍스트값을 가져오기 위해 컨트롤러 할당
                   /* 키패드에서 "완료"버튼 누르면 이벤트 발동 */
@@ -87,21 +90,37 @@ class MainWidget extends StatelessWidget {
                   autofocus: false, // 자동으로 클릭할것인가
                   style: TextStyle(fontSize: GeneralCtr.fontsize_normal),
                   decoration: InputDecoration(
-                    //prefixIcon: Icon(Icons.search),
+
                       suffixIcon: IconButton(
-                        icon: Icon(Icons.clear, color: GeneralCtr.MainColor),
+                        icon: Icon(Icons.clear, color: GeneralCtr.MainColor, size: GeneralCtr.fontsize_normal*1.4),
                         /* 클리어 버튼(X) 눌렀을 때 텍스트 비우기 */
                         onPressed: () {
                           BibleCtr.textController.clear();
-                          BibleCtr.FreeSearch_init(); // 자유검색결과
                         },
                       ),
-                      hintText: '검색어를 입력해주세요',
+                      hintText: '검색어 입력',
                       border: InputBorder.none),
                 ),
                 backgroundColor: Colors.white,
                 // 앱바 액숀 버튼
                 actions: [
+                  // 전체 검색 버튼
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                    child: TextButton(
+                      onPressed: () {
+                        /* 셋팅화면 띄워주기 */
+                        BibleCtr.textController.clear();
+                        BibleCtr.FreeSearch_init(); // 자유검색결과
+                      },
+                      child: Text("전체", style: TextStyle(color: GeneralCtr.MainColor, fontSize: GeneralCtr.fontsize_normal)),
+                      style: TextButton.styleFrom(
+                        minimumSize: Size.zero,
+                        padding: EdgeInsets.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                    ),
+                  ),
                   // 셋팅 버튼
                   Padding(
                     padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
@@ -110,7 +129,7 @@ class MainWidget extends StatelessWidget {
                         /* 셋팅화면 띄워주기 */
                         openPopup(context);
                       },
-                      icon: Icon(Typicons.cog_outline, size: 25.0, color: GeneralCtr.MainColor),
+                      icon: Icon(Linecons.cog, size: 25.0, color: GeneralCtr.MainColor),
                     ),
                   )
                 ],
@@ -122,14 +141,16 @@ class MainWidget extends StatelessWidget {
                     child: TabBar(
                       padding: EdgeInsets.zero,
                       controller: BibleCtr.SearchtabController, // 컨트롤러 정의
-                      //labelColor: GeneralCtr.MainColor, // 활성 탭 색
+                      //controller: HymnCtr.tabController, // 컨트롤러 정의
+                      labelColor: Colors.black, // 활성 탭 색
                       //labelStyle: TextStyle(fontSize: 17.0), // 활성 탭 스타일
-                      //unselectedLabelStyle: TextStyle(fontSize: 15.0), // 비활성 탭 스타일
-                      unselectedLabelColor: Colors.white54, // 비활성 탭 색
+                      //unselectedLabelStyle:TextStyle(fontSize: 14.0), // 비활성 탭 스타일
+                      unselectedLabelColor: Colors.grey, // 비활성 탭 색
                       indicatorSize: TabBarIndicatorSize.label, // 아래 강조표시 길이
                       indicatorWeight: 3.0, // 아래 강조표시 두께
                       indicatorColor: GeneralCtr.MainColor, // 아래 강조표시 색깔
                       isScrollable: true, // 수평으로 스크롤가능여부
+
                       tabs: [
                         Tab(child: Text("검색결과", style: TextStyle(fontSize: GeneralCtr.fontsize_normal))),
                         Tab(child: Text('최근검색', style: TextStyle(fontSize: GeneralCtr.fontsize_normal))),
@@ -170,7 +191,7 @@ class FreeSearchResult extends StatelessWidget {
                 /* 전체 검색 결과 등 결과 요약 표기 */
                 Container(
                   child: Text(
-                    '검색어 : "${BibleCtr.textController.text}" 에 대한 검색결과 ${NumberFormat('##,###').format(BibleCtr.FreeSearchResult.length)} 건',
+                    '검색어 : "${BibleCtr.FreeSearchQuery}" 에 대한 검색결과 ${NumberFormat('##,###').format(BibleCtr.FreeSearchResult.length)} 건',
                     style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9),),
                   margin: EdgeInsets.fromLTRB(0,5,0,5),
                   padding: EdgeInsets.fromLTRB(50,2,50,2),
@@ -415,7 +436,7 @@ class History extends StatelessWidget {
                                     child: Row(
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
-                                        Icon(Elusive.search, size: GeneralCtr.fontsize_normal*0.9, color: GeneralCtr.MainColor),
+                                        Icon(Octicons.search, size: GeneralCtr.fontsize_normal*0.9, color: GeneralCtr.MainColor),
                                         Flexible(
                                           child: Text("   ${BibleCtr.FreeSearch_history_query[index]}    ",
                                               style: TextStyle(fontSize: GeneralCtr.fontsize_normal, color: Colors.black)),

@@ -8,6 +8,8 @@ import 'package:bible_in_us/diary/diary_controller.dart';
 import 'package:bible_in_us/general/general_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:fluttericon/linecons_icons.dart';
+import 'package:fluttericon/octicons_icons.dart';
 import 'package:fluttericon/typicons_icons.dart';
 import 'package:fluttericon/entypo_icons.dart';
 import 'package:fluttericon/elusive_icons.dart';
@@ -83,7 +85,7 @@ class Mainwidget extends StatelessWidget {
                   actions: [
                     /* 돋보기 버튼 */
                     Padding(
-                      padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                       child: IconButton(
                         onPressed: (){
                           /* 자유검색 상태값 변경해주기 ( bible app에서 호출했음을 알리기 위해 ) */
@@ -91,7 +93,7 @@ class Mainwidget extends StatelessWidget {
                           // 버튼 동작
                           Get.to(() => BibleSearchScreen());
                         },
-                        icon: Icon(Entypo.search, size: 28.0, color: Colors.indigoAccent,),
+                        icon: Icon(Octicons.search, size: 23.0, color: GeneralCtr.MainColor),
                       ),
                     ),
                     /* 셋팅 버튼 */
@@ -102,7 +104,7 @@ class Mainwidget extends StatelessWidget {
                           // 버튼 동작
                           openPopup(context);
                         },
-                        icon: Icon(Typicons.cog_outline, size: 25.0, color: GeneralCtr.BlueColor,),
+                        icon: Icon(Linecons.cog, size: 25.0, color: GeneralCtr.MainColor),
                       ),
                     ),
                   ],

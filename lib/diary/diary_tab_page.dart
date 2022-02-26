@@ -4,9 +4,12 @@ import 'package:bible_in_us/diary/diary_write_srceen.dart';
 import 'package:bible_in_us/diary/diray_view_page.dart';
 import 'package:bible_in_us/general/general_controller.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttericon/elusive_icons.dart';
 import 'package:fluttericon/entypo_icons.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
+import 'package:fluttericon/linecons_icons.dart';
 import 'package:fluttericon/octicons_icons.dart';
+import 'package:fluttericon/zocial_icons.dart';
 import 'package:get/get.dart';
 
 // Gex컨트롤러 객체 초기화
@@ -39,7 +42,7 @@ class MainWidget extends StatelessWidget {
           builder: (_){
             return DefaultTabController(
               initialIndex: 0,
-              length: 2,
+              length: 1,
               child: Scaffold(
 
                 /*  메인 스크롤  */
@@ -65,12 +68,12 @@ class MainWidget extends StatelessWidget {
                                   // 작성하기 스크린으로 이동
                                   Get.to(() => DiaryCalendarScreen());
                                 },
-                                icon: Icon(FontAwesome.calendar, size: 20.0, color: Colors.indigoAccent,),
+                                icon: Icon(Zocial.calendar, size: 25.0, color: GeneralCtr.MainColor),
                               ),
                             ),
                             /* 작성하기(+) 버튼 */
                             Padding(
-                              padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                              padding: EdgeInsets.fromLTRB(0, 2, 10, 0),
                               child: IconButton(
                                 onPressed: (){
                                   //모드선택 ( 신규(new) 또는 수정(modify) )
@@ -78,7 +81,7 @@ class MainWidget extends StatelessWidget {
                                   // 작성하기 스크린으로 이동
                                   Get.to(() => DiaryWriteScreen());
                                 },
-                                icon: Icon(Octicons.plus_small, size: 35.0, color: Colors.indigoAccent,),
+                                icon: Icon(Octicons.plus_small, size: 37.0, color: GeneralCtr.MainColor),
                               ),
                             ),
                           ],
@@ -105,8 +108,10 @@ class MainWidget extends StatelessWidget {
                                 indicatorColor: GeneralCtr.MainColor, // 아래 강조표시 색깔
                                 isScrollable: true, // 수평으로 스크롤가능여부
                                 tabs: [
-                                  Tab(child: Text('나의 일기', style: TextStyle(fontSize: GeneralCtr.fontsize_normal))),
-                                  Tab(child: Text('Live 일기', style: TextStyle(fontSize: GeneralCtr.fontsize_normal))),
+                                  // Tab(child: Text('Live 일기', style: TextStyle(fontSize: GeneralCtr.fontsize_normal))),
+                                  // Tab(child: Text('우리 일기', style: TextStyle(fontSize: GeneralCtr.fontsize_normal))),
+                                  Tab(child: Text('나만의 일기', style: TextStyle(fontSize: GeneralCtr.fontsize_normal))),
+
                                 ],
                               ),
                             ),
@@ -119,8 +124,6 @@ class MainWidget extends StatelessWidget {
                       children: <Widget>[
                         /* Tab메뉴 전환시 보여줄 메인 */
                         DiaryViewPage(),
-                        Text("준비중인 기능입니다."),
-
                       ],
                     ),
                   )),

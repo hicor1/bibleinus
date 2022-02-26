@@ -43,7 +43,7 @@ class AuthLoginPage extends StatelessWidget {
                 /* 로그인 안내 텍스트 */
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Text("로그인", style: TextStyle(fontSize: 30, fontFamily: "cafe")
+                  child: Text("로그인", style: GeneralCtr.Style_title
                   ),
                 ),
 

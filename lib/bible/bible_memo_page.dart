@@ -113,11 +113,11 @@ class MainWidget extends StatelessWidget {
                                               break;
                                           }
                                         },
-                                        icon: Icon(Icons.more_vert_sharp,size: GeneralCtr.fontsize_normal*1.2), // pop메뉴 아이콘
+                                        icon: Icon(Icons.more_vert_sharp,size: GeneralCtr.fontsize_normal), // pop메뉴 아이콘
                                         /* 하위 메뉴 스타일 */
                                         itemBuilder: (context) => [
-                                          PopupMenuItem(child: Row(children: [Icon(ModernPictograms.edit, size: GeneralCtr.fontsize_normal*0.9), Text(" 편집", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9))]), value: "편집"),
-                                          PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: GeneralCtr.fontsize_normal*0.9), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9))]), value: "삭제"),
+                                          PopupMenuItem(child: Row(children: [Icon(ModernPictograms.edit, size: GeneralCtr.fontsize_normal*0.7), Text(" 편집", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "편집"),
+                                          PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: GeneralCtr.fontsize_normal*0.7), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "삭제"),
                                         ]
                                     )
                                   ],

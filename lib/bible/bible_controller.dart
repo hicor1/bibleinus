@@ -336,6 +336,7 @@ class BibleController extends GetxController {
       // 3-2. 검색결과가 0건인경우, 검색 기록 없음 띄워주기
       PopToast("검색결과가 없습니다");
       FreeSearchResult_filtered = []; // 리스트 초기화
+      FreeSearchResultCount_cnum = []; //챕터(cnum) 갯수  초기화
     }
     // 4. 검색기록 저장 및 변수 업뎃
     SavePrefsData(); //현재 설정값 저장
