@@ -8,11 +8,14 @@ import 'package:bible_in_us/diary/diary_controller.dart';
 import 'package:bible_in_us/general/general_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:fluttericon/font_awesome_icons.dart';
+import 'package:fluttericon/iconic_icons.dart';
 import 'package:fluttericon/linecons_icons.dart';
 import 'package:fluttericon/octicons_icons.dart';
 import 'package:fluttericon/typicons_icons.dart';
 import 'package:fluttericon/entypo_icons.dart';
 import 'package:fluttericon/elusive_icons.dart';
+import 'package:fluttericon/web_symbols_icons.dart';
 import 'package:get/get.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 
@@ -104,7 +107,7 @@ class Mainwidget extends StatelessWidget {
                           // 버튼 동작
                           openPopup(context);
                         },
-                        icon: Icon(Linecons.cog, size: 25.0, color: GeneralCtr.MainColor),
+                        icon: Icon(FontAwesome.cog, size: 25.0, color: GeneralCtr.MainColor),
                       ),
                     ),
                   ],

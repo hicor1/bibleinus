@@ -196,64 +196,63 @@ void openPopup(context) {
         titleStyle: TextStyle(fontSize: 0, fontWeight: FontWeight.bold),
         animationDuration: Duration(milliseconds: 200),
         alertBorder: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(5.0),
           side: BorderSide(color: Colors.grey, width: 3),
         ),
       ),
       title: "",
       content: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             /* 0. 성경 선택 (BibleController에 집어넣기)*/
             GetBuilder<BibleController>(
                 init: BibleController(),
                 builder: (_){
-                  return Container(
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text("성경 선택", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, height: 3),)
-                          ],
+                  return Column(
+                    children: [
+                      Row(
+                        children: [
+                          Text("성경 선택", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, height: 3),)
+                        ],
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey.withOpacity(0.4), width: 2),
+                            borderRadius: BorderRadius.circular(15)
                         ),
-                        Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey.withOpacity(0.4), width: 2),
-                              borderRadius: BorderRadius.circular(15)
-                          ),
-                          padding: EdgeInsets.all(10),
-                          //height: 130,
-                          child: Container(
-                            height: 50,
-                            width: MediaQuery.of(context).size.width,
-                            margin: EdgeInsets.all(20),
-                            child: DropdownButtonHideUnderline(
-                              child: GFDropdown(
-                                padding: const EdgeInsets.all(15),
-                                borderRadius: BorderRadius.circular(5),
-                                border: const BorderSide(color: Colors.black12, width: 1),
-                                dropdownButtonColor: Colors.white,
-                                /* 메인페이지와 즐겨찾기 페이지의 성경선택 변수를 따로 가져가자 ㄱㄱ*/
-                                value:BibleCtr.Bible_choiced,
-                                onChanged: (newValue) {
-                                  /* 선택된 성경 업데이트 */
-                                  BibleCtr.Bible_choice(newValue);
-                                },
-                                items: BibleCtr.Bible_list.map(
-                                        (value) => DropdownMenuItem(
-                                      value: value,
-                                      child: Row(
-                                        children: [
-                                          Icon(FontAwesome5.bible, size: 15, color: Colors.grey,),
-                                          Text("  $value")
-                                        ],
-                                      ), //
-                                    )).toList(),
-                              ),
+                        padding: EdgeInsets.all(10),
+                        //height: 130,
+                        child: Container(
+                          height: 50,
+                          width: MediaQuery.of(context).size.width,
+                          margin: EdgeInsets.all(20),
+                          child: DropdownButtonHideUnderline(
+                            child: GFDropdown(
+                              padding: const EdgeInsets.all(15),
+                              borderRadius: BorderRadius.circular(5),
+                              border: const BorderSide(color: Colors.black12, width: 1),
+                              dropdownButtonColor: Colors.white,
+                              /* 메인페이지와 즐겨찾기 페이지의 성경선택 변수를 따로 가져가자 ㄱㄱ*/
+                              value:BibleCtr.Bible_choiced,
+                              onChanged: (newValue) {
+                                /* 선택된 성경 업데이트 */
+                                BibleCtr.Bible_choice(newValue);
+                              },
+                              items: BibleCtr.Bible_list.map(
+                                      (value) => DropdownMenuItem(
+                                    value: value,
+                                    child: Row(
+                                      children: [
+                                        Icon(FontAwesome5.bible, size: 15, color: Colors.grey,),
+                                        Text("  $value")
+                                      ],
+                                    ), //
+                                  )).toList(),
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ); //return은 필수
                 }
             ),

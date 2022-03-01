@@ -6,9 +6,11 @@ import 'package:bible_in_us/general/general_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttericon/elusive_icons.dart';
 import 'package:fluttericon/entypo_icons.dart';
+import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
 import 'package:fluttericon/linecons_icons.dart';
 import 'package:fluttericon/octicons_icons.dart';
+import 'package:fluttericon/typicons_icons.dart';
 import 'package:fluttericon/zocial_icons.dart';
 import 'package:get/get.dart';
 
@@ -68,7 +70,7 @@ class MainWidget extends StatelessWidget {
                                   // 작성하기 스크린으로 이동
                                   Get.to(() => DiaryCalendarScreen());
                                 },
-                                icon: Icon(Zocial.calendar, size: 25.0, color: GeneralCtr.MainColor),
+                                icon: Icon(FontAwesome5.calendar_check, size: 22.0, color: GeneralCtr.MainColor),
                               ),
                             ),
                             /* 작성하기(+) 버튼 */
@@ -81,7 +83,7 @@ class MainWidget extends StatelessWidget {
                                   // 작성하기 스크린으로 이동
                                   Get.to(() => DiaryWriteScreen());
                                 },
-                                icon: Icon(Octicons.plus_small, size: 37.0, color: GeneralCtr.MainColor),
+                                icon: Icon(Octicons.plus_small, size: 41.0, color: GeneralCtr.MainColor),
                               ),
                             ),
                           ],

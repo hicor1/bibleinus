@@ -73,8 +73,8 @@ Widget MainWidget(){
                 viewHeaderHeight: 50, // 날짜와 아래 달력 거리
                 headerDateFormat: 'M', // 년월 표기 서식
                 monthViewSettings: MonthViewSettings(
-                  //appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
-                  showAgenda: true,
+                  appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+                  showAgenda: false, // 클릭하면 아래 상세정보 표시하기
                 ),
                 scheduleViewSettings: ScheduleViewSettings(
                   hideEmptyScheduleWeek: true,

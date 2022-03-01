@@ -40,6 +40,7 @@ class DiaryController extends GetxController {
   /* <변수>정의 */
   var dirary_screen_address = ""; // 성경일기 작성 페이지 _ 선택된 주소
   var dirary_screen_color_index = 0; // 성경일기 작성 페이지 _ 선택된 색깔 인덱스
+  var dirary_screen_emoji_index = 0; // 성경일기 작성 페이지 _ 선택된 색깔 인덱스
   var dirary_screen_timetag_index = 0; // 성경일기 작성 페이지 _ 선택된 시간태그 인덱스
   var dirary_screen_title = "";    //성경일기 작성 페이지 _ 일기 제목 ( title )
   var dirary_screen_contents = ""; //성경일기 작성 페이지 _ 일기 내용 ( contents )
@@ -54,6 +55,7 @@ class DiaryController extends GetxController {
   // 선택된 사진 3장 경로 저장(빈경로), ( 3장으로 제한 ), File과 URL string 두 개의 타입이 복합적으로 사용돠어야하므로 "dynamic"으로 선언!!
   List<dynamic> choiced_image_file = [File(""),File(""),File("")];
 
+  var diary_view_ViewMode = "grid"; // 성경일기 뷰 페이지 _ "그리드뷰(grid view) 또는 리스트뷰(list view)선택"
   var diary_view_contents = []; // 성경일기 뷰 페이지 _ 데이터 로드
   var diary_view_timediffer = []; // 성경일기 뷰 페이지 _ 시간경과 산출데이터 저장
   var diary_view_selected_contents_data = []; // 성경일기 뷰 페이지 _ 보여줄 성경 구절 데이터 DB에서 받아와서 저장하기
@@ -91,6 +93,28 @@ class DiaryController extends GetxController {
     Color(0xFF008080).withOpacity(0.8),
   ];
 
+  /* 이미티콘(이모지,emoji) 정의 */
+  var EmojiCode = [
+    "\u{1f60e}",
+    "\u{1f601}",
+    "\u{1f602}",
+    "\u{1f603}",
+    "\u{1f604}",
+    "\u{1f605}",
+    "\u{1f606}",
+    "\u{1f609}",
+    "\u{1f60A}",
+    "\u{1f60B}",
+    "\u{1f60C}",
+    "\u{1f60D}",
+    "\u{1f60F}",
+    "\u{1f612}",
+    "\u{1f613}",
+    "\u{1f614}",
+    "\u{1f616}",
+    "\u{1f618}",
+  ];
+
   /* 시간 추천 태크 정의 */
   var TimeTag = [
     "촉촉한 새벽","새로운 아침","나른한 낮 시간","빛나는 오후","설레는 퇴근","따뜻한 저녁","별 헤는 밤"
@@ -105,6 +129,12 @@ class DiaryController extends GetxController {
   //<함수> 성경일기 작성스크린 _ 색깔 인덱스 선택
   void update_dirary_screen_color_index(int index){
     dirary_screen_color_index = index;
+    update();
+  }
+
+  //<함수> 성경일기 작성스크린 _ 이모지(이모티콘) 인덱스 선택
+  void update_dirary_screen_emoji_index(int index){
+    dirary_screen_emoji_index = index;
     update();
   }
 
@@ -338,7 +368,8 @@ class DiaryController extends GetxController {
       "created_at":DateTime.now(), // 최초 생성 시간
       "updated_at":DateTime.now(), // 수정 시간
       "dirary_screen_selected_verses_id": dirary_screen_selected_verses_id, // 더미 데이터 삭제
-      "dirary_screen_color_index": dirary_screen_color_index, // Stokes and Sons
+      "dirary_screen_color_index": dirary_screen_color_index,
+      "dirary_screen_emoji_index": dirary_screen_emoji_index,
       "dirary_screen_title": dirary_screen_title,
       "dirary_screen_contents":dirary_screen_contents,
       "choiced_image_file":ImgUrl,
@@ -461,6 +492,7 @@ class DiaryController extends GetxController {
   void diray_write_screen_init(){
     dirary_screen_selected_verses_id = [99999];
     dirary_screen_color_index        = 0; //
+    dirary_screen_emoji_index        = 0; //
     TitletextController.text         = "";
     ContentstextController.text      = "";
     choiced_image_file               = [File(""),File(""),File("")];
@@ -487,6 +519,7 @@ class DiaryController extends GetxController {
     /* 데이터 입혀주기 */
     dirary_screen_selected_verses_id = diary_view_contents[index]['dirary_screen_selected_verses_id'].cast<int>();
     dirary_screen_color_index        = diary_view_contents[index]['dirary_screen_color_index'];
+    dirary_screen_emoji_index        = diary_view_contents[index]['dirary_screen_emoji_index'];
     dirary_screen_title              = diary_view_contents[index]['dirary_screen_title'];
     dirary_screen_contents           = diary_view_contents[index]['dirary_screen_contents'];
     dirary_screen_timetag_index      = diary_view_contents[index]['dirary_screen_timetag_index'];
@@ -588,7 +621,8 @@ class DiaryController extends GetxController {
     collection.doc(selected_document_id).update({
       "updated_at":DateTime.now(), // 수정 시간
       "dirary_screen_selected_verses_id": dirary_screen_selected_verses_id, // 더미 데이터 삭제
-      "dirary_screen_color_index": dirary_screen_color_index, // Stokes and Sons
+      "dirary_screen_color_index": dirary_screen_color_index,
+      "dirary_screen_emoji_index": dirary_screen_emoji_index,
       "dirary_screen_title": dirary_screen_title,
       "dirary_screen_contents":dirary_screen_contents,
       "choiced_image_file":ImgUrl,
@@ -657,6 +691,12 @@ class DiaryController extends GetxController {
     /* 클리닝된 텍스트를 대신 삽입해주기 */
     HashTagController.text = temp;
 
+  }
+
+  /* <함수> 성경일기 뷰 페이지 _ "그리드뷰(grid view) 또는 리스트뷰(list view)선택" */
+  void ViewMode_change(String mode){
+    diary_view_ViewMode = mode;
+    update();
   }
 
 

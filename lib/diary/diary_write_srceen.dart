@@ -22,6 +22,7 @@ import 'package:kpostal/kpostal.dart';
 import 'package:hashtager/hashtager.dart';
 import 'package:hashtager/widgets/hashtag_text_field.dart';
 
+
 // Gex컨트롤러 객체 초기화
 final GeneralCtr = Get.put(GeneralController());
 final DiaryCtr   = Get.put(DiaryController());
@@ -132,47 +133,10 @@ class MainWidget extends StatelessWidget {
                       children: [
 
                         /* 칼라코드 보여주기 */
-                        Container(
-                          padding: EdgeInsets.fromLTRB(15, 20, 0, 5),
-                          height : 60,
-                          child: ListView.builder(
-                            //physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
-                              //reverse: true,
-                              shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
-                              scrollDirection: Axis.horizontal, // 수직(vertical)  수평(horizontal) 배열 선택
-                              //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
-                              itemCount: DiaryCtr.ColorCode.length,
-                              itemBuilder: (context, index) {
-                                var result = DiaryCtr.ColorCode[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
-                                return Row(
-                                  children: [
-                                    InkWell(
-                                      /* 칼라 선택 이벤트 */
-                                      onTap : (){
-                                        DiaryCtr.update_dirary_screen_color_index(index);
-                                      },
-                                      /* 칼라코드 보여주기 */
-                                      child: Container(
-                                        width: 30,
-                                        height: 30,
-                                        decoration: new BoxDecoration(
-                                            color: result, 
-                                            shape: BoxShape.circle, 
-                                            /* 선태된 색 강조 */
-                                            border: index == DiaryCtr.dirary_screen_color_index
-                                                ? Border.all(color: Colors.black26, width: 3) : null,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 10)
-                                  ],
-                                );
-                              }
-                          ),
-                        ),
+                        Color_code_choice(),
 
-                        /* 사회적 거리두기 */
-                        SizedBox(height: 10),
+                        /* 감정 이모티콘 선택하기(이모지(#emoji #이모티콘 선택하는 위젯) */
+                        Emoji_choice(),
 
                         /* 제목, 내용 등 텍스트 필드 */
                         Padding(
@@ -640,6 +604,98 @@ class Photo_Control_widget extends StatelessWidget {
   }
 }
 
+//<서브위젯> 칼라코드 선택하는 위젯
+Widget Color_code_choice(){
+  return
+    Container(
+      padding: EdgeInsets.fromLTRB(15, 20, 0, 5),
+      height : 60,
+      child: ListView.builder(
+        //physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
+        //reverse: true,
+          shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
+          scrollDirection: Axis.horizontal, // 수직(vertical)  수평(horizontal) 배열 선택
+          //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
+          itemCount: DiaryCtr.ColorCode.length,
+          itemBuilder: (context, index) {
+            var result = DiaryCtr.ColorCode[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
+            return Row(
+              children: [
+                InkWell(
+                  /* 칼라 선택 이벤트 */
+                  onTap : (){
+                    DiaryCtr.update_dirary_screen_color_index(index);
+                  },
+                  /* 칼라코드 보여주기 */
+                  child: Stack(
+                    alignment: Alignment.topLeft,
+                    children: [
+                      Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                          color: result,
+                          shape: BoxShape.circle,
+                        ),
+                      ),
+                      /* 선태된 색 강조 */
+                      Icon(
+                          index == DiaryCtr.dirary_screen_color_index ? WebSymbols.ok : null,
+                          color: Colors.deepOrangeAccent, size: 15
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(width: 10)
+              ],
+            );
+          }
+      ),
+    );
+}
+
+//<서브위젯> 이모지(#emoji #이모티콘) 선택하는 위젯
+Widget Emoji_choice(){
+  return
+    Container(
+      padding: EdgeInsets.fromLTRB(15, 10, 0, 5),
+      height : 60,
+      child: ListView.builder(
+        //physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
+        //reverse: true,
+          shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
+          scrollDirection: Axis.horizontal, // 수직(vertical)  수평(horizontal) 배열 선택
+          //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
+          itemCount: DiaryCtr.EmojiCode.length,
+          itemBuilder: (context, index) {
+            var result = DiaryCtr.EmojiCode[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
+            return Row(
+              children: [
+                InkWell(
+                  onTap: (){
+                    /* 이모지 코드 선택 이벤트 */
+                    DiaryCtr.update_dirary_screen_emoji_index(index);
+                    },
+                    /* 이모지 코드 보여주기 */
+                    child: Stack(
+                      alignment: Alignment.topLeft,
+                      children: [
+                        Text("${result}", style: TextStyle(fontSize: 24)),
+                        /* 선태된 이모지 강조 */
+                        Icon(
+                            index == DiaryCtr.dirary_screen_emoji_index ? WebSymbols.ok : null,
+                            color: Colors.deepOrangeAccent, size: 15
+                        ),
+                      ],
+                    )//
+                ),
+                SizedBox(width: 10)
+              ],
+            );
+          }
+      ),
+    );
+}
 
 
 //<서브위젯> 사진 모듈 ( 이미지가 URL 인 경우 )

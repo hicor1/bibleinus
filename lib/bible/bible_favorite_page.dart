@@ -100,7 +100,7 @@ class MainWidget extends StatelessWidget {
                                                 children: [
                                                   /* 메모 추가를 위한 체크박스 _ 플로팅 액숀버튼 띄우기 */
                                                   GFCheckbox(
-                                                    size: GeneralCtr.fontsize_normal*1.1, // 박스 사이즈
+                                                    size: GeneralCtr.fontsize_normal*1.0, // 박스 사이즈
                                                     activeIcon: Icon(Typicons.ok, size: GeneralCtr.fontsize_normal, color: BibleCtr.ColorCode[result['highlight_color_index']]), // 활성 아이콘
                                                     inactiveIcon: Icon(Typicons.ok_outline, size: GeneralCtr.fontsize_normal, color: Colors.white), // 비활성 아이콘
                                                     type: GFCheckboxType.circle, // 아이콘 모양(사각형, 원형 등등)
@@ -116,14 +116,14 @@ class MainWidget extends StatelessWidget {
                                                     value: checker,
                                                   ),
                                                   /* 위젯간 거리두기 캠페인 */
-                                                  SizedBox(width: 5),
+                                                  SizedBox(width: 3),
                                                   /* 구절 정보( 클릭된 구절은 강조해주기 ) */
                                                   Container(
                                                     color: checker ? BibleCtr.ColorCode[result['highlight_color_index']] : Colors.transparent,
                                                     child: Text("${result['국문']} (${result['영문']}): ${result['cnum']}장 ${result['vnum']}절 ",
                                                         style: TextStyle(fontSize: GeneralCtr.fontsize_normal,
                                                             color: checker ? Colors.white :BibleCtr.ColorCode[result['highlight_color_index']],
-                                                            fontWeight: FontWeight.bold)
+                                                            fontWeight: FontWeight.w500)
                                                     ),
                                                   ),
                                                 ],
@@ -140,7 +140,7 @@ class MainWidget extends StatelessWidget {
                                             )
                                           ],
                                         ),
-                                        SizedBox(height: GeneralCtr.Textheight+10), //제목열과 본문 살짝 띄워주기
+                                        SizedBox(height: 5), //제목열과 본문 살짝 띄워주기
 
                                         /* 본문 */
                                         WordBreakText("${result[BibleCtr.Bible_choiced]}",

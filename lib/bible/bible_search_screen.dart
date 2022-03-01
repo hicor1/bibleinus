@@ -113,7 +113,7 @@ class MainWidget extends StatelessWidget {
                         BibleCtr.textController.clear();
                         BibleCtr.FreeSearch_init(); // 자유검색결과
                       },
-                      child: Text("전체", style: TextStyle(color: GeneralCtr.MainColor, fontSize: GeneralCtr.fontsize_normal)),
+                      child: Text("전체", style: TextStyle(color: GeneralCtr.MainColor, fontSize: GeneralCtr.fontsize_normal, fontWeight: FontWeight.bold)),
                       style: TextButton.styleFrom(
                         minimumSize: Size.zero,
                         padding: EdgeInsets.zero,
@@ -129,7 +129,7 @@ class MainWidget extends StatelessWidget {
                         /* 셋팅화면 띄워주기 */
                         openPopup(context);
                       },
-                      icon: Icon(Linecons.cog, size: 25.0, color: GeneralCtr.MainColor),
+                      icon: Icon(FontAwesome.cog, size: 25.0, color: GeneralCtr.MainColor),
                     ),
                   )
                 ],
