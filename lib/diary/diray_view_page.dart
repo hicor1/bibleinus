@@ -128,11 +128,11 @@ Widget ViewMode_select() {
 Widget DiaryGridView() {
   return
     Padding(
-      padding: const EdgeInsets.fromLTRB(5, 0, 5, 0),
+      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
       child: GridView.builder(
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2, //1 개의 행에 보여줄 item 개수
-            childAspectRatio: 1 / 1, //item 의 가로 1, 세로 2 의 비율
+            childAspectRatio: 0.8 / 1, //item 의 가로 1, 세로 2 의 비율
             mainAxisSpacing: 10, //수평 Padding
             crossAxisSpacing: 10, //수직 Padding
           ),
@@ -144,52 +144,77 @@ Widget DiaryGridView() {
           itemBuilder: (context, index) {
             var result = DiaryCtr.diary_view_contents[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
             /* 아래부터 컨테이너 반복 */
-            return Material(
-              color: Colors.white,
-              elevation: 5,
-              shadowColor: DiaryCtr.ColorCode[result['dirary_screen_color_index']].withOpacity(1), // 카드 색깔
-              //shadowColor: GeneralCtr.MainColor, // 카드 색깔
-              borderRadius: BorderRadius.circular(3),
-              child: Column(
-                children: [
-                  /* 이미지 + 경과시간 */
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                          "${DiaryCtr.diary_view_timediffer[index]}·${DiaryCtr.EmojiCode[result['dirary_screen_emoji_index']]}",
-                          style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7, color: Colors.grey)
-                      ),
-                    ],
-                  ),
-                  /* 제목 */
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Flexible(
-                        child: Text(
-                            "  ${result['dirary_screen_title']}",
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                                color: DiaryCtr.ColorCode[result['dirary_screen_color_index']],
-                                fontSize: GeneralCtr.fontsize_normal,
-                                fontWeight: FontWeight.bold)
+            return InkWell(
+              onTap: (){
+                /* 일기 컨테이너 클릭 시, 상세페이지로 이동 */
+              },
+              child: Material(
+                color: DiaryCtr.ColorCode[result['dirary_screen_color_index']].withOpacity(0.3),
+                elevation: 0.0,
+                borderRadius: BorderRadius.circular(3),
+                child: Column(
+                  children: [
+                    /* 이미지 + 경과시간 + 옵션버튼 */
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        Text(
+                            "${DiaryCtr.diary_view_timediffer[index]}·${DiaryCtr.EmojiCode[result['dirary_screen_emoji_index']]}",
+                            style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7, color: Colors.grey)
                         ),
-                      ),
-                    ],
-                  ),
-                  /* 38도선 */
-                  Divider(),
-                  Flexible(
-                    child: Text(
-                        "${result['dirary_screen_contents']}",
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 3,
-                        softWrap: false,
-                        style: TextStyle(fontSize: GeneralCtr.fontsize_normal)
+                        /* 옵션 버튼 */
+                        PopupMenuButton(
+                            iconSize: GeneralCtr.fontsize_normal*0.8,
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                            tooltip: "추가기능",
+                            color: Colors.white, // pop메뉴 배경색
+                            onSelected: (value) {
+                              /* 옵션 버튼에 따른 동작 지정 */
+                              switch(value){
+                                case"수정": DiaryCtr.diary_modify_call(index); break;
+                                case"삭제": Delete_check_Dialog(context, result.id, index);break;
+                              }
+                            },
+                            /* 옵션 버튼 _ 하위 메뉴 스타일 */
+                            itemBuilder: (context) => [
+                              /*삭제*/
+                              PopupMenuItem(child: Row(children: [Icon(FontAwesome5.eraser, size: GeneralCtr.fontsize_normal*0.7), Text(" 수정", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "수정"),
+                              /*수정*/
+                              PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: GeneralCtr.fontsize_normal*0.7), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "삭제"),
+                            ]
+                        ),
+                      ],
                     ),
-                  ),
-                ],
+                    /* 제목 */
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Flexible(
+                          child: Text(
+                              "  ${result['dirary_screen_title']}",
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                  //color: DiaryCtr.ColorCode[result['dirary_screen_color_index']],
+                                  color: Colors.black,
+                                  fontSize: GeneralCtr.fontsize_normal*1.1,
+                                  fontWeight: FontWeight.bold)
+                          ),
+                        ),
+                      ],
+                    ),
+                    /* 38도선 */
+                    Divider(),
+                    Flexible(
+                      child: Text(
+                          "${result['dirary_screen_contents']}",
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 3,
+                          softWrap: false,
+                          style: TextStyle(fontSize: GeneralCtr.fontsize_normal)
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           }
@@ -304,7 +329,7 @@ Widget DiaryListView(){
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text("${result['dirary_screen_title']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: GeneralCtr.fontsize_normal)),
+                                Text("${result['dirary_screen_title']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: GeneralCtr.fontsize_normal*1.1)),
                                 /* 사회적 거리두기 */
                                 SizedBox(height: 10)
                               ],

@@ -242,3 +242,48 @@ Future<void> GalleryOrCam(context, index) async {
         );
       });
 }
+
+
+// 일기 작성(write)페이지에서 "이젠페이지" 돌아갈건지 한번더 묻는 안내창
+Future<void> Getback_check_Dialog(context) async {
+  await showDialog(
+      context: context,
+      //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5.0)),
+          //Dialog Main Title
+          title: Column(
+            children: <Widget>[
+              new Text("안내 메세지"),
+            ],
+          ),
+          content: Text("작성중인 내용이 있습니다.\n이전 페이지로 돌아가겠습니까?"),
+          actions: <Widget>[
+            OutlinedButton(
+              child: new Text("확인"),
+              onPressed: () {
+                // 1. 삭제 모듈 작동
+                print("이전 페이지로 돌아가버리기");
+                // 2. 일기 작성(write)페이지 초기화
+                DiaryCtr.diray_write_screen_init();
+                // 3. 이전 페이지 돌아가기
+                Get.back();
+                // 2. 팝업창 닫기
+                Navigator.pop(context);
+              },
+            ),
+            ElevatedButton(
+              child: new Text("취소"),
+              onPressed: () {
+                // "취소"인 경우, 바로 액션없이 팝업창 내리기
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      });
+}

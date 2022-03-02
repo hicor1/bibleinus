@@ -14,6 +14,7 @@ import 'package:fluttericon/elusive_icons.dart';
 import 'package:fluttericon/entypo_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttericon/font_awesome_icons.dart';
+import 'package:fluttericon/mfg_labs_icons.dart';
 import 'package:fluttericon/typicons_icons.dart';
 import 'package:fluttericon/web_symbols_icons.dart';
 import 'package:get/get.dart';
@@ -39,6 +40,7 @@ class DiaryWriteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return MainWidget();
   }
 }
@@ -54,12 +56,36 @@ class MainWidget extends StatelessWidget {
     return GetBuilder<DiaryController>(
         init: DiaryController(),
         builder: (_){
-
           return Scaffold(
-            backgroundColor: GeneralCtr.MainColor.withOpacity(0.03),
+            backgroundColor: GeneralCtr.MainColor.withOpacity(0.1),
             appBar: AppBar(
               iconTheme: IconThemeData(
                 color: GeneralCtr.MainColor
+              ),
+              /* 뒤로가기 버튼 */
+              leading: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: GestureDetector(
+                  onTap: () {
+                    /* "신규"모드 일 떄만 물어본다. "수정"모드에서는 묻지 않기 */
+                    if(DiaryCtr.NewOrModify == "new"){
+                      /* 작성중인 내용이 있는데 그래도 돌아갈건지 묻는 팝업창 */
+                      if(DiaryCtr.IsWriting()==true){
+                        /* 1. 작성중인 내용이 있다면, */
+                        Getback_check_Dialog(context);
+                      }else{
+                        /* 2. 작성중인 내용이 없다면, */
+                        Get.back();
+                      }
+                    }else{
+                      /* "수정"때문에 맵핑해놨던 정보 초기화 */
+                      DiaryCtr.diray_write_screen_init();
+                      /* 이전페이지로 돌아가기 */
+                      Get.back();
+                    }
+                  },
+                  child: Icon(MfgLabs.left, size: 20)
+                ),
               ),
               title: Text(DiaryCtr.NewOrModify == "new" ? "기록 남기기" : "기록 수정하기",
                   style: GeneralCtr.Style_title
@@ -97,7 +123,7 @@ class MainWidget extends StatelessWidget {
                         DiaryDialog(context, "필수입력 정보 확인");
                       }
                     },
-                    child: Text(DiaryCtr.NewOrModify=="new" ? "저장" : "수정", style: TextStyle(fontSize: GeneralCtr.fontsize_normal))
+                    child: Text(DiaryCtr.NewOrModify=="new" ? "등록" : "수정", style: TextStyle(fontSize: GeneralCtr.fontsize_normal))
                 )
               ],
             ),
@@ -198,7 +224,7 @@ class MainWidget extends StatelessWidget {
                                     keyboardType: TextInputType.multiline, // 줄바꿈이 있는 키도드 보여주기
                                     minLines: 10,
                                     maxLines: null,
-                                    autofocus: true,
+                                    autofocus: false,
                                     autocorrect: true,
                                     //maxLines: 10,
                                     /* 저장 버튼("_formKey.save()" 눌렀을 때 이벤트 정의 */

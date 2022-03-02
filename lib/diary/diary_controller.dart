@@ -499,9 +499,32 @@ class DiaryController extends GetxController {
     dirary_screen_timetag_index      = 0;
     dirary_screen_address            = "";
     HashTagController.text           = "";
-
     update();
   }
+  /* <함수> 작성중인 내용이 있는지 확인하는 모듈 */
+  bool IsWriting(){
+    /* 작성중인 내용이 있는지 확인 */
+    var check_score = 0; // 1점이상인 경우, 바뀐게 있는거임
+    if(dirary_screen_selected_verses_id.length != 1){check_score+=1;}
+    if(dirary_screen_color_index        != 0){check_score+=1;}
+    if(dirary_screen_emoji_index        != 0){check_score+=1;}
+    if(TitletextController.text         != ""){check_score+=1;}
+    if(ContentstextController.text      != ""){check_score+=1;}
+    if(dirary_screen_timetag_index      != 0){check_score+=1;}
+    if(dirary_screen_address            != ""){check_score+=1;}
+    if(HashTagController.text           != ""){check_score+=1;}
+    // 이상하게 계속 1점이 나온다,..??!!!!
+    if(choiced_image_file               != [File(""),File(""),File("")]){check_score+=1;}
+
+    /* 작성중인 내용이 있는경우, 팝업 띄우기 */
+    if(check_score>1){
+      return true;
+    } else {
+      return false;
+    }
+
+  }
+
 
   /* <함수> 모드선택 ( 신규(new) 또는 수정(modify) ) */
   void select_NewOrModify(String mode){
