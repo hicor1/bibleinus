@@ -77,6 +77,9 @@ dependencies:
 
   hashtager: ^1.0.3 # 해시태그
 
+  flutter_staggered_animations: ^1.0.0 # Listview 애니메이션
+
+
 
 
 

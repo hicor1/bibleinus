@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:bible_in_us/bible/bible_controller.dart';
 import 'package:bible_in_us/diary/diary_component.dart';
 import 'package:bible_in_us/diary/diary_controller.dart';
+import 'package:bible_in_us/diary/diary_view_detail_screen.dart';
 import 'package:bible_in_us/diary/diary_write_srceen.dart';
 import 'package:bible_in_us/general/general_controller.dart';
 import 'package:bible_in_us/my/my_controller.dart';
@@ -18,6 +19,7 @@ import 'package:getwidget/getwidget.dart';
 import 'package:expandable/expandable.dart';
 import 'package:hashtager/hashtager.dart';
 import 'package:word_break_text/word_break_text.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 
 final MyCtr = Get.put(MyController());
@@ -48,7 +50,7 @@ class MainWidget extends StatelessWidget {
         builder: (_){
           return SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.fromLTRB(2, 2, 2, 0),
+              padding: EdgeInsets.fromLTRB(10, 2, 10, 0),
               child: Column(
                 children: [
                   SizedBox(height: 5),
@@ -128,14 +130,120 @@ Widget ViewMode_select() {
 Widget DiaryGridView() {
   return
     Padding(
-      padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-      child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2, //1 개의 행에 보여줄 item 개수
-            childAspectRatio: 0.8 / 1, //item 의 가로 1, 세로 2 의 비율
-            mainAxisSpacing: 10, //수평 Padding
-            crossAxisSpacing: 10, //수직 Padding
-          ),
+      padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
+      /* 애니메이션 빌더로 감싸준다 (https://pub.dev/packages/flutter_staggered_animations)*/
+      child: AnimationLimiter(
+        child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, //1 개의 행에 보여줄 item 개수
+              childAspectRatio: 0.8 / 1, //item 의 가로 1, 세로 2 의 비율
+              mainAxisSpacing: 8, //수평 Padding
+              crossAxisSpacing: 8, //수직 Padding
+            ),
+            physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
+            shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
+            scrollDirection: Axis.vertical, // 수직(vertical)  수평(horizontal) 배열 선택
+            //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
+            itemCount: DiaryCtr.diary_view_contents.length,
+            itemBuilder: (context, index) {
+              var result = DiaryCtr.diary_view_contents[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
+              /* 아래부터 컨테이너 반복 */
+              return AnimationConfiguration.staggeredGrid(
+                position: index,
+                duration: const Duration(milliseconds: 375),
+                columnCount: index,
+                child: SlideAnimation(
+                  child: FadeInAnimation(
+                    child: InkWell(
+                      onTap: (){
+                        /* 일기 컨테이너 클릭 시, 상세페이지로 이동 */
+                        Get.to(() => DiaryViewDetailScreen(index: index));
+                      },
+                      child: Material(
+                        color: DiaryCtr.ColorCode[result['dirary_screen_color_index']].withOpacity(0.3),
+                        elevation: 0.0,
+                        borderRadius: BorderRadius.circular(3),
+                        child: Column(
+                          children: [
+                            /* 이미지 + 경과시간 + 옵션버튼 */
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                    "${DiaryCtr.diary_view_timediffer[index]}·${DiaryCtr.EmojiCode[result['dirary_screen_emoji_index']]}",
+                                    style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7, color: Colors.grey)
+                                ),
+                                /* 옵션 버튼 */
+                                PopupMenuButton(
+                                    iconSize: GeneralCtr.fontsize_normal*0.8,
+                                    padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                                    tooltip: "추가기능",
+                                    color: Colors.white, // pop메뉴 배경색
+                                    onSelected: (value) {
+                                      /* 옵션 버튼에 따른 동작 지정 */
+                                      switch(value){
+                                        case"수정": DiaryCtr.diary_modify_call(index); break;
+                                        case"삭제": Delete_check_Dialog(context, result.id, index);break;
+                                      }
+                                    },
+                                    /* 옵션 버튼 _ 하위 메뉴 스타일 */
+                                    itemBuilder: (context) => [
+                                      /*삭제*/
+                                      PopupMenuItem(child: Row(children: [Icon(FontAwesome5.eraser, size: GeneralCtr.fontsize_normal*0.7), Text(" 수정", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "수정"),
+                                      /*수정*/
+                                      PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: GeneralCtr.fontsize_normal*0.7), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "삭제"),
+                                    ]
+                                ),
+                              ],
+                            ),
+                            /* 제목 */
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                      "  ${result['dirary_screen_title']}",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                          //color: DiaryCtr.ColorCode[result['dirary_screen_color_index']],
+                                          color: Colors.black,
+                                          fontSize: GeneralCtr.fontsize_normal*1.1,
+                                          fontWeight: FontWeight.bold)
+                                  ),
+                                ),
+                              ],
+                            ),
+                            /* 38도선 */
+                            Divider(),
+                            Flexible(
+                              child: Text(
+                                  "${result['dirary_screen_contents']}",
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 5,
+                                  softWrap: false,
+                                  style: TextStyle(fontSize: GeneralCtr.fontsize_normal)
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            }
+        ),
+      ),
+    );
+}
+
+
+//<서브위젯> 일기 리스트 view로 보여주기
+Widget DiaryListView(){
+  return
+  /* 애니메이션 빌더로 감싸준다 (https://pub.dev/packages/flutter_staggered_animations)*/
+    AnimationLimiter(
+      child: ListView.builder(
           physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
           shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
           scrollDirection: Axis.vertical, // 수직(vertical)  수평(horizontal) 배열 선택
@@ -144,76 +252,105 @@ Widget DiaryGridView() {
           itemBuilder: (context, index) {
             var result = DiaryCtr.diary_view_contents[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
             /* 아래부터 컨테이너 반복 */
-            return InkWell(
-              onTap: (){
-                /* 일기 컨테이너 클릭 시, 상세페이지로 이동 */
-              },
-              child: Material(
-                color: DiaryCtr.ColorCode[result['dirary_screen_color_index']].withOpacity(0.3),
-                elevation: 0.0,
-                borderRadius: BorderRadius.circular(3),
-                child: Column(
-                  children: [
-                    /* 이미지 + 경과시간 + 옵션버튼 */
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+            return AnimationConfiguration.staggeredList(
+              position: index,
+              duration: const Duration(milliseconds: 200),
+              child: SlideAnimation(
+                verticalOffset: 50.0,
+                child: FadeInAnimation(
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                            "${DiaryCtr.diary_view_timediffer[index]}·${DiaryCtr.EmojiCode[result['dirary_screen_emoji_index']]}",
-                            style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7, color: Colors.grey)
+                        /* 컨테이너 상단 식별 정보 */
+                        ContentsHeader(context, result, index),
+
+                        /* 해시태그 삽입 */
+                        HashTagView(result),
+
+                        /* 사회적 거리두기 */
+                        SizedBox(height: 10),
+
+                        /* 제목 + 내용 */
+                        ExpandableNotifier( //컨테이너 마다 컨트롤러를 할당하기 위해 빌더를 쓴다 ㄱㄱㄱ https://pub.dev/packages/expandable/example
+                            child:
+                            Builder(
+                              builder: (context){
+                                // 빌더를 통해 각각의 위젯마다 독립된 컨트롤러 할당
+                                var controller = ExpandableController.of(context, required: true)!;
+                                return ExpandablePanel(
+                                    theme: const ExpandableThemeData(headerAlignment: ExpandablePanelHeaderAlignment.center,),
+                                    // 1. 제목
+                                    header:
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text("${result['dirary_screen_title']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: GeneralCtr.fontsize_normal*1.1)),
+                                        /* 사회적 거리두기 */
+                                        SizedBox(height: 10)
+                                      ],
+                                    ),
+
+                                    // 2. 내용 접었을 때
+                                    collapsed: InkWell(
+                                        onTap: (){
+                                          /* 접었다 폈다 토글동작 */
+                                          controller.toggle();
+                                        },
+                                        child:
+                                        Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text("${result['dirary_screen_contents']}",
+                                                maxLines:3, overflow: TextOverflow.ellipsis, softWrap: true,// 공간을 넘는 글자는 쩜쩜쩜(...)으로 표기한다.
+                                                style: TextStyle(fontSize:GeneralCtr.fontsize_normal)
+                                            ),
+                                            Text("..더 보기", style: TextStyle(color: Colors.grey,fontSize:GeneralCtr.fontsize_normal*0.9))
+
+                                          ],
+                                        )
+
+                                    ),
+                                    // 3. 내용 펼쳤을 때
+                                    expanded:  Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        /* 성경구절 보여주는 위젯 */
+                                        ViewVerses(index: index),
+                                        /* 일기 내용(본문, contents)보여주기 */
+                                        InkWell(
+                                            onTap: (){
+                                              /* 접었다 폈다 토글동작 */
+                                              controller.toggle();
+                                            },
+                                            child: Text("${result['dirary_screen_contents']}",  style: TextStyle(fontSize:GeneralCtr.fontsize_normal))
+                                        ),
+                                        /* 사회적 거리두기 */
+                                        SizedBox(height: 20),
+
+                                      ],
+                                    )
+
+                                );
+                              },
+                            )
                         ),
-                        /* 옵션 버튼 */
-                        PopupMenuButton(
-                            iconSize: GeneralCtr.fontsize_normal*0.8,
-                            padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            tooltip: "추가기능",
-                            color: Colors.white, // pop메뉴 배경색
-                            onSelected: (value) {
-                              /* 옵션 버튼에 따른 동작 지정 */
-                              switch(value){
-                                case"수정": DiaryCtr.diary_modify_call(index); break;
-                                case"삭제": Delete_check_Dialog(context, result.id, index);break;
-                              }
-                            },
-                            /* 옵션 버튼 _ 하위 메뉴 스타일 */
-                            itemBuilder: (context) => [
-                              /*삭제*/
-                              PopupMenuItem(child: Row(children: [Icon(FontAwesome5.eraser, size: GeneralCtr.fontsize_normal*0.7), Text(" 수정", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "수정"),
-                              /*수정*/
-                              PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: GeneralCtr.fontsize_normal*0.7), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "삭제"),
-                            ]
-                        ),
+
+                        SizedBox(height: 10),
+                        /* 사진보여주기 */
+                        ViewPhoto(result: result),
+                        /* 사회적 거리두기 */
+                        SizedBox(height: 10),
+                        /* 타임태그 */
+                        ViewTimeTag(result: result),
+                        /* 사회적 거리두기 */
+                        SizedBox(height: 10),
+                        /* 38도선 */
+                        Divider(thickness: 1)
                       ],
                     ),
-                    /* 제목 */
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Flexible(
-                          child: Text(
-                              "  ${result['dirary_screen_title']}",
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  //color: DiaryCtr.ColorCode[result['dirary_screen_color_index']],
-                                  color: Colors.black,
-                                  fontSize: GeneralCtr.fontsize_normal*1.1,
-                                  fontWeight: FontWeight.bold)
-                          ),
-                        ),
-                      ],
-                    ),
-                    /* 38도선 */
-                    Divider(),
-                    Flexible(
-                      child: Text(
-                          "${result['dirary_screen_contents']}",
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 3,
-                          softWrap: false,
-                          style: TextStyle(fontSize: GeneralCtr.fontsize_normal)
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
               ),
             );
@@ -223,176 +360,75 @@ Widget DiaryGridView() {
 }
 
 
-//<서브위젯> 일기 리스트 view로 보여주기
-Widget DiaryListView(){
+/* 리스트뷰에서 컨텐츠 최상단(#헤더) */
+/* 컨테이너 상단 식별 정보 */
+Widget ContentsHeader(context, result, index){
   return
-    ListView.builder(
-        physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
-        shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
-        scrollDirection: Axis.vertical, // 수직(vertical)  수평(horizontal) 배열 선택
-        //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
-        itemCount: DiaryCtr.diary_view_contents.length,
-        itemBuilder: (context, index) {
-          var result = DiaryCtr.diary_view_contents[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
-          /* 아래부터 컨테이너 반복 */
-          return Container(
-            padding: EdgeInsets.fromLTRB(5, 5, 5, 0),
-            child: Column(
+    Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            /* 프로필 사진 */
+            Container(
+                margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                width: 40.0,
+                height: 40.0,
+                decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    image: DecorationImage(
+                        fit: BoxFit.fill,
+                        image: NetworkImage("${MyCtr.photoURL}")
+                    )
+                )
+            ),
+            /* 사회적 거리두기 */
+            SizedBox(width: 15),
+            /* 이름·(이모지), 장소 */
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                /* 컨테이너 상단 식별 정보 */
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        /* 프로필 사진 */
-                        Container(
-                            margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                            width: 40.0,
-                            height: 40.0,
-                            decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                    fit: BoxFit.fill,
-                                    image: NetworkImage("${MyCtr.photoURL}")
-                                )
-                            )
-                        ),
-                        /* 사회적 거리두기 */
-                        SizedBox(width: 15),
-                        /* 이름·(이모지), 장소 */
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text("${MyCtr.displayName}·${DiaryCtr.EmojiCode[result['dirary_screen_emoji_index']]}", style: TextStyle(fontSize: GeneralCtr.fontsize_normal)),
-                            Text("${result['dirary_screen_address']}", style: TextStyle(color: Colors.grey, fontSize: GeneralCtr.fontsize_normal*0.7)),
-                          ],
-                        )
-                      ],
-                    ),
-                    /* 옵션 버튼 */
-                    Row(
-                      children: [
-                        /* 경과시간 표기 */
-                        Text("${DiaryCtr.diary_view_timediffer[index]}", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7, color: Colors.grey)),
-                        PopupMenuButton(
-                            icon: Icon(Icons.more_vert_sharp, size: GeneralCtr.fontsize_normal, color: Colors.black54), // pop메뉴 아이콘
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5)),
-                            padding: EdgeInsets.zero,
-                            tooltip: "추가기능",
-                            color: Colors.white, // pop메뉴 배경색
-                            elevation: 10,// pop메뉴 그림자
-                            onSelected: (value) {
-                              /* 옵션 버튼에 따른 동작 지정 */
-                              switch(value){
-                                case"수정": DiaryCtr.diary_modify_call(index); break;
-                                case"삭제": Delete_check_Dialog(context, result.id, index);break;
-                              }
-
-                            },
-
-                            /* 옵션 버튼 _ 하위 메뉴 스타일 */
-                            itemBuilder: (context) => [
-                              /*삭제*/
-                              PopupMenuItem(child: Row(children: [Icon(FontAwesome5.eraser, size: GeneralCtr.fontsize_normal*0.7), Text(" 수정", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "수정"),
-                              /*수정*/
-                              PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: GeneralCtr.fontsize_normal*0.7), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "삭제"),
-                            ]
-                        ),
-                      ],
-                    )
-                  ],
-                ),
-
-                /* 해시태그 삽입 */
-                HashTagView(result),
-
-
-                /* 사회적 거리두기 */
-                SizedBox(height: 10),
-
-                /* 제목 + 내용 */
-                ExpandableNotifier( //컨테이너 마다 컨트롤러를 할당하기 위해 빌더를 쓴다 ㄱㄱㄱ https://pub.dev/packages/expandable/example
-                    child:
-                    Builder(
-                      builder: (context){
-                        // 빌더를 통해 각각의 위젯마다 독립된 컨트롤러 할당
-                        var controller = ExpandableController.of(context, required: true)!;
-                        return ExpandablePanel(
-                            theme: const ExpandableThemeData(headerAlignment: ExpandablePanelHeaderAlignment.center,),
-                            // 1. 제목
-                            header:
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("${result['dirary_screen_title']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: GeneralCtr.fontsize_normal*1.1)),
-                                /* 사회적 거리두기 */
-                                SizedBox(height: 10)
-                              ],
-                            ),
-
-                            // 2. 내용 접었을 때
-                            collapsed: InkWell(
-                                onTap: (){
-                                  /* 접었다 폈다 토글동작 */
-                                  controller.toggle();
-                                },
-                                child:
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("${result['dirary_screen_contents']}",
-                                        maxLines:3, overflow: TextOverflow.ellipsis, softWrap: true,// 공간을 넘는 글자는 쩜쩜쩜(...)으로 표기한다.
-                                        style: TextStyle(fontSize:GeneralCtr.fontsize_normal)
-                                    ),
-                                    Text("..더 보기", style: TextStyle(color: Colors.grey,fontSize:GeneralCtr.fontsize_normal*0.9))
-
-                                  ],
-                                )
-
-                            ),
-                            // 3. 내용 펼쳤을 때
-                            expanded:  Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                /* 일기 내용(본문, contents)보여주기 */
-                                InkWell(
-                                    onTap: (){
-                                      /* 접었다 폈다 토글동작 */
-                                      controller.toggle();
-                                    },
-                                    child: Text("${result['dirary_screen_contents']}",  style: TextStyle(fontSize:GeneralCtr.fontsize_normal))),
-                                /* 사회적 거리두기 */
-                                SizedBox(height: 20),
-                                /* 성경구절 보여주는 위젯 */
-                                ViewVerses(index: index),
-                              ],
-                            )
-
-                        );
-                      },
-                    )
-                ),
-
-                SizedBox(height: 10),
-                /* 사진보여주기 */
-                ViewPhoto(result: result),
-                /* 사회적 거리두기 */
-                SizedBox(height: 10),
-                /* 타임태그 */
-                ViewTimeTag(result: result),
-                /* 사회적 거리두기 */
-                SizedBox(height: 10),
-                /* 38도선 */
-                Divider(thickness: 1)
+                Text("${MyCtr.displayName}·${DiaryCtr.EmojiCode[result['dirary_screen_emoji_index']]}", style: TextStyle(fontSize: GeneralCtr.fontsize_normal)),
+                Text("${result['dirary_screen_address']}", style: TextStyle(color: Colors.grey, fontSize: GeneralCtr.fontsize_normal*0.7)),
               ],
+            )
+          ],
+        ),
+        /* 옵션 버튼 */
+        Row(
+          children: [
+            /* 경과시간 표기 */
+            Text("${DiaryCtr.diary_view_timediffer[index]}", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7, color: Colors.grey)),
+            PopupMenuButton(
+                icon: Icon(Icons.more_vert_sharp, size: GeneralCtr.fontsize_normal, color: Colors.black54), // pop메뉴 아이콘
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5)),
+                padding: EdgeInsets.zero,
+                tooltip: "추가기능",
+                color: Colors.white, // pop메뉴 배경색
+                elevation: 10,// pop메뉴 그림자
+                onSelected: (value) {
+                  /* 옵션 버튼에 따른 동작 지정 */
+                  switch(value){
+                    case"수정": DiaryCtr.diary_modify_call(index); break;
+                    case"삭제": Delete_check_Dialog(context, result.id, index);break;
+                  }
+
+                },
+
+                /* 옵션 버튼 _ 하위 메뉴 스타일 */
+                itemBuilder: (context) => [
+                  /*삭제*/
+                  PopupMenuItem(child: Row(children: [Icon(FontAwesome5.eraser, size: GeneralCtr.fontsize_normal*0.7), Text(" 수정", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "수정"),
+                  /*수정*/
+                  PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: GeneralCtr.fontsize_normal*0.7), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "삭제"),
+                ]
             ),
-          );
-        }
+          ],
+        )
+      ],
     );
 }
 
@@ -413,7 +449,7 @@ class ViewVerses extends StatelessWidget {
       passiveIndicator: Colors.white,
       pagerSize: 7.0,// 이미지 하단 페이지 인디케이터 크기
       enableInfiniteScroll: false, // 무한스크롤
-      viewportFraction: 0.95, // 전.후 이미지 보여주기 ( 1.0이면 안보여줌 )
+      viewportFraction: 1.0, // 전.후 이미지 보여주기 ( 1.0이면 안보여줌 )
       aspectRatio: 0, // 사진 비율
       enlargeMainPage: true, // 자동 확대
       pagination: true, // 이미지 하단 페이지 인디케이터 표시여부
@@ -436,7 +472,7 @@ class ViewVerses extends StatelessWidget {
               color: DiaryCtr.ColorCode[diary_data['dirary_screen_color_index']].withOpacity(0.4), // 카드 색깔
               borderRadius: BorderRadius.circular(5),
             ),
-            margin: EdgeInsets.fromLTRB(5, 0, 5, 0), // 좌우 카드끼리 간격 띄우기
+            margin: EdgeInsets.fromLTRB(2, 0, 2, 0), // 좌우 카드끼리 간격 띄우기
             child: SingleChildScrollView(
                 child: Column(
                   children: [

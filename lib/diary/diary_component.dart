@@ -261,7 +261,7 @@ Future<void> Getback_check_Dialog(context) async {
               new Text("안내 메세지"),
             ],
           ),
-          content: Text("작성중인 내용이 있습니다.\n이전 페이지로 돌아가겠습니까?"),
+          content: Text("작성중인 내용이 있습니다.\n이전 페이지로 돌아가시겠습니까?"),
           actions: <Widget>[
             OutlinedButton(
               child: new Text("확인"),

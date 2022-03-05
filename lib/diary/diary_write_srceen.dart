@@ -183,7 +183,7 @@ class MainWidget extends StatelessWidget {
                                     DiaryCtr.dirary_screen_title = val!; // 이메일 값 저장
                                   },
                                   /* 최대 입력가능한 글자 수 제한 */
-                                  inputFormatters: [LengthLimitingTextInputFormatter(30)],
+                                  inputFormatters: [LengthLimitingTextInputFormatter(40)],
                                   /* 사람이 입력하는 텍스트 스타일 지정 */
                                   style: TextStyle(color: Colors.black, fontSize: GeneralCtr.fontsize_normal),
                                   /* 스타일 정의 */

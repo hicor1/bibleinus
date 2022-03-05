@@ -56,7 +56,7 @@ Widget MainWidget(){
         builder: (_){
           return Scaffold(
             appBar: AppBar(
-              title: Text("일기 달력", style: GeneralCtr.Style_title),
+              title: Text("달력", style: GeneralCtr.Style_title),
               iconTheme: IconThemeData(
                   color: GeneralCtr.MainColor
               ),
