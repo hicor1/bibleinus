@@ -666,4 +666,5 @@ class BibleController extends GetxController {
     update();
   }
 
+
 }

@@ -68,6 +68,11 @@ class DiaryController extends GetxController {
 
   List<Meeting> meetings = <Meeting>[]; // 성경일기 달력 스크린 _ 일정담아둘 공간
 
+  var statistics_month_string = ""; // 성경 달력 스크린 _ 기본 통계 _ 월 현황
+  var statistics_month_percent = 0.0; // 성경 달력 스크린 _ 기본 통계 _ 월 퍼센트
+  var statistics_year_string = ""; // 성경 달력 스크린 _ 기본 통계 _ 년 현황
+  var statistics_year_percent = 0.0; // 성경 달력 스크린 _ 기본 통계 _ 년 퍼센트
+
 
   /* 텍스트컨트롤러 정의 */
   var TitletextController      = TextEditingController(); // 성경일기 작성 페이지 _ 일기 제목 ( title ) 컨트롤러
@@ -388,6 +393,9 @@ class DiaryController extends GetxController {
 
     /* 더미데이터(99999) 추가 */
     dirary_screen_selected_verses_id.add(99999);
+
+    // 일기 작성페이지 초기화
+    diray_write_screen_init();
 
     // 일기 리스트 다시 불러오기
     LoadAction();
@@ -755,6 +763,58 @@ class DiaryController extends GetxController {
   }
 
 
+  //<함수> 기초 통계 ( 이번달 몇건, 올해 몇건 등등 )
+  void cal_basic_statistics(){
+    var now = DateTime.now();
+
+    /* 이번달 통계 구하기 */
+    //0. 이번 달 총 몇일인지 구하기
+    int MonthDayCount = int.parse(
+        DateTime(now.year, now.month+1, 0).difference(DateTime(now.year, now.month, 1)).inDays.toString()
+    );
+    //1. 임시 저장공간 만들기
+    var temp_month_list= [];
+    //2. 이번달 구하기
+    var this_month = now.month;
+    //3. 이번달에 일기의 서로다른 날짜 갯수 구하기
+    for(int i = 0; i < diary_view_contents.length; i++){
+      var date = diary_view_contents[i]["dirary_screen_selectedDate"].toDate();
+      //3-1. 이번달 일기가 맞다면,
+      if(date.month == this_month){
+        temp_month_list.add(date.day);
+      }
+    }
+    //4. 일(day)중복제거
+    temp_month_list = temp_month_list.toSet().toList();
+    //5. 결과 정리
+    statistics_month_percent = (temp_month_list.length/MonthDayCount);
+    statistics_month_string = "${temp_month_list.length}일/${MonthDayCount}일(${(statistics_month_percent*100).toStringAsFixed(1)}%)";
+
+    /* 이번 년도 통계 구하기 */
+    //0. 이번 년도 총 몇일인지 구하기
+    int YearCount = int.parse(
+        DateTime(now.year+1, 1, 1).difference(DateTime(now.year, 1, 1)).inDays.toString()
+    );
+    //1. 임시 저장공간 만들기
+    var temp_year_list= [];
+    //2. 이번 년도 구하기
+    var this_year = now.year;
+    //3. 이번 년도에 일기의 서로다른 날짜 갯수 구하기
+    for(int i = 0; i < diary_view_contents.length; i++){
+      var date = diary_view_contents[i]["dirary_screen_selectedDate"].toDate();
+      //3-1. 이번달 일기가 맞다면,
+      if(date.year == this_year){
+        temp_year_list.add("${date.month}/${date.day}");
+      }
+    }
+    //4. 일(day)중복제거
+    temp_year_list = temp_year_list.toSet().toList();
+    //5. 결과 정리
+    statistics_year_percent = (temp_year_list.length/YearCount);
+    statistics_year_string = "${temp_year_list.length}일/${YearCount}일(${(statistics_year_percent*100).toStringAsFixed(1)}%)";
+
+
+  }
 
 
 } // 여기가 전체 클래스 끝 부분!!

@@ -16,8 +16,12 @@ final DiaryCtr = Get.put(DiaryController());
 class DiaryCalendarScreen extends StatelessWidget {
   const DiaryCalendarScreen({Key? key}) : super(key: key);
 
+
   @override
   Widget build(BuildContext context) {
+    /* 기초통계데이터 가져오기 */
+    DiaryCtr.cal_basic_statistics();
+    /* 달력데이터 가져오기 */
     DiaryCtr.calendar_data_mapping();
     return MainWidget(context);
   }
@@ -82,10 +86,10 @@ Widget MainWidget(context){
                       lineHeight: 20.0,
                       animateFromLastPercent: true,
                       animationDuration: 1000,
-                      percent: 19/30,
-                      center: Text("19일/30일"),
+                      percent: DiaryCtr.statistics_month_percent,
+                      center: Text(DiaryCtr.statistics_month_string),
                       barRadius: const Radius.circular(16),
-                      progressColor: Colors.greenAccent,
+                      progressColor: GeneralCtr.MainColor.withOpacity(0.8),
                       backgroundColor: Colors.grey.withOpacity(0.1),
                     ),
 
@@ -103,10 +107,10 @@ Widget MainWidget(context){
                       lineHeight: 20.0,
                       animateFromLastPercent: true,
                       animationDuration: 1000,
-                      percent: 19/365,
-                      center: Text("19일/365일"),
+                      percent: DiaryCtr.statistics_year_percent,
+                      center: Text(DiaryCtr.statistics_year_string),
                       barRadius: const Radius.circular(16),
-                      progressColor: Colors.greenAccent,
+                      progressColor: GeneralCtr.BlueColor.withOpacity(0.5),
                       backgroundColor: Colors.grey.withOpacity(0.1),
                     ),
 

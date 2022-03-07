@@ -473,7 +473,7 @@ class ViewVerses extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           /* 구절 정보 */
-                          SelectableText("  [${result[0]['국문']}(${result[0]['영문']}) ${result[0]['cnum']}장 ${result[0]['vnum']}절]", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9),),
+                          Flexible(child: SelectableText("  [${result[0]['국문']}(${result[0]['영문']}) ${result[0]['cnum']}장 ${result[0]['vnum']}절]", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9),)),
                           /* 옵션 버튼 */
                           PopupMenuButton(
                               icon: Icon(Icons.more_vert_sharp, size: GeneralCtr.Textsize*1.2, color: Colors.black54), // pop메뉴 아이콘
