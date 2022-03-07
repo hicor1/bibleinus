@@ -115,18 +115,18 @@ class MainWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       // 이전페이지
-                      IconButton(icon: Icon(Elusive.left_open, color: GeneralCtr.BlueColor),
+                      IconButton(icon: Icon(Elusive.left_open, color: Colors.black),
                           onPressed: (){BibleCtr.Page_change('previous');}),
                       // 모달팝업
                       TextButton(
                         child: Column(
                           children: [
                             Icon(Entypo.up_open_mini,
-                                color: GeneralCtr.BlueColor, size: 30),
+                                color: Colors.black, size: 30),
                             // 모달창을 위로 올리라는 아이콘
                             Text(
                               "${BibleCtr.Book_choiced} ${BibleCtr.Chapter_choiced} 장",
-                              style: TextStyle(color: GeneralCtr.BlueColor, fontSize: GeneralCtr.fontsize_normal),
+                              style: TextStyle(color: Colors.black, fontSize: GeneralCtr.fontsize_normal),
                             ),
                           ],
                         ),
@@ -145,7 +145,7 @@ class MainWidget extends StatelessWidget {
                         },
                       ),
                       // 다음페이지
-                      IconButton(icon: Icon(Elusive.right_open, color: GeneralCtr.BlueColor),
+                      IconButton(icon: Icon(Elusive.right_open, color: Colors.black),
                           onPressed: (){BibleCtr.Page_change('next');}),
                     ],
                   ),

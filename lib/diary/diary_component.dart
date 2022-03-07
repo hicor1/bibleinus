@@ -4,6 +4,8 @@ import 'package:bible_in_us/diary/diary_controller.dart';
 import 'package:bible_in_us/general/general_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+
 
 final DiaryCtr   = Get.put(DiaryController());
 final GeneralCtr = Get.put(GeneralController());
@@ -266,12 +268,66 @@ Future<void> Getback_check_Dialog(context) async {
             OutlinedButton(
               child: new Text("확인"),
               onPressed: () {
-                // 1. 삭제 모듈 작동
-                print("이전 페이지로 돌아가버리기");
-                // 2. 일기 작성(write)페이지 초기화
+                // 1. 일기 작성(write)페이지 초기화
                 DiaryCtr.diray_write_screen_init();
-                // 3. 이전 페이지 돌아가기
+                // 2. 이전 페이지 돌아가기
                 Get.back();
+                // 3. 팝업창 닫기
+                Navigator.pop(context);
+              },
+            ),
+            ElevatedButton(
+              child: new Text("취소"),
+              onPressed: () {
+                // "취소"인 경우, 바로 액션없이 팝업창 내리기
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      });
+}
+
+
+// 일기 작성(write)페이지에서 "날짜선택"  안내창
+Future<void> Date_picker_Dialog(context) async {
+  await showDialog(
+      context: context,
+      //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(5.0)),
+          //Dialog Main Title
+          title: Column(
+            children: <Widget>[
+              new Text("안내 메세지"),
+            ],
+          ),
+          content: 
+          /* 날짜 선택 위젯 띄우기 */
+          Container(
+            width: 300,
+            height: 250,
+            child: SfDateRangePicker(
+              controller: DiaryCtr.datePickerController, // 컨트롤러 할당
+              showActionButtons: false, //"확인", "취소"버튼 보이기
+              cancelText: "취소",
+              confirmText: "확인",
+              //onSelectionChanged: _onSelectionChanged,
+              showNavigationArrow: true,
+              showTodayButton: false, // 오늘 날짜 선택 할수 있는 버튼
+              view: DateRangePickerView.month,
+              selectionMode: DateRangePickerSelectionMode.single,
+            ),
+          ),
+          actions: <Widget>[
+            OutlinedButton(
+              child: new Text("확인"),
+              onPressed: () {
+                DiaryCtr.SelectedDate_change();
                 // 2. 팝업창 닫기
                 Navigator.pop(context);
               },

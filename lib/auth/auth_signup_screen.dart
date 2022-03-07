@@ -42,12 +42,12 @@ class AuthSignUpScreen extends StatelessWidget {
                 /* 로그인 안내 텍스트 */
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: Text("회원가입", style: TextStyle(fontSize: 30, fontFamily: "cafe")
+                  child: Text("회원가입", style: GeneralCtr.Style_title
                   ),
                 ),
 
                 /* 메인 이미지 */
-                Image.asset("assets/img/logo/app_icon.png",height: 150),
+                Image.asset("assets/img/logo/성경일기.png",height: 150),
 
                 /* 로그인 관련 칼럼 묶음 */
                 Column(

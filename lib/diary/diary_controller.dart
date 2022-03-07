@@ -20,6 +20,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 
 final BibleCtr = Get.put(BibleController());
@@ -44,6 +45,7 @@ class DiaryController extends GetxController {
   var dirary_screen_timetag_index = 0; // 성경일기 작성 페이지 _ 선택된 시간태그 인덱스
   var dirary_screen_title = "";    //성경일기 작성 페이지 _ 일기 제목 ( title )
   var dirary_screen_contents = ""; //성경일기 작성 페이지 _ 일기 내용 ( contents )
+  var dirary_screen_selectedDate = DateTime.now(); //성경일기 작성 페이지 _ 선택된 날짜_ 오늘 날짜로 초기화
 
   var dirary_screen_selected_verses_id = [99999]; // 성경일기 작성 페이지 _ 선택된 구절 인덱스 리스트
   var max_verse_length = 10; // 추가 가능한 최대 구절 수 제한
@@ -72,6 +74,9 @@ class DiaryController extends GetxController {
   var ContentstextController   = TextEditingController(); // 성경일기 작성 페이지 _ 일기 내용 ( contents ) 컨트롤러
   var HashTagController        = TextEditingController(); // 성경일기 작성 페이지 _ 일기 내용 ( contents ) 컨트롤러
 
+
+  /* 데이트 피커 컨트롤러 정의 */
+  var datePickerController = DateRangePickerController(); // 성경일기 작성 페이지 _ 날짜선택 컨트롤러
 
   /* 칼라코드 정의 */
   var ColorCode = [Color(0xFFBFBFBF), // 젤 처음은 흑백 칼라
@@ -368,6 +373,7 @@ class DiaryController extends GetxController {
       "created_at":DateTime.now(), // 최초 생성 시간
       "updated_at":DateTime.now(), // 수정 시간
       "dirary_screen_selected_verses_id": dirary_screen_selected_verses_id, // 더미 데이터 삭제
+      "dirary_screen_selectedDate": dirary_screen_selectedDate,
       "dirary_screen_color_index": dirary_screen_color_index,
       "dirary_screen_emoji_index": dirary_screen_emoji_index,
       "dirary_screen_title": dirary_screen_title,
@@ -427,16 +433,16 @@ class DiaryController extends GetxController {
     /* 데이터 로드(조건) */
     collection
         .where("uid", isEqualTo: MyCtr.uid) // 본인이 작성한 글만 보이게
-        .orderBy("created_at", descending:true) // 날짜로 내림차순 정렬
+        .orderBy("updated_at", descending:true) // 날짜로 내림차순 정렬
         /* ↓정상적으로 로드가 되었다면 아래 수행↓ */
         .get().then((QuerySnapshot ds) async {
           /*  불러온 데이터 할당 */
           diary_view_contents = ds.docs;
 
-          /* 시간경과 산출 */
+          /* 시간경과 산출(마지막으로 수정된 시간기준) */
           diary_view_timediffer = []; // 시간 경과 저장 리스트 초기화
           for(int i = 0; i < diary_view_contents.length; i++){
-            diary_view_timediffer.add(cal_time_differ(diary_view_contents[i]["created_at"]));
+            diary_view_timediffer.add(cal_time_differ(diary_view_contents[i]["updated_at"]));
           }
           /* 성경구절 ID에 맞는 구절 DATA를 DB에서 조회해서 가져오기 */
           // 0 . 임시 저장공간생성
@@ -491,6 +497,7 @@ class DiaryController extends GetxController {
   /* <함수> 일기쓰지 페이지 초기화 */
   void diray_write_screen_init(){
     dirary_screen_selected_verses_id = [99999];
+    dirary_screen_selectedDate       = DateTime.now();
     dirary_screen_color_index        = 0; //
     dirary_screen_emoji_index        = 0; //
     TitletextController.text         = "";
@@ -506,6 +513,7 @@ class DiaryController extends GetxController {
     /* 작성중인 내용이 있는지 확인 */
     var check_score = 0; // 1점이상인 경우, 바뀐게 있는거임
     if(dirary_screen_selected_verses_id.length != 1){check_score+=1;}
+    //if(dirary_screen_selectedDate       != DateTime.now()){check_score+=1;} // 날짜는 초단위로 바껴서 비교하기가 좀 빡세네
     if(dirary_screen_color_index        != 0){check_score+=1;}
     if(dirary_screen_emoji_index        != 0){check_score+=1;}
     if(TitletextController.text         != ""){check_score+=1;}
@@ -541,6 +549,7 @@ class DiaryController extends GetxController {
 
     /* 데이터 입혀주기 */
     dirary_screen_selected_verses_id = diary_view_contents[index]['dirary_screen_selected_verses_id'].cast<int>();
+    dirary_screen_selectedDate       = diary_view_contents[index]['dirary_screen_selectedDate'].toDate();
     dirary_screen_color_index        = diary_view_contents[index]['dirary_screen_color_index'];
     dirary_screen_emoji_index        = diary_view_contents[index]['dirary_screen_emoji_index'];
     dirary_screen_title              = diary_view_contents[index]['dirary_screen_title'];
@@ -644,6 +653,7 @@ class DiaryController extends GetxController {
     collection.doc(selected_document_id).update({
       "updated_at":DateTime.now(), // 수정 시간
       "dirary_screen_selected_verses_id": dirary_screen_selected_verses_id, // 더미 데이터 삭제
+      "dirary_screen_selectedDate": dirary_screen_selectedDate,
       "dirary_screen_color_index": dirary_screen_color_index,
       "dirary_screen_emoji_index": dirary_screen_emoji_index,
       "dirary_screen_title": dirary_screen_title,
@@ -682,7 +692,7 @@ class DiaryController extends GetxController {
     // "Meeting"클래스에 데이터를 담고, "meetings"리스트에 쌓기
     for(int i = 0; i < diary_view_contents.length; i++){
       var contents = diary_view_contents[i]["dirary_screen_title"] ;
-      var date = diary_view_contents[i]["created_at"].toDate();
+      var date = diary_view_contents[i]["dirary_screen_selectedDate"].toDate();
       var date_convert = DateTime(date.year, date.month, date.day);
       var color = ColorCode[diary_view_contents[i]["dirary_screen_color_index"]];
       //"meetings"리스트에 쌓기
@@ -722,6 +732,27 @@ class DiaryController extends GetxController {
     update();
   }
 
+  /* <함수> 성경작성(write)_페이지 _ 선택된 날짜로 변경 함수 */
+  void SelectedDate_change(){
+    /* 선택된 날짜로 업데이트 */
+    dirary_screen_selectedDate = datePickerController.selectedDate!;
+    update();
+  }
+
+  /* <함수> 날짜를 요일로 변경하는 함수 */
+  String ConvertWeekday(int weekday){
+    var result = "";
+    switch(weekday){
+      case 1 : result = "월"; break;
+      case 2 : result = "화"; break;
+      case 3 : result = "수"; break;
+      case 4 : result = "목"; break;
+      case 5 : result = "금"; break;
+      case 6 : result = "토"; break;
+      case 7 : result = "일"; break;
+    }
+    return result;
+  }
 
 
 

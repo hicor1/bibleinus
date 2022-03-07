@@ -48,7 +48,7 @@ class AuthLoginPage extends StatelessWidget {
                 ),
 
                 /* 메인 이미지 */
-                Image.asset("assets/img/logo/app_icon.png",height: 150),
+                Image.asset("assets/img/logo/성경일기.png",height: 150),
 
                 /* 로그인 관련 칼럼 묶음 */
                 Column(

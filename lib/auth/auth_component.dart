@@ -125,7 +125,7 @@ Future<UserCredential> signInWithGoogle() async {
 /* 페이스북 로그인 모듈 */
 Future<UserCredential> signInWithFacebook() async {
   // 로딩화면 띄우기
-  EasyLoading.show(status: 'loading...');
+  //EasyLoading.show(status: 'loading...');
 
   // Trigger the sign-in flow
   final LoginResult loginResult = await FacebookAuth.instance.login();
@@ -134,7 +134,7 @@ Future<UserCredential> signInWithFacebook() async {
   final OAuthCredential facebookAuthCredential = FacebookAuthProvider.credential(loginResult.accessToken!.token);
 
   // 로딩화면 종료
-  EasyLoading.dismiss();
+  //EasyLoading.dismiss();
 
   // Once signed in, return the UserCredential
   return FirebaseAuth.instance.signInWithCredential(facebookAuthCredential);

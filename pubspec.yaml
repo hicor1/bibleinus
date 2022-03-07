@@ -39,7 +39,6 @@ dependencies:
   shared_preferences: ^2.0.12 # 설정저장
   word_break_text: ^0.1.0 # 자연스러운 줄바꿈 패키지
   flutter_launcher_icons: ^0.9.2 # 앱 아이콘 적용하기
-  flutter_app_name: ^0.1.1 # 앱 이름 변경하기
   fluttericon: ^2.0.0 # 앱 아이콘 모음 추가
   modal_bottom_sheet: ^2.0.0 # 밑에서 올라오는 창
   fluttertoast: ^8.0.8 # 토스트 메세지 띄우기
@@ -78,14 +77,24 @@ dependencies:
   hashtager: ^1.0.3 # 해시태그
 
   flutter_staggered_animations: ^1.0.0 # Listview 애니메이션
-
-
-
+  syncfusion_flutter_datepicker: ^19.4.54 # 달력에서 날짜 선택 ( #데이트 피커 # date picker )
+  percent_indicator: ^4.0.0 # 프로그레스바
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_app_name: ^0.1.1 # 앱 이름 변경하기
+
+# 앱 아이콘 설정
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/img/logo/성경일기.png"
+
+# 앱 이름 설정
+flutter_app_name:
+  name: "성경일기"
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

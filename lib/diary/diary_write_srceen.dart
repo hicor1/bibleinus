@@ -24,6 +24,7 @@ import 'package:hashtager/hashtager.dart';
 import 'package:hashtager/widgets/hashtag_text_field.dart';
 
 
+
 // Gex컨트롤러 객체 초기화
 final GeneralCtr = Get.put(GeneralController());
 final DiaryCtr   = Get.put(DiaryController());
@@ -158,6 +159,31 @@ class MainWidget extends StatelessWidget {
                     child: Column(
                       children: [
 
+                        /* 사회적 거리두리 */
+                        SizedBox(height: 10),
+
+                        /* 날짜 선택 */
+                        InkWell(
+                          onTap: (){
+                            /* 날짜 선택 팝업 띄우기 */
+                            Date_picker_Dialog(context);
+                          },
+                          /* 선택된 날짜 보여주기 */
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                  "${DiaryCtr.dirary_screen_selectedDate.year}년 "
+                                  "${DiaryCtr.dirary_screen_selectedDate.month}월 "
+                                  "${DiaryCtr.dirary_screen_selectedDate.day}일 "
+                                  "(${DiaryCtr.ConvertWeekday(DiaryCtr.dirary_screen_selectedDate.weekday)})",
+                                style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9, fontWeight: FontWeight.bold),
+                              ),
+                              Icon(FontAwesome.down_dir, size: GeneralCtr.fontsize_normal, color: Colors.grey)
+                            ],
+                          ),
+                        ),
+
                         /* 칼라코드 보여주기 */
                         Color_code_choice(),
 
@@ -183,7 +209,8 @@ class MainWidget extends StatelessWidget {
                                     DiaryCtr.dirary_screen_title = val!; // 이메일 값 저장
                                   },
                                   /* 최대 입력가능한 글자 수 제한 */
-                                  inputFormatters: [LengthLimitingTextInputFormatter(40)],
+                                  maxLength: 40,
+                                  //inputFormatters: [LengthLimitingTextInputFormatter(40)],
                                   /* 사람이 입력하는 텍스트 스타일 지정 */
                                   style: TextStyle(color: Colors.black, fontSize: GeneralCtr.fontsize_normal),
                                   /* 스타일 정의 */
@@ -219,7 +246,8 @@ class MainWidget extends StatelessWidget {
                                   ),
                                   child: TextFormField(
                                     /* 최대 입력가능한 글자 수 제한 */
-                                    inputFormatters: [LengthLimitingTextInputFormatter(1500)],
+                                    maxLength: 1500,
+                                    //inputFormatters: [LengthLimitingTextInputFormatter(1500)],
                                     controller: DiaryCtr.ContentstextController,
                                     keyboardType: TextInputType.multiline, // 줄바꿈이 있는 키도드 보여주기
                                     minLines: 10,

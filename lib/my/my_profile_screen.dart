@@ -209,6 +209,7 @@ class DisplayNameModalWigdet extends StatelessWidget {
                       /* Form을 위한 key(키) 할당 */
                       key: Update_displayname_formkey,
                       child: TextFormField(
+                        maxLength: 10,
                         /* 저장 버튼("_formKey.save()" 눌렀을 때 이벤트 정의 */
                         onSaved: (val){
                           displayname = val!; // 닉네임 값 저장
