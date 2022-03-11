@@ -20,6 +20,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:syncfusion_flutter_datepicker/datepicker.dart';
 
 
@@ -87,6 +88,10 @@ class DiaryController extends GetxController {
 
   /* 데이트 피커 컨트롤러 정의 */
   var datePickerController = DateRangePickerController(); // 성경일기 작성 페이지 _ 날짜선택 컨트롤러
+
+  /* 달력 컨트롤러 정의의(https://www.syncfusion.com/kb/12115/how-to-programmatically-select-the-dates-in-the-flutter-calendar) */
+  final CalendarController calendarController= CalendarController();
+
 
   /* 칼라코드 정의 */
   var ColorCode = [Color(0xFFBFBFBF), // 젤 처음은 흑백 칼라
@@ -727,12 +732,13 @@ class DiaryController extends GetxController {
     meetings = [];
     // "Meeting"클래스에 데이터를 담고, "meetings"리스트에 쌓기
     for(int i = 0; i < diary_view_contents.length; i++){
+      var index = i;
       var contents = diary_view_contents[i]["dirary_screen_title"] ;
       var date = diary_view_contents[i]["dirary_screen_selectedDate"].toDate();
       var date_convert = DateTime(date.year, date.month, date.day);
       var color = ColorCode[diary_view_contents[i]["dirary_screen_color_index"]];
       //"meetings"리스트에 쌓기
-      meetings.add(Meeting(contents, date_convert, date_convert, color, true));
+      meetings.add(Meeting(i, contents, date_convert, date_convert, color, true));
     }
   }
 
@@ -772,6 +778,13 @@ class DiaryController extends GetxController {
   void SelectedDate_change(){
     /* 선택된 날짜로 업데이트 */
     dirary_screen_selectedDate = datePickerController.selectedDate!;
+    update();
+  }
+
+  /* <함수> 성경작성(write)_페이지 _ 선택된 날짜로 변경 함수 */
+  void SelectedDate_change_from_calendar(){
+    /* 선택된 날짜로 업데이트 */
+    dirary_screen_selectedDate = calendarController.selectedDate!;
     update();
   }
 
@@ -859,8 +872,6 @@ class DiaryController extends GetxController {
     update();
   }
 
-
-
 } // 여기가 전체 클래스 끝 부분!!
 
 
@@ -870,10 +881,16 @@ class DiaryController extends GetxController {
 
 /* <서브 클래스> 달력정보만들기에 필요한 클래스 정의 */
 class Meeting {
-  Meeting(this.eventName, this.from, this.to, this.background, this.isAllDay);
+  Meeting(this.index, this.eventName, this.from, this.to, this.background, this.isAllDay);
+
+  /* <변수> 클래스 데이터 멤버 정의 */
+  int index;
   String eventName;
   DateTime from;
   DateTime to;
   Color background;
   bool isAllDay;
+
+  /* <함수> 클래스 인스턴스에서 변수를 가져오기 위한 함수 정의 */
+  int get get_index => index;
 }

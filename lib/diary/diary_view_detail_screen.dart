@@ -43,7 +43,7 @@ Widget MainWidget(context, int index){
               ),
               backgroundColor: Colors.white,
               elevation: 0.0,
-              centerTitle: true,
+              centerTitle: false,
               title: Text("나만의 일기", style: GeneralCtr.Style_title),
             ),
             body: SingleChildScrollView(

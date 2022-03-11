@@ -109,14 +109,14 @@ class MainWidget extends StatelessWidget {
                   actions: [
                     // 전체 검색 버튼
                     Padding(
-                      padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                      padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
                       child: TextButton(
                         onPressed: () {
                           /* 셋팅화면 띄워주기 */
                           BibleCtr.textController.clear();
                           BibleCtr.FreeSearch_init(); // 자유검색결과
                         },
-                        child: Text("전체", style: TextStyle(color: GeneralCtr.MainColor, fontSize: GeneralCtr.fontsize_normal, fontWeight: FontWeight.bold)),
+                        child: Text("전체보기", style: TextStyle(color: GeneralCtr.MainColor, fontSize: GeneralCtr.fontsize_normal, fontWeight: FontWeight.bold)),
                         style: TextButton.styleFrom(
                           minimumSize: Size.zero,
                           padding: EdgeInsets.zero,
@@ -126,7 +126,7 @@ class MainWidget extends StatelessWidget {
                     ),
                     // 셋팅 버튼
                     Padding(
-                      padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                      padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
                       child: IconButton(
                         onPressed: () {
                           /* 셋팅화면 띄워주기 */
@@ -195,7 +195,7 @@ class FreeSearchResult extends StatelessWidget {
                 /* 전체 검색 결과 등 결과 요약 표기 */
                 Container(
                   child: Text(
-                    '검색어 : "${BibleCtr.FreeSearchQuery}" 에 대한 검색결과 ${NumberFormat('##,###').format(BibleCtr.FreeSearchResult.length)} 건',
+                    '검색어 : "${BibleCtr.FreeSearchQuery}" 에 대한 검색결과 ${NumberFormat('##,###').format(BibleCtr.FreeSearchResultSumCount)} 건',
                     style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9),),
                   margin: EdgeInsets.fromLTRB(0,5,0,5),
                   padding: EdgeInsets.fromLTRB(50,2,50,2),

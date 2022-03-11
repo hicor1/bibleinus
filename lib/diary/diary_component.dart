@@ -303,7 +303,7 @@ Future<void> Date_picker_Dialog(context) async {
           //Dialog Main Title
           title: Column(
             children: <Widget>[
-              new Text("안내 메세지"),
+              new Text("날짜 선택"),
             ],
           ),
           content: 
@@ -327,6 +327,7 @@ Future<void> Date_picker_Dialog(context) async {
             OutlinedButton(
               child: new Text("확인"),
               onPressed: () {
+                /* 1. 선택된 날짜로 설정 */
                 DiaryCtr.SelectedDate_change();
                 // 2. 팝업창 닫기
                 Navigator.pop(context);

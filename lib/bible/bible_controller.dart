@@ -23,6 +23,7 @@ class BibleController extends GetxController {
     FloatingAB_init(); // 플로팅 액션버튼 초기화
     Get_color_count(); // 색깔별 즐겨찾기 몇개인지 쿼리
     GetFavorite_list();// 색깔별 즐겨찾기 쿼리
+    GetFreeSearchList();// 자유검색 _ 초반 전체 검색 한바퀴 돌려놓기
   }
 
   /* SharedPrefs 저장하기(save) */
@@ -101,6 +102,7 @@ class BibleController extends GetxController {
   var FreeSearchResult        = []; // 자유검색결과를 담을 공간
   var FreeSearchResult_filtered = []; // 자유검색결과 필터링된 결과
   var FreeSearchResultCount   = []; // 자유검색결과 각 권마다 몇개가 있는지 담을 공간
+  num FreeSearchResultSumCount = 0; // 자유검색결과 총 몇개의 검색결과(구절)이 있는지 담을공간
   var FreeSearchSelected_bcode = 1; // 자유검색결과 선택된 북코드
   var FreeSearchResultCount_cnum   = []; // 자유검색결과 각 챕터마다 몇개가 있는지 담을 공간
   var FreeSearchSelected_cnum  = 1; // 자유검색결과 선택된 챕터번호
@@ -322,23 +324,32 @@ class BibleController extends GetxController {
   Future<void> GetFreeSearchList() async {
     //0. 로딩시작 화면 띄우기
     EasyLoading.show(status: 'loading...');
-    //1. DB에서 전체 데이터 받아오기 //
-    FreeSearchResult      = await BibleRepository.FreeSearchList(Bible_choiced, FreeSearchQuery);
-    //2. DB에서 각각의 성경이 몇개씩인지 받아오기 //
-    FreeSearchResultCount = await BibleRepository.FreeSearchResultCount(Bible_choiced, FreeSearchQuery);
 
-    //3. 가장 검색결과가 많은 권을 초기값으로 지정 //
+    //1. 조건에 맞는 성경 권(book)이 몇개씩인지 받아오기 //
+    FreeSearchResultCount = await BibleRepository.FreeSearchResultCount(Bible_choiced, FreeSearchQuery);
+    //1-1. 총 몇건인지 더해서 확인해봐야됨
+    FreeSearchResultSumCount = 0;
+    FreeSearchResultCount.forEach((r) {
+      FreeSearchResultSumCount += r['count(국문)'];
+    });
+
+    //2. 가장 먼저 나오는 성경 권(book)을 초기값으로 지정하고 조건에 맞는 챕터리스트 가져오기
     if(FreeSearchResultCount.length>=1){
       // 3-1. 검색결과가 1건 이상인 경우는 정상적으로 진행 //
       FreeSearch_book_choice(FreeSearchResultCount[0]['bcode']);
-      PopToast("총 ${FreeSearchResult.length} 건의 검색결과가 존재합니다.");
+      PopToast("총 ${FreeSearchResultSumCount} 건의 검색결과가 존재합니다.");
     }else{
       // 3-2. 검색결과가 0건인경우, 검색 기록 없음 띄워주기
       PopToast("검색결과가 없습니다");
       FreeSearchResult_filtered = []; // 리스트 초기화
       FreeSearchResultCount_cnum = []; //챕터(cnum) 갯수  초기화
     }
-    // 4. 검색기록 저장 및 변수 업뎃
+
+
+    //3. 가장 먼저 나오는 성경 챕터(cnum)을 초기값으로 지정하고 조건에 맞는 구절리스트 가져오기
+    FreeSearch_cnum_choice(FreeSearchSelected_cnum);
+
+    //4. 검색기록 저장 및 변수 업뎃
     SavePrefsData(); //현재 설정값 저장
     update();
 
@@ -355,45 +366,32 @@ class BibleController extends GetxController {
     FreeSearchSelected_bcode = bcode;
 
     /* 선택된 권에 맞는 챕터(cnum) 갯수 받아오기 */
-    FreeSearchResultCount_cnum = await BibleRepository.FreeSearchResultCount_cnum(Bible_choiced, FreeSearchSelected_bcode, FreeSearchQuery);
+    FreeSearchResultCount_cnum = await BibleRepository.GetCnumList(Bible_choiced, FreeSearchQuery, FreeSearchSelected_bcode);
+
     /* 선택된 챕터(cnum)번호 가장 위에 있는 챕터번호로 초기화 */
     FreeSearchSelected_cnum = FreeSearchResultCount_cnum[0]['cnum'];
 
-
-    /* 선택된 권 번호(bcode) & 챕터번호 (cnum) 에 맞게 결과 필터링 */
-    if(FreeSearchResult.length > 0){
-      FreeSearchResult_filtered = FreeSearchResult.where(
-              (f) =>
-              (f['bcode'] == FreeSearchSelected_bcode) &
-              (f['cnum'] == FreeSearchSelected_cnum)
-      ).toList();
-    }else{
-      FreeSearchResult_filtered = [];
-    }
     /* 컨텐츠 스크롤 초기화 */
-    ContentsScroller.jumpTo(0);
+    if(ContentsScroller.hasClients){
+      ContentsScroller.jumpTo(0);
+    }
+
     update();
 
     //5. 로딩종료 화면 띄우기
     EasyLoading.dismiss();
   }
 
-  // <함수> 자유검색 성경 챕터번호(cnum) 선택
-  void FreeSearch_cnum_choice(cnum){
+  // <함수> [성경 권(book) + 챕터번호(cnum) + 쿼리문] 으로 결과 리스트 가져오기
+  Future<void> FreeSearch_cnum_choice(cnum) async {
     /* 챕터번호(cnum)업데이트 */
     FreeSearchSelected_cnum = cnum;
-    /* 선택된 권 번호(bcode) & 챕터번호 (cnum) 에 맞게 결과 필터링 */
-    if(FreeSearchResult.length > 0){
-      FreeSearchResult_filtered = FreeSearchResult.where(
-              (f) =>
-          (f['bcode'] == FreeSearchSelected_bcode) &
-          (f['cnum'] == FreeSearchSelected_cnum)
-      ).toList();
-    }else{
-      FreeSearchResult_filtered = [];
-    }
+    /* 성경 권(book) + 챕터번호(cnum) + 쿼리문 으로 결과 리스트 가져오기  */
+    FreeSearchResult_filtered = await BibleRepository.GetResult(Bible_choiced, FreeSearchQuery, FreeSearchSelected_bcode, FreeSearchSelected_cnum);
     /* 컨텐츠 스크롤 초기화 */
-    ContentsScroller.jumpTo(0);
+    if(ContentsScroller.hasClients){
+      ContentsScroller.jumpTo(0);
+    }
     update();
   }
 

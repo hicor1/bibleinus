@@ -1,6 +1,8 @@
 
 
 import 'package:bible_in_us/diary/diary_controller.dart';
+import 'package:bible_in_us/diary/diary_view_detail_screen.dart';
+import 'package:bible_in_us/diary/diary_write_srceen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../general/general_controller.dart';
@@ -120,8 +122,19 @@ Widget MainWidget(context){
                     /* 달력보여주기 */
                     Flexible(
                       child: SfCalendar(
+                        /*  아래 상세 내역을 클릭했을 때 이벤트 정의(https://help.syncfusion.com/flutter/calendar/appointments)/(https://www.syncfusion.com/kb/10999/how-to-get-appointment-details-from-the-ontap-event-of-the-flutter-calendar) */
+                        onTap: (CalendarTapDetails details) {
+                          /* 내역이 있을때만 반응한다 */
+                          if (details.appointments!.isNotEmpty &&
+                              details.targetElement == CalendarElement.appointment){
+                            /* "Meeting"인스턴스에서 해당 일기 인덱스만 가져온다 */
+                            var diary_index = details.appointments![0].get_index;
+                            /* 해당 일기 상세 페이지로 이동 */
+                            Get.to(() => DiaryViewDetailScreen(index: diary_index));
+                          }
+                        },
+                        controller: DiaryCtr.calendarController, // 선택된 날짜 불러오기를 위해 컨트롤러 할당
                         todayTextStyle: TextStyle(fontWeight: FontWeight.bold),
-
                         view: CalendarView.month,
                         allowViewNavigation: false, // 클릭하면 상세내용으로 이동
                         showNavigationArrow: true, // 날짜 전환 화살표 포함 여부
@@ -146,8 +159,27 @@ Widget MainWidget(context){
 
               ),
             ),
-          ); //return은 필수
+
+            /* 새 일기 쓰기 버튼 (플로팅 액션버튼) 추가 */
+            floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
+            floatingActionButton: Align(
+              alignment: Alignment(1, 0.95),
+              child: FloatingActionButton(
+                isExtended: true,
+                child: Icon(Icons.add),
+                backgroundColor: GeneralCtr.MainColor,
+                onPressed: () {
+                  /* 새 일기 쓰기 모듈 호출 */
+                  // 1. 선택된 날짜로 설정해주기
+                  DiaryCtr.SelectedDate_change_from_calendar();
+                  // 2. 일기 쓰기 페이지로 이동하기
+                  Get.to(() => DiaryWriteScreen());
+                },
+              ),
+            ),
+          );
         }
     );
 
 }
+

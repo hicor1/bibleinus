@@ -101,7 +101,7 @@ class Mainwidget extends StatelessWidget {
                     ),
                     /* 셋팅 버튼 */
                     Padding(
-                      padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                      padding: EdgeInsets.fromLTRB(0, 0, 5, 0),
                       child: IconButton(
                         onPressed: (){
                           // 버튼 동작

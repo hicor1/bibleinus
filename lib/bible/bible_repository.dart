@@ -68,6 +68,40 @@ class BibleRepository {
     );
     return result;
   }
+
+  /* 성경 권(book)에 결과값을 포함하고 있는 챕터번호(cnum) 리스트 가져오기  */
+  static Future<List<Map<String, dynamic>>> GetCnumList(String BibleName, String query, int bcode) async {
+    var db = await BibleDatabase.getDb();
+    var Query_string =
+      """
+        SELECT DISTINCT cnum
+        FROM verses
+        WHERE $BibleName like '%$query%' and bcode = $bcode
+      """;
+    var result =  db.rawQuery(Query_string);
+    return result;
+  }
+
+
+  /* [성경 권(book) + 챕터번호(cnum) + 쿼리문] 으로 결과 리스트 가져오기  */
+  static Future<List<Map<String, dynamic>>> GetResult(String BibleName, String query, int bcode, int cnum) async {
+    var db = await BibleDatabase.getDb();
+    var Query_string =
+      """
+        SELECT verses._id, verses.bcode, cnum, vnum, bookmarked, 국문, 영문, $BibleName
+        FROM
+        (
+          SELECT _id, bcode, cnum, vnum, bookmarked, $BibleName
+          FROM verses 
+        ) AS verses
+        INNER JOIN bibles
+        ON verses.bcode = bibles.bcode
+        WHERE $BibleName like '%$query%' and verses.bcode = $bcode and cnum = $cnum
+      """;
+    var result =  db.rawQuery(Query_string);
+    return result;
+  }
+
   // 자유검색 ( 각 성경 권(book)이 몇개인지 조회하는 기능 )
   static Future<List<Map<String, dynamic>>> FreeSearchResultCount(String BibleName, String query) async {
     var db = await BibleDatabase.getDb();

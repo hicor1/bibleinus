@@ -88,8 +88,6 @@ class MainWidget extends StatelessWidget {
                             ),
                           ],
 
-
-
                           // "TabBar"는 기본적으로 Evenly 정렬이므로, 좌측정렬이 안됨. 따라서 PreferredSize를 사용해서 인위적으로 좌측 정렬 시킴
                           bottom: PreferredSize(
                             preferredSize: const Size.fromHeight(49),
