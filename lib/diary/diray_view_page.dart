@@ -54,8 +54,18 @@ class MainWidget extends StatelessWidget {
               child: Column(
                 children: [
                   SizedBox(height: 5),
+                  /* 검색창 + 그리드뷰 or 리스트뷰 선택 위젯 배치 */
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      /* 검색창 */
+                      SearchWidget(),
+                      /* 그리드뷰 or 리스트뷰 선택 위젯 배치 */
+                      ViewMode_select(),
+                    ],
+                  ),
                   /*  작성한 일기기 하나도 없는 경우 */
-                  if (DiaryCtr.diary_view_contents.length == 0)
+                  if (DiaryCtr.diary_view_contents_filtered.length == 0)
                     TextButton(
                       child: Text("새로운 일기를 작성해보세요 !",
                         style: TextStyle(
@@ -69,8 +79,7 @@ class MainWidget extends StatelessWidget {
                     )
                   /*  ↓작성한 일기가 있는 경우↓ */
                   else
-                  /* 그리드뷰 or 리스트뷰 선택 위젯 배치 */
-                  ViewMode_select(),
+
                   /* 사회적 거리두기 */
                   SizedBox(height: 10),
                   /* 뷰 선택에 따라 보여줄 뷰 변경(그리드뷰 or 리스트뷰) */
@@ -104,7 +113,7 @@ Widget ViewMode_select() {
           constraints: BoxConstraints(),
         ),
         /* 사회적 거리두기 */
-        SizedBox(width: 25),
+        SizedBox(width: 20),
         /* 리스트뷰 */
         IconButton(
           onPressed: (){
@@ -120,7 +129,7 @@ Widget ViewMode_select() {
           constraints: BoxConstraints(),
         ),
         /* 사회적 거리두기 */
-        SizedBox(width: 20)
+        SizedBox(width: 10)
       ],
     );
 }
@@ -144,9 +153,9 @@ Widget DiaryGridView() {
             shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
             scrollDirection: Axis.vertical, // 수직(vertical)  수평(horizontal) 배열 선택
             //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
-            itemCount: DiaryCtr.diary_view_contents.length,
+            itemCount: DiaryCtr.diary_view_contents_filtered.length,
             itemBuilder: (context, index) {
-              var result = DiaryCtr.diary_view_contents[index];
+              var result = DiaryCtr.diary_view_contents_filtered[index];
               /* 날짜 데이터를 보기좋게 재구성 */
               var date_temp = result['dirary_screen_selectedDate'].toDate();
               var date_format = "${date_temp.year}년${date_temp.month}월${date_temp.day}일."; //date로 형식 변환
@@ -246,9 +255,9 @@ Widget DiaryListView(){
           shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
           scrollDirection: Axis.vertical, // 수직(vertical)  수평(horizontal) 배열 선택
           //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
-          itemCount: DiaryCtr.diary_view_contents.length,
+          itemCount: DiaryCtr.diary_view_contents_filtered.length,
           itemBuilder: (context, index) {
-            var result = DiaryCtr.diary_view_contents[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
+            var result = DiaryCtr.diary_view_contents_filtered[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
             /* 아래부터 컨테이너 반복 */
             return AnimationConfiguration.staggeredList(
               position: index,
@@ -473,12 +482,12 @@ class ViewVerses extends StatelessWidget {
       pauseAutoPlayOnTouch: Duration(milliseconds: 5000), // 클릭하면 자동넘기기 일시 정지
 
       /* 선택된 구절 갯수만큼 카드 만들어주기 */
-      items: DiaryCtr.diary_view_contents[index]['dirary_screen_selected_verses_id'].map<Widget>(
+      items: DiaryCtr.diary_view_contents_filtered[index]['dirary_screen_selected_verses_id'].map<Widget>(
             (id) {
 
           /* 필터링으로 구절정보 하나씩 가져오기 */
           var contents_data = DiaryCtr.diary_view_selected_contents_data.where((f)=>f["_id"]==id).toList();
-          var diary_data = DiaryCtr.diary_view_contents[index];
+          var diary_data = DiaryCtr.diary_view_contents_filtered[index];
 
           /* 성경 구절 카드에 담아서 보여주기 */
           /* 1. 정보가 "null"이 아니면, 구절 정보 담아서 보여준다 */
@@ -630,6 +639,35 @@ Widget HashTagView(result){
               ),
             );
           }
+      ),
+    );
+}
+
+//<서브위젯> 검색창 모듈
+Widget SearchWidget(){
+  return
+    SizedBox(
+      width: 250,
+      child: TextField(
+        onChanged: (keyword){
+          /* 검색어를 입력 했을 때 액션 정의 */
+          DiaryCtr.result_filtering(keyword);
+        },
+        controller: DiaryCtr.DiarySearchController, // 텍스트값을 가져오기 위해 컨트롤러 할당
+        autofocus: false, // 자동으로 클릭할것인가
+        style: TextStyle(fontSize: GeneralCtr.fontsize_normal),
+        decoration: InputDecoration(
+            prefixIcon: Icon(Icons.search),
+            // suffixIcon: IconButton(
+            //   icon: Icon(Icons.clear),
+            //   onPressed: () {
+            //     /* 클리어 버튼(X) 눌렀을 때 텍스트 비우기 */
+            //     DiaryCtr.DiarySearchController.clear();
+            //   },
+            // ),
+            hintText: '검색어',
+            hintStyle: GeneralCtr.TextStyle_normal_disable,
+            border: InputBorder.none),
       ),
     );
 }

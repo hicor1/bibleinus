@@ -202,7 +202,8 @@ class AuthLoginPage extends StatelessWidget {
                       children: [
                         /* 구글 로그인 */
                         SizedBox(
-                          width: 150,
+                          width: MediaQuery.of(context).size.width/2.3,
+                          height: 50,
                           child: SignInButton(
                             Buttons.Google,
                             shape: RoundedRectangleBorder(
@@ -223,7 +224,8 @@ class AuthLoginPage extends StatelessWidget {
 
                         /* 페이스북 로그인 */
                         SizedBox(
-                          width: 150,
+                          width: MediaQuery.of(context).size.width/2.3,
+                          height: 50,
                           child: SignInButton(
                             Buttons.FacebookNew,
                             shape: RoundedRectangleBorder(

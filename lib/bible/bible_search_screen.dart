@@ -59,115 +59,119 @@ class MainWidget extends StatelessWidget {
         builder: (_){
           return DefaultTabController(
             length: 2,
-            child: Scaffold(
-              appBar: AppBar(
-                iconTheme: IconThemeData(
-                  color: GeneralCtr.MainColor, //change your color here
-                ),
-                elevation: 1.5,
-                title: TextField(
+            /* 너무 위쪽에 붙어있는것을 방지하기 위해 높이를 준다 */
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+              child: Scaffold(
+                appBar: AppBar(
 
-                  textAlignVertical: TextAlignVertical.center,
-                  controller: BibleCtr.textController, // 텍스트값을 가져오기 위해 컨트롤러 할당
-                  /* 키패드에서 "완료"버튼 누르면 이벤트 발동 */
-                  onEditingComplete: () {
-                    /* 최소 검색글자수 ( 2글자 ) 만족하는지 체크 */
-                    if(BibleCtr.textController.text.length>=2){
-                      // 0. 질의어 저장하기 //
-                      BibleCtr.FreeSearchQuery_update(BibleCtr.textController.text);
-                      // 1. 검색결과 받아오기 //
-                      BibleCtr.GetFreeSearchList();
-                      // 2. 키패드 감추기 //
-                      FocusScopeNode currentFocus = FocusScope.of(context);
-                      currentFocus.unfocus();
-                      // 3. 검색결과(o번)탭으로 이동하기 ( "최근검색" 탭에서도 검색 버튼을 누를 수 있으므로 ! );
-                      BibleCtr.SearchtabController.animateTo(0);
-                    }else{
-                      /* 글자수 모자람 안내창 띄우기 */
-                      FlutterDialog(context);
-                    }
-                  },
-                  autofocus: false, // 자동으로 클릭할것인가
-                  style: TextStyle(fontSize: GeneralCtr.fontsize_normal),
-                  decoration: InputDecoration(
+                  iconTheme: IconThemeData(
+                    color: GeneralCtr.MainColor, //change your color here
+                  ),
+                  elevation: 1.5,
+                  title: TextField(
+                    textAlignVertical: TextAlignVertical.center,
+                    controller: BibleCtr.textController, // 텍스트값을 가져오기 위해 컨트롤러 할당
+                    /* 키패드에서 "완료"버튼 누르면 이벤트 발동 */
+                    onEditingComplete: () {
+                      /* 최소 검색글자수 ( 2글자 ) 만족하는지 체크 */
+                      if(BibleCtr.textController.text.length>=2){
+                        // 0. 질의어 저장하기 //
+                        BibleCtr.FreeSearchQuery_update(BibleCtr.textController.text);
+                        // 1. 검색결과 받아오기 //
+                        BibleCtr.GetFreeSearchList();
+                        // 2. 키패드 감추기 //
+                        FocusScopeNode currentFocus = FocusScope.of(context);
+                        currentFocus.unfocus();
+                        // 3. 검색결과(o번)탭으로 이동하기 ( "최근검색" 탭에서도 검색 버튼을 누를 수 있으므로 ! );
+                        BibleCtr.SearchtabController.animateTo(0);
+                      }else{
+                        /* 글자수 모자람 안내창 띄우기 */
+                        FlutterDialog(context);
+                      }
+                    },
+                    autofocus: false, // 자동으로 클릭할것인가
+                    style: TextStyle(fontSize: GeneralCtr.fontsize_normal),
+                    decoration: InputDecoration(
 
-                      suffixIcon: IconButton(
-                        icon: Icon(Icons.clear, color: GeneralCtr.MainColor, size: GeneralCtr.fontsize_normal*1.4),
-                        /* 클리어 버튼(X) 눌렀을 때 텍스트 비우기 */
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.clear, color: GeneralCtr.MainColor, size: GeneralCtr.fontsize_normal*1.4),
+                          /* 클리어 버튼(X) 눌렀을 때 텍스트 비우기 */
+                          onPressed: () {
+                            BibleCtr.textController.clear();
+                          },
+                        ),
+                        hintText: '검색어 입력',
+                        border: InputBorder.none),
+                  ),
+                  backgroundColor: Colors.white,
+                  // 앱바 액숀 버튼
+                  actions: [
+                    // 전체 검색 버튼
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                      child: TextButton(
                         onPressed: () {
+                          /* 셋팅화면 띄워주기 */
                           BibleCtr.textController.clear();
+                          BibleCtr.FreeSearch_init(); // 자유검색결과
                         },
+                        child: Text("전체", style: TextStyle(color: GeneralCtr.MainColor, fontSize: GeneralCtr.fontsize_normal, fontWeight: FontWeight.bold)),
+                        style: TextButton.styleFrom(
+                          minimumSize: Size.zero,
+                          padding: EdgeInsets.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
                       ),
-                      hintText: '검색어 입력',
-                      border: InputBorder.none),
-                ),
-                backgroundColor: Colors.white,
-                // 앱바 액숀 버튼
-                actions: [
-                  // 전체 검색 버튼
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                    child: TextButton(
-                      onPressed: () {
-                        /* 셋팅화면 띄워주기 */
-                        BibleCtr.textController.clear();
-                        BibleCtr.FreeSearch_init(); // 자유검색결과
-                      },
-                      child: Text("전체", style: TextStyle(color: GeneralCtr.MainColor, fontSize: GeneralCtr.fontsize_normal, fontWeight: FontWeight.bold)),
-                      style: TextButton.styleFrom(
-                        minimumSize: Size.zero,
+                    ),
+                    // 셋팅 버튼
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                      child: IconButton(
+                        onPressed: () {
+                          /* 셋팅화면 띄워주기 */
+                          openPopup(context);
+                        },
+                        icon: Icon(FontAwesome.cog, size: 25.0, color: GeneralCtr.MainColor),
+                      ),
+                    )
+                  ],
+                  // "TabBar"는 기본적으로 Evenly 정렬이므로, 좌측정렬이 안됨. 따라서 PreferredSize를 사용해서 인위적으로 좌측 정렬 시킴
+                  bottom: PreferredSize(
+                    preferredSize: Size.fromHeight(30),
+                    child: Align(
+                      alignment: Alignment.centerLeft, // 탭 메뉴들 왼쪽 정렬
+                      child: TabBar(
                         padding: EdgeInsets.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        controller: BibleCtr.SearchtabController, // 컨트롤러 정의
+                        //controller: HymnCtr.tabController, // 컨트롤러 정의
+                        labelColor: Colors.black, // 활성 탭 색
+                        //labelStyle: TextStyle(fontSize: 17.0), // 활성 탭 스타일
+                        //unselectedLabelStyle:TextStyle(fontSize: 14.0), // 비활성 탭 스타일
+                        unselectedLabelColor: Colors.grey, // 비활성 탭 색
+                        indicatorSize: TabBarIndicatorSize.label, // 아래 강조표시 길이
+                        indicatorWeight: 3.0, // 아래 강조표시 두께
+                        indicatorColor: GeneralCtr.MainColor, // 아래 강조표시 색깔
+                        isScrollable: true, // 수평으로 스크롤가능여부
+
+                        tabs: [
+                          Tab(child: Text("검색결과", style: TextStyle(fontSize: GeneralCtr.fontsize_normal))),
+                          Tab(child: Text('최근검색', style: TextStyle(fontSize: GeneralCtr.fontsize_normal))),
+                        ],
                       ),
                     ),
                   ),
-                  // 셋팅 버튼
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                    child: IconButton(
-                      onPressed: () {
-                        /* 셋팅화면 띄워주기 */
-                        openPopup(context);
-                      },
-                      icon: Icon(FontAwesome.cog, size: 25.0, color: GeneralCtr.MainColor),
-                    ),
-                  )
-                ],
-                // "TabBar"는 기본적으로 Evenly 정렬이므로, 좌측정렬이 안됨. 따라서 PreferredSize를 사용해서 인위적으로 좌측 정렬 시킴
-                bottom: PreferredSize(
-                  preferredSize: Size.fromHeight(30),
-                  child: Align(
-                    alignment: Alignment.centerLeft, // 탭 메뉴들 왼쪽 정렬
-                    child: TabBar(
-                      padding: EdgeInsets.zero,
-                      controller: BibleCtr.SearchtabController, // 컨트롤러 정의
-                      //controller: HymnCtr.tabController, // 컨트롤러 정의
-                      labelColor: Colors.black, // 활성 탭 색
-                      //labelStyle: TextStyle(fontSize: 17.0), // 활성 탭 스타일
-                      //unselectedLabelStyle:TextStyle(fontSize: 14.0), // 비활성 탭 스타일
-                      unselectedLabelColor: Colors.grey, // 비활성 탭 색
-                      indicatorSize: TabBarIndicatorSize.label, // 아래 강조표시 길이
-                      indicatorWeight: 3.0, // 아래 강조표시 두께
-                      indicatorColor: GeneralCtr.MainColor, // 아래 강조표시 색깔
-                      isScrollable: true, // 수평으로 스크롤가능여부
-
-                      tabs: [
-                        Tab(child: Text("검색결과", style: TextStyle(fontSize: GeneralCtr.fontsize_normal))),
-                        Tab(child: Text('최근검색', style: TextStyle(fontSize: GeneralCtr.fontsize_normal))),
-                      ],
-                    ),
-                  ),
                 ),
-              ),
 
-              body: TabBarView(
-                controller: BibleCtr.SearchtabController, // 컨트롤러 정의
-                children: [
-                  /* 1. 검색결과 보여주기 */
-                  FreeSearchResult(),
-                  /* 2. 최근검색 히스토리 보여주기 */
-                  History(),
-                ],
+                body: TabBarView(
+                  controller: BibleCtr.SearchtabController, // 컨트롤러 정의
+                  children: [
+                    /* 1. 검색결과 보여주기 */
+                    FreeSearchResult(),
+                    /* 2. 최근검색 히스토리 보여주기 */
+                    History(),
+                  ],
+                ),
               ),
             ),
           ); //return은 필수
@@ -241,8 +245,8 @@ class FreeSearchResult extends StatelessWidget {
                                             GeneralCtr.TextStyle_normal_accent : GeneralCtr.TextStyle_normal_disable ),
                                       ),
                                     ),
-                                    /* 리스트간 사히적 거리두기 */
-                                    SizedBox(height: 5)
+                                    /* 리스트간 사회적 거리두기 */
+                                    SizedBox(height: 10)
                                   ],
                                 );
                               }
@@ -286,8 +290,8 @@ class FreeSearchResult extends StatelessWidget {
                                             GeneralCtr.TextStyle_normal_accent : GeneralCtr.TextStyle_normal_disable ),
                                       ),
                                     ),
-                                    /* 리스트간 사히적 거리두기 */
-                                    SizedBox(height: 5)
+                                    /* 리스트간 사회적 거리두기 */
+                                    SizedBox(height: 10)
                                   ],
                                 );
                               }

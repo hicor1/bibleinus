@@ -25,7 +25,7 @@ class GeneralController extends GetxController {
     }
 
     /* 메인컬러 정의 */
-    var MainColor = Color(0xff9966ff); // 앱 전반적으로 사용될 메인 컬러 # 0xFF9966ff
+    var MainColor = Color(0xff9966ff); // 앱 전반적으로 사용될 메인 컬러 # 0xFF9966ff # 969FF3
     var BlueColor = Color(0xff536dfe); // 블루계열 색상 # 0xff2196f3 # 0xff2196f3 # 0xff2979ff
 
     /* 메인 텍스트 스타일 정의 */

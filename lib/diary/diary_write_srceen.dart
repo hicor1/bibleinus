@@ -192,7 +192,7 @@ class MainWidget extends StatelessWidget {
 
                         /* 제목, 내용 등 텍스트 필드 */
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                          padding: const EdgeInsets.fromLTRB(12, 0, 10, 0),
                           child: Form(
                             /* Form을 위한 key(키) 할당 */
                             key: _formKey,
@@ -239,7 +239,8 @@ class MainWidget extends StatelessWidget {
 
                                 /* 내용 입력 */
                                 Container(
-                                  padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                                  margin: EdgeInsets.zero,
+                                  padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
                                     color: Colors.grey.withOpacity(0.1),
@@ -600,8 +601,8 @@ class AddVerses extends StatelessWidget {
 
               /* 옵션 버튼 _ 하위 메뉴 스타일 */
               itemBuilder: (context) => [
-                PopupMenuItem(child: Row(children: [Icon(Entypo.search, size: 20), Text(" 검색", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "검색"),
-                PopupMenuItem(child: Row(children: [Icon(FontAwesome.bookmark_empty, size: 20), Text(" 즐겨찾기", style: TextStyle(fontSize: GeneralCtr.Textsize*0.9))]), value: "즐겨찾기"),
+                PopupMenuItem(child: Row(children: [Icon(Entypo.search, size: 20), Text(" 검색", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9))]), value: "검색"),
+                PopupMenuItem(child: Row(children: [Icon(FontAwesome.bookmark_empty, size: 20), Text(" 즐겨찾기", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9))]), value: "즐겨찾기"),
               ]
           )
         ],

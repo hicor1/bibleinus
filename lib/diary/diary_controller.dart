@@ -59,6 +59,7 @@ class DiaryController extends GetxController {
 
   var diary_view_ViewMode = "grid"; // 성경일기 뷰 페이지 _ "그리드뷰(grid view) 또는 리스트뷰(list view)선택"
   var diary_view_contents = []; // 성경일기 뷰 페이지 _ 데이터 로드
+  var diary_view_contents_filtered = []; // 성경일기 뷰 페이지 _ 필터된 데이터
   var diary_view_timediffer = []; // 성경일기 뷰 페이지 _ 시간경과 산출데이터 저장
   var diary_view_selected_contents_data = []; // 성경일기 뷰 페이지 _ 보여줄 성경 구절 데이터 DB에서 받아와서 저장하기
   var NewOrModify = "";// 모드선택 ( 신규(new) 또는 수정(modify) )
@@ -70,14 +71,18 @@ class DiaryController extends GetxController {
 
   var statistics_month_string = ""; // 성경 달력 스크린 _ 기본 통계 _ 월 현황
   var statistics_month_percent = 0.0; // 성경 달력 스크린 _ 기본 통계 _ 월 퍼센트
+  var statistics_this_month = 0; //성경 달력 스크린 _ 기본 통계 _ 올해 월
+
   var statistics_year_string = ""; // 성경 달력 스크린 _ 기본 통계 _ 년 현황
   var statistics_year_percent = 0.0; // 성경 달력 스크린 _ 기본 통계 _ 년 퍼센트
+  var statistics_this_year = 0; //성경 달력 스크린 _ 기본 통계 _ 올해 년도
 
 
   /* 텍스트컨트롤러 정의 */
   var TitletextController      = TextEditingController(); // 성경일기 작성 페이지 _ 일기 제목 ( title ) 컨트롤러
   var ContentstextController   = TextEditingController(); // 성경일기 작성 페이지 _ 일기 내용 ( contents ) 컨트롤러
   var HashTagController        = TextEditingController(); // 성경일기 작성 페이지 _ 일기 내용 ( contents ) 컨트롤러
+  var DiarySearchController    = TextEditingController(); // 성경일기 보기(view) 페이지 _ 일기 검색 컨트롤러
 
 
   /* 데이트 피커 컨트롤러 정의 */
@@ -85,7 +90,7 @@ class DiaryController extends GetxController {
 
   /* 칼라코드 정의 */
   var ColorCode = [Color(0xFFBFBFBF), // 젤 처음은 흑백 칼라
-    Color(0xFFffd700).withOpacity(0.8),
+    Color(0xff0c0c0d).withOpacity(0.8),
     Color(0xFF00bfff).withOpacity(0.8),
     Color(0xFF32cd32).withOpacity(0.8),
     Color(0xff9966ff).withOpacity(0.8),
@@ -105,7 +110,6 @@ class DiaryController extends GetxController {
 
   /* 이미티콘(이모지,emoji) 정의 */
   var EmojiCode = [
-    "\u{1f60e}",
     "\u{1f601}",
     "\u{1f602}",
     "\u{1f603}",
@@ -123,6 +127,29 @@ class DiaryController extends GetxController {
     "\u{1f614}",
     "\u{1f616}",
     "\u{1f618}",
+
+    "\u{1f61A}",
+    "\u{1f61C}",
+    "\u{1f61D}",
+    "\u{1f61E}",
+
+    "\u{1f620}",
+    "\u{1f621}",
+    "\u{1f622}",
+    "\u{1f623}",
+    "\u{1f624}",
+    "\u{1f625}",
+    "\u{1f628}",
+    "\u{1f629}",
+    "\u{1f62A}",
+    "\u{1f62B}",
+    "\u{1f62D}",
+    "\u{1f630}",
+    "\u{1f631}",
+    "\u{1f632}",
+    "\u{1f633}",
+    "\u{1f635}",
+    "\u{1f637}",
   ];
 
   /* 시간 추천 태크 정의 */
@@ -441,11 +468,12 @@ class DiaryController extends GetxController {
     /* 데이터 로드(조건) */
     collection
         .where("uid", isEqualTo: MyCtr.uid) // 본인이 작성한 글만 보이게
-        .orderBy("updated_at", descending:true) // 날짜로 내림차순 정렬
+        .orderBy("dirary_screen_selectedDate", descending:true) // 날짜로 내림차순 정렬
         /* ↓정상적으로 로드가 되었다면 아래 수행↓ */
         .get().then((QuerySnapshot ds) async {
           /*  불러온 데이터 할당 */
-          diary_view_contents = ds.docs;
+          diary_view_contents          = ds.docs;
+          diary_view_contents_filtered = ds.docs; // 필터된 결과값 초기값도 필터안된것과 동일하게 할당
 
           /* 시간경과 산출(마지막으로 수정된 시간기준) */
           diary_view_timediffer = []; // 시간 경과 저장 리스트 초기화
@@ -463,7 +491,7 @@ class DiaryController extends GetxController {
           temp_verses_id_list = temp_verses_id_list.toSet().toList();
           // 3. DB에서 조회
           diary_view_selected_contents_data = await BibleRepository.GetClickedVerses(temp_verses_id_list, BibleCtr.Bible_choiced);
-    }
+        }
     );// 필드명에 단어 포함
 
 
@@ -767,7 +795,7 @@ class DiaryController extends GetxController {
   void cal_basic_statistics(){
     var now = DateTime.now();
 
-    /* 이번달 통계 구하기 */
+    /* 이번달(month) 통계 구하기 */
     //0. 이번 달 총 몇일인지 구하기
     int MonthDayCount = int.parse(
         DateTime(now.year, now.month+1, 0).difference(DateTime(now.year, now.month, 1)).inDays.toString()
@@ -787,10 +815,11 @@ class DiaryController extends GetxController {
     //4. 일(day)중복제거
     temp_month_list = temp_month_list.toSet().toList();
     //5. 결과 정리
+    statistics_this_month = now.month;
     statistics_month_percent = (temp_month_list.length/MonthDayCount);
-    statistics_month_string = "${temp_month_list.length}일/${MonthDayCount}일(${(statistics_month_percent*100).toStringAsFixed(1)}%)";
+    statistics_month_string = "${temp_month_list.length}일/${MonthDayCount}일 (${(statistics_month_percent*100).toStringAsFixed(1)}%)";
 
-    /* 이번 년도 통계 구하기 */
+    /* 이번 년도(year) 통계 구하기 */
     //0. 이번 년도 총 몇일인지 구하기
     int YearCount = int.parse(
         DateTime(now.year+1, 1, 1).difference(DateTime(now.year, 1, 1)).inDays.toString()
@@ -810,11 +839,26 @@ class DiaryController extends GetxController {
     //4. 일(day)중복제거
     temp_year_list = temp_year_list.toSet().toList();
     //5. 결과 정리
+    statistics_this_year = now.year;
     statistics_year_percent = (temp_year_list.length/YearCount);
-    statistics_year_string = "${temp_year_list.length}일/${YearCount}일(${(statistics_year_percent*100).toStringAsFixed(1)}%)";
-
+    statistics_year_string = "${temp_year_list.length}일/${YearCount}일 (${(statistics_year_percent*100).toStringAsFixed(1)}%)";
 
   }
+
+  /* 검색결과 필터링 *///diary_view_selected_contents_data
+  void result_filtering(String query){
+    // 1. 결과 저장용 임시공간
+    var result = [];
+    // 2. 각 결과 순환하면서 조건에 맞는 값 가져오기
+    diary_view_contents.forEach((u) {
+      if(u['dirary_screen_title'].contains(query) | u['dirary_screen_contents'].contains(query))
+        result.add(u);
+    });
+    // 3. 결과 씌워주기
+    diary_view_contents_filtered = result;
+    update();
+  }
+
 
 
 } // 여기가 전체 클래스 끝 부분!!

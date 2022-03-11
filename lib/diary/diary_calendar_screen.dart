@@ -69,14 +69,14 @@ Widget MainWidget(context){
               backgroundColor: Colors.white),
             body: SingleChildScrollView(
               child: Container(
-                height: 750,
+                height: 700,
                 padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
 
                     /* 이번 달 목표량 */
-                    Text("이번 달(3월)", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text("이번 달(${DiaryCtr.statistics_this_month}월)", style: TextStyle(fontWeight: FontWeight.bold)),
                     /* 사회적 거리두기 */
                     SizedBox(height: 10),
                     /* 차트 보여주기 */
@@ -85,7 +85,7 @@ Widget MainWidget(context){
                       animation: true,
                       lineHeight: 20.0,
                       animateFromLastPercent: true,
-                      animationDuration: 1000,
+                      animationDuration: 900,
                       percent: DiaryCtr.statistics_month_percent,
                       center: Text(DiaryCtr.statistics_month_string),
                       barRadius: const Radius.circular(16),
@@ -97,7 +97,7 @@ Widget MainWidget(context){
                     SizedBox(height: 10),
                     
                     /* 올해 목표량 */
-                    Text("이번 년도(2022년)", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Text("이번 년도(${DiaryCtr.statistics_this_year}년)", style: TextStyle(fontWeight: FontWeight.bold)),
                     /* 사회적 거리두기 */
                     SizedBox(height: 10),
                     /* 차트 보여주기 */
@@ -120,6 +120,8 @@ Widget MainWidget(context){
                     /* 달력보여주기 */
                     Flexible(
                       child: SfCalendar(
+                        todayTextStyle: TextStyle(fontWeight: FontWeight.bold),
+
                         view: CalendarView.month,
                         allowViewNavigation: false, // 클릭하면 상세내용으로 이동
                         showNavigationArrow: true, // 날짜 전환 화살표 포함 여부
@@ -128,14 +130,14 @@ Widget MainWidget(context){
                         viewHeaderHeight: 50, // 날짜와 아래 달력 거리
                         headerDateFormat: 'M', // 년월 표기 서식
                         monthViewSettings: MonthViewSettings(
-                          appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
-                          showAgenda: false, // 클릭하면 아래 상세정보 표시하기
+                          //appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
+                          showAgenda: true, // 클릭하면 아래 상세정보 표시하기
                         ),
                         scheduleViewSettings: ScheduleViewSettings(
                           hideEmptyScheduleWeek: true,
                         ),
                         showDatePickerButton: true, // 날짜 선택 팝업 여부
-                        todayHighlightColor: GeneralCtr.MainColor, // 오늘 표시 색깔
+                        todayHighlightColor: GeneralCtr.MainColor.withOpacity(0.5), // 오늘 표시 색깔
                         cellBorderColor: GeneralCtr.MainColor.withOpacity(0.0), // 테두리 색깔
                       ),
                     ),
