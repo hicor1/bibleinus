@@ -88,7 +88,7 @@ class MainWidget extends StatelessWidget {
                   child: Icon(MfgLabs.left, size: 20)
                 ),
               ),
-              title: Text(DiaryCtr.NewOrModify == "new" ? "기록 남기기" : "기록 수정하기",
+              title: Text(DiaryCtr.NewOrModify == "new" ? "일기 쓰기" : "일기 수정하기",
                   style: GeneralCtr.Style_title
               ),
               backgroundColor: Colors.transparent,
@@ -192,7 +192,7 @@ class MainWidget extends StatelessWidget {
 
                         /* 제목, 내용 등 텍스트 필드 */
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(12, 0, 10, 0),
+                          padding: const EdgeInsets.fromLTRB(13, 0, 12, 0),
                           child: Form(
                             /* Form을 위한 key(키) 할당 */
                             key: _formKey,

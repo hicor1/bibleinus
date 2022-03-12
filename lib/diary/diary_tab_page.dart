@@ -70,7 +70,7 @@ class MainWidget extends StatelessWidget {
                                   // 작성하기 스크린으로 이동
                                   Get.to(() => DiaryCalendarScreen());
                                 },
-                                icon: Icon(FontAwesome5.calendar_check, size: 22.0, color: GeneralCtr.MainColor),
+                                icon: Icon(Elusive.calendar, size: 22.0, color: GeneralCtr.MainColor),
                               ),
                             ),
                             /* 작성하기(+) 버튼 */

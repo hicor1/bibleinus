@@ -142,8 +142,11 @@ class MainWidget extends StatelessWidget {
                             duration: Duration(milliseconds: 500), // 모달창이 올라오는 시간
                             expand: false, // 높이와 상관없이 화면 끝까지 늘리는 기능
                             context: context, // 아래부터 모달창에 보여줄 내용
-                            builder: (context) => ModalWigdet(context) // 모달위젯 뿌리기
-                          );
+                            builder: (context) => ModalWigdet(context)// 모달위젯 뿌리기
+                          ).whenComplete(() {
+                            /* 모달창을 닫을 때, 스크롤위치 저장오기 */
+                            BibleCtr.Scroll_offset_save();
+                          });
                         },
                       ),
                       // 다음페이지
@@ -160,8 +163,11 @@ class MainWidget extends StatelessWidget {
   }
 }
 
+
 // <서브위젯_모달>모달 위젯 정의
 Widget ModalWigdet(context){
+  /* 스크롤위치 불러오기 */
+  WidgetsBinding.instance!.addPostFrameCallback((_) => BibleCtr.Scroll_offset_load());
   return
     GetBuilder<BibleController>(
         init: BibleController(),
@@ -210,7 +216,6 @@ Widget ModalWigdet(context){
 
                   // 사회적 위젯 거리두기
                   Divider(indent: 10, endIndent: 10),
-
                   // 아래부터 성경 선택 스크롤
                   SizedBox(
                     height: 400, // 아이콘을 제외한 나머지 모달창 크기 설정
@@ -308,5 +313,6 @@ Widget ModalWigdet(context){
           );
         }
     );
+
 }
 

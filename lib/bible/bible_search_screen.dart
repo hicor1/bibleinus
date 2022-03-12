@@ -3,6 +3,7 @@ import 'package:bible_in_us/bible/bible_controller.dart';
 import 'package:bible_in_us/general/general_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:fluttericon/elusive_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
@@ -194,14 +195,16 @@ class FreeSearchResult extends StatelessWidget {
               children: [
                 /* 전체 검색 결과 등 결과 요약 표기 */
                 Container(
+                  width: MediaQuery.of(context).size.width*0.95,
                   child: Text(
-                    '검색어 : "${BibleCtr.FreeSearchQuery}" 에 대한 검색결과 ${NumberFormat('##,###').format(BibleCtr.FreeSearchResultSumCount)} 건',
-                    style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9),),
+                      '검색어 : "${BibleCtr.FreeSearchQuery}" 에 대한 검색결과 ${NumberFormat('##,###').format(BibleCtr.FreeSearchResultSumCount)} 건',
+                      style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9),
+                      textAlign: TextAlign.center),
                   margin: EdgeInsets.fromLTRB(0,5,0,5),
-                  padding: EdgeInsets.fromLTRB(50,2,50,2),
+                  padding: EdgeInsets.fromLTRB(0,2,0,2),
                   decoration: BoxDecoration(
-                    border: Border.all(width: 2, color: Colors.grey),
-                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(width: 1, color: Colors.grey),
+                    borderRadius: BorderRadius.circular(3),
                   ),
                 ),
                 /* 아래는 검색 결과 표기 */
@@ -403,6 +406,7 @@ class History extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print(BibleCtr.FreeSearch_history_query);
     /*  GetX 불러오기 */
     return GetBuilder<GeneralController>(
         init: GeneralController(),
@@ -410,16 +414,18 @@ class History extends StatelessWidget {
           return Padding(
             padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
             child: Scrollbar(
+              controller: BibleCtr.RecentScroller,
               child: Align(
-                // 가장 최신 히스토리가 위로 올라오도록 "reverse"시킴
                 // 배열이 뒤집혀 아래로 몰릴수 있으므로 "Align"위젯씌워서 "topcenter"로 재정렬
                 alignment: Alignment.topCenter,
                 child: ListView.builder(
-                    reverse: true,
+                    reverse: false,
                     shrinkWrap: true,
                     itemCount: BibleCtr.FreeSearch_history_query.length,
                     itemBuilder: (context, index) {
-                      //var result = FavoriteCtr.FavoriteList[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
+                      /* 최신 검색 결과가 가장 위로 올라와야 하므로 배열을 반전시킨다 */
+                      var result_query = List.from(BibleCtr.FreeSearch_history_query.reversed);
+                      var result_bible = List.from(BibleCtr.FreeSearch_history_bible.reversed);
                       /* 아래부터 검색결과를 하나씩 컨테이너에 담아주기*/
                       return InkWell(
                         /* 히스토리를 클릭 했을 때 이벤트 정의 */
@@ -442,11 +448,11 @@ class History extends StatelessWidget {
                                       children: [
                                         Icon(Octicons.search, size: GeneralCtr.fontsize_normal*0.9, color: GeneralCtr.MainColor),
                                         Flexible(
-                                          child: Text("   ${BibleCtr.FreeSearch_history_query[index]}    ",
+                                          child: Text("   ${result_query[index]}    ",
                                               style: TextStyle(fontSize: GeneralCtr.fontsize_normal, color: Colors.black)),
                                         ),
                                         Icon(FontAwesome5.bible, size: GeneralCtr.fontsize_normal*0.9, color: Colors.grey.withOpacity(0.8)),
-                                        Text(" ${BibleCtr.FreeSearch_history_bible[index]}",
+                                        Text(" ${result_bible[index]}",
                                             style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.85, color: Colors.grey.withOpacity(0.8))),
                                       ],
                                     ),

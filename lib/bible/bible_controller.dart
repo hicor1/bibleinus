@@ -1,5 +1,6 @@
 import 'package:bible_in_us/bible/bible_component.dart';
 import 'package:bible_in_us/bible/bible_repository.dart';
+import 'package:bible_in_us/diary/diary_controller.dart';
 import 'package:bible_in_us/general/general_controller.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/material.dart';
@@ -11,6 +12,7 @@ import 'package:intl/intl.dart';
 
 // Gex컨트롤러 객체 초기화
 final GeneralCtr = Get.put(GeneralController());
+final DiaryCtr   = Get.put(DiaryController());
 
 class BibleController extends GetxController {
 
@@ -65,12 +67,15 @@ class BibleController extends GetxController {
   final ScrollController BibleScroller    = ScrollController(keepScrollOffset: true); // 모달창 스크롤 컨트롤러 선언
 
   /* 메인 페이지 모달창 스크롤 컨트롤러 정의 */
-  final ScrollController BookScroller    = ScrollController(keepScrollOffset: true); // 모달창 스크롤 컨트롤러 선언
-  final ScrollController ChapterScroller = ScrollController(keepScrollOffset: true); // 모달창 스크롤 컨트롤러 선언
+  final ScrollController BookScroller    = ScrollController(keepScrollOffset: true); // 모달창 스크롤 컨트롤러 선언. "keepScrollOffset: true"무쓸모임... 항상 새롭게 빌드하는 구조이므로
+  final ScrollController ChapterScroller = ScrollController(keepScrollOffset: true); // 모달창 스크롤 컨트롤러 선언  "keepScrollOffset: true"무쓸모임... 항상 새롭게 빌드하는 구조이므로
+  var BookScroller_position    = 0.0;// 모달창 스크롤 컨트롤러 위치값(offset)저장
+  var ChapterScroller_position = 0.0;// 모달창 스크롤 컨트롤러 위치값(offset)저장
 
   /* 자유 검색 스크린 결과 스크롤 조정을 위한 컨트롤러 정의 */
   final ScrollController BookCountScroller  = ScrollController(keepScrollOffset: true);
   final ScrollController ContentsScroller   = ScrollController(keepScrollOffset: true);
+  final ScrollController RecentScroller      = ScrollController(keepScrollOffset: true); // 최근검색결과 tab 전용 스크롤 컨트롤러
 
   /* 텍스트컨트롤러 정의 */
   var ModaltextController = TextEditingController(); // 메인 모달 검색어 컨트롤러
@@ -138,7 +143,7 @@ class BibleController extends GetxController {
     update();
   }
 
-  //<함수>"구약" or "신약" 선택
+  //<함수>성경검색 모달창에서 "구약" or "신약" 선택
   void NEWorOLD_choice(String value){
     // 조건 업데이트
     NEWorOLD_choiced = value;
@@ -149,12 +154,16 @@ class BibleController extends GetxController {
       case "구약" :
         BookList_filtered = BookList.where((f) => f['type'] == 'old').toList(); // 구약으로 필터링
         Book_choiced ="창세기"; // 초기선택값 부여
+        Book_choice("창세기"); // 조건에 맞는 챕터리스트 가져오기
         break;
       case "신약" :
         BookList_filtered = BookList.where((f) => f['type'] == 'new').toList(); // 신약으로 필터링
         Book_choiced ="마태복음"; // 초기선택값 부여
+        Book_choice("마태복음"); // 조건에 맞는 챕터리스트 가져오기
         break;
     }
+    /* 스크롤러 초기화 */
+    Scroll_offset_init();
     update();
   }
   //<함수> 메인페이지 _ 모달 검색창에서 성경 권(book) 자유 검색
@@ -164,12 +173,16 @@ class BibleController extends GetxController {
   }
 
 
-  // <함수> 성경 권(book) 선택
+  // <함수> 메인페이지 _ 모달 검색창에서 성경 권(book) 선택
   Future<void> Book_choice(String value) async {
     // 조건 업데이트
     Book_choiced = value;
     Chapter_choiced = 1; // 권이 변경되었으므로, 챕터 1장으로 초기화
-    // 조건에 맞는 권(book)의 bcode 가져오기
+    // 권이 변경되었으므로, 스크롤 최상단으로 초기화
+    if (ChapterScroller.hasClients){
+      ChapterScroller.jumpTo(0.0);
+    }
+    //최상단에 있는 book code로 초기화
     if(BookList_filtered.length>0){
       BookCode_choiced = BookList_filtered.where((f) => f['국문'] == value).toList()[0]['bcode'];
     }else{
@@ -182,7 +195,7 @@ class BibleController extends GetxController {
     update();
   }
 
-  // <함수> 챕터번호(cnum) 선택
+  // <함수> 메인페이지 _ 모달 검색창에서 챕터번호(cnum) 선택
   void Chapternumber_choice(cnum){
     // 조건 업데이트
     Chapter_choiced = cnum;
@@ -191,6 +204,36 @@ class BibleController extends GetxController {
     update();
     SavePrefsData(); //현재 설정값 저장
   }
+
+  //<함수> 메인페이지 _ 모달 검색창에서 스크롤 현재 위치 저장
+  void Scroll_offset_save(){
+    if (BookScroller.hasClients){
+      BookScroller_position    = BookScroller.offset;// 모달창 스크롤 컨트롤러 위치값(offset)저장
+    }
+    if (ChapterScroller.hasClients){
+      ChapterScroller_position = ChapterScroller.offset;// 모달창 스크롤 컨트롤러 위치값(offset)저장
+    }
+    update();
+  }
+  //<함수> 메인페이지 _ 모달 검색창에서 스크롤 현재 위치 불러오기
+  void Scroll_offset_load(){
+    BookScroller.animateTo(BookScroller_position, duration: Duration(milliseconds: 1000), curve: Curves.fastOutSlowIn);
+    ChapterScroller.animateTo(BookScroller_position, duration: Duration(milliseconds: 1000), curve: Curves.fastOutSlowIn);
+    update();
+  }
+
+  //<함수> 메인페이지 _ 모달 검색창에서 스크롤 초기화
+  void Scroll_offset_init(){
+    if (BookScroller.hasClients){
+      BookScroller.jumpTo(0);
+    }
+    if (ChapterScroller.hasClients){
+      ChapterScroller.jumpTo(0);
+    }
+    update();
+  }
+
+  
 
   // <함수> 조건에 맞는 성경 구절 가져오기
   Future<void> Getcontents() async {
@@ -260,6 +303,7 @@ class BibleController extends GetxController {
         if(current_index==0){ // 이전 페이지가 없는 경우, 안내 메세지 팝업
           PopToast("첫 페이지 입니다.");
         }else{
+          Book_choiced     = VersesDummy[current_index - 1]['국문'];
           BookCode_choiced = VersesDummy[current_index - 1]['bcode'];
           Chapter_choiced  = VersesDummy[current_index - 1]['cnum'];
         }
@@ -269,11 +313,13 @@ class BibleController extends GetxController {
         if(current_index==1188){ // 다음 페이지가 없는 경우, 안내 메세지 팝업
           PopToast("마지막 페이지 입니다.");
         }else{
+          Book_choiced     = VersesDummy[current_index + 1]['국문'];
           BookCode_choiced = VersesDummy[current_index + 1]['bcode'];
           Chapter_choiced  = VersesDummy[current_index + 1]['cnum'];
         }
         break;
     }
+
     // 플로팅 액션버튼 초기화
     FloatingAB_init();
 
@@ -335,25 +381,24 @@ class BibleController extends GetxController {
 
     //2. 가장 먼저 나오는 성경 권(book)을 초기값으로 지정하고 조건에 맞는 챕터리스트 가져오기
     if(FreeSearchResultCount.length>=1){
-      // 3-1. 검색결과가 1건 이상인 경우는 정상적으로 진행 //
-      FreeSearch_book_choice(FreeSearchResultCount[0]['bcode']);
-      PopToast("총 ${FreeSearchResultSumCount} 건의 검색결과가 존재합니다.");
+      // 2-1. 검색결과가 1건 이상인 경우는 정상적으로 진행 //
+      FreeSearch_book_choice(FreeSearchResultCount[0]['bcode']).then((value) =>
+      // 2-2. 가장 먼저 나오는 성경 챕터(cnum)을 초기값으로 지정하고 조건에 맞는 구절리스트 가져오기
+          FreeSearch_cnum_choice(FreeSearchSelected_cnum)
+      );
+      //PopToast("총 ${FreeSearchResultSumCount} 건의 검색결과가 존재합니다.");
     }else{
-      // 3-2. 검색결과가 0건인경우, 검색 기록 없음 띄워주기
+      // 2-3. 검색결과가 0건인경우, 검색 기록 없음 띄워주기
       PopToast("검색결과가 없습니다");
       FreeSearchResult_filtered = []; // 리스트 초기화
       FreeSearchResultCount_cnum = []; //챕터(cnum) 갯수  초기화
     }
 
-
-    //3. 가장 먼저 나오는 성경 챕터(cnum)을 초기값으로 지정하고 조건에 맞는 구절리스트 가져오기
-    FreeSearch_cnum_choice(FreeSearchSelected_cnum);
-
-    //4. 검색기록 저장 및 변수 업뎃
+    //3. 검색기록 저장 및 변수 업뎃
     SavePrefsData(); //현재 설정값 저장
     update();
 
-    //5. 로딩종료 화면 띄우기
+    //4. 로딩종료 화면 띄우기
     EasyLoading.dismiss();
   }
 
@@ -429,6 +474,7 @@ class BibleController extends GetxController {
     FreeSearch_init(); // 자유검색 초기화
     GetFavorite_list(); // 즐겨찾기 업데이트
     Memo_DB_load(); // 메모 업데이트
+    DiaryCtr.Bilbe_reload();// 성경 일기 페이지 바뀐 성경으로 리로드
     update();
   }
 
@@ -438,9 +484,10 @@ class BibleController extends GetxController {
     // 0. 0번탭(검색결과탭)으로 이동
     SearchtabController.animateTo(0);
     // 1. 쿼리에 필요한 변수 수정
-    textController.text      = FreeSearch_history_query[index]; // 보여지는 쿼리 수정
-    FreeSearchQuery          = FreeSearch_history_query[index]; // 실제 검색에 쓸 쿼리문 수정
-    Bible_choiced = FreeSearch_history_bible[index]; // 선택된 성경 수정
+    /* 최신 검색 결과가 가장 위로 올라와야 하므로 배열을 반전시킨다 */
+    textController.text      = List.from(FreeSearch_history_query.reversed)[index]; // 보여지는 쿼리 수정
+    FreeSearchQuery          = List.from(FreeSearch_history_query.reversed)[index]; // 실제 검색에 쓸 쿼리문 수정
+    Bible_choiced            = List.from(FreeSearch_history_bible.reversed)[index]; // 선택된 성경 수정
     // 2. 쿼리 실행
     GetFreeSearchList();
     /* 메인 성경 컨텐츠 업데이트 */

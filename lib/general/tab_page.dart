@@ -36,7 +36,7 @@ class _TabPageState extends State<TabPage> {
             return Scaffold(
               body: Center(child: pages[GeneralCtr.selectedPageIndex]),
               bottomNavigationBar: Container(
-                  height: 40, // 네비바 높이
+                  height: 60, // 네비바 높이
                   decoration: const BoxDecoration(
                       color: Colors.white,
                       boxShadow: [BoxShadow(color: Colors.white)],
@@ -47,12 +47,12 @@ class _TabPageState extends State<TabPage> {
                               width: 0.2,
                               style: BorderStyle.solid))),
                   child: BottomNavigationBar(
-
+                    backgroundColor: Colors.white,
                     type: BottomNavigationBarType.fixed,
                     unselectedItemColor: Colors.grey, // 비활성 아이콘 색깔
                     selectedItemColor: GeneralCtr.MainColor,  // 활성 아이콘 색깔
-                    unselectedFontSize: 0, // 비활성 텍스트 크기, 텍스트를 안쓸거기때문에 가장작게한다!
-                    selectedFontSize: 0, // 활성 텍스트 크기, 텍스트를 안쓸거기때문에 가장작게한다!
+                    unselectedFontSize: 13, // 비활성 텍스트 크기, 텍스트를 안쓸거기때문에 가장작게한다!
+                    selectedFontSize: 13, // 활성 텍스트 크기, 텍스트를 안쓸거기때문에 가장작게한다!
                     // 탭 클릭 이벤트
                     onTap: (index) {
                       GeneralCtr.PageChanged(index);
@@ -61,12 +61,12 @@ class _TabPageState extends State<TabPage> {
                     //Tab 아이템 정의
                     items: const [
                       BottomNavigationBarItem(
-                          icon: Icon(FontAwesome5.bible, size: 25), label: ''),
+                          icon: Icon(FontAwesome5.bible, size: 25), label: '성경'),
                       BottomNavigationBarItem(
-                          icon: Icon(Elusive.pencil, size: 25), label: ''),
+                          icon: Icon(Elusive.pencil, size: 25), label: '일기'),
                       BottomNavigationBarItem(
-                          icon: Icon(Elusive.music , size: 25), label: ''),
-                      BottomNavigationBarItem(icon: Icon(FontAwesome5.user, size: 25), label:''),
+                          icon: Icon(Elusive.music , size: 25), label: '찬송가'),
+                      BottomNavigationBarItem(icon: Icon(FontAwesome5.user, size: 25), label:'MY'),
                     ],
                   )
               ),

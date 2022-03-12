@@ -112,7 +112,7 @@ Widget MainWidget(context){
                       percent: DiaryCtr.statistics_year_percent,
                       center: Text(DiaryCtr.statistics_year_string),
                       barRadius: const Radius.circular(16),
-                      progressColor: GeneralCtr.BlueColor.withOpacity(0.5),
+                      progressColor: GeneralCtr.GreenColor,
                       backgroundColor: Colors.grey.withOpacity(0.1),
                     ),
 

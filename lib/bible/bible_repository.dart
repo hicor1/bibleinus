@@ -43,8 +43,14 @@ class BibleRepository {
     var db = await BibleDatabase.getDb();
     var Query =
     """
-          SELECT DISTINCT bcode, cnum
+        SELECT DISTINCT verses.bcode, cnum, 국문, 영문
+        FROM
+        (
+          SELECT _id, bcode, cnum
           FROM verses 
+        ) AS verses
+        INNER JOIN bibles
+        ON verses.bcode = bibles.bcode
       """;
     var result =  db.rawQuery(Query);
     return result;

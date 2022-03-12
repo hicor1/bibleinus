@@ -50,6 +50,7 @@ class DiaryController extends GetxController {
 
   var dirary_screen_selected_verses_id = [99999]; // 성경일기 작성 페이지 _ 선택된 구절 인덱스 리스트
   var max_verse_length = 10; // 추가 가능한 최대 구절 수 제한
+  var temp_verses_id_list = []; // DB에서 성경 불러오기 위한 중복이 제거된 구절 아이디 리스트 임시 저장소
 
 
   var Temp_selected_contents_id   = 0; // 구절 id 수정을 위한  선택된 구절 아이디값 임시저장
@@ -487,7 +488,7 @@ class DiaryController extends GetxController {
           }
           /* 성경구절 ID에 맞는 구절 DATA를 DB에서 조회해서 가져오기 */
           // 0 . 임시 저장공간생성
-          var temp_verses_id_list = [];
+          temp_verses_id_list = [];
           // 1. 성경구절 id 합쳐주기
           for(int i = 0; i < diary_view_contents.length; i++){
             temp_verses_id_list.addAll(diary_view_contents[i]['dirary_screen_selected_verses_id']);
@@ -506,6 +507,11 @@ class DiaryController extends GetxController {
     update();
     // 로딩화면 종료
     EasyLoading.dismiss();
+  }
+
+  /* <함수> 설정에서 성경이 변경되었을 경우, 리로드 하는 모듈 */
+  Future<void> Bilbe_reload() async {
+    diary_view_selected_contents_data = await BibleRepository.GetClickedVerses(temp_verses_id_list, BibleCtr.Bible_choiced);
   }
 
   /* <함수> 현재시간과의 시간차이 산출 _ 현재와의 시간차이 구하기 ( 방금_1분이내, xx시간전, xx일전, xx달전, xx년전 으로 구분 ) */
