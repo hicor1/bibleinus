@@ -1,6 +1,7 @@
 import 'package:bible_in_us/auth/auth_check_page.dart';
 import 'package:bible_in_us/bible/bible_controller.dart';
 import 'package:bible_in_us/diary/diary_controller.dart';
+import 'package:bible_in_us/diary/diary_tab_page.dart';
 import 'package:bible_in_us/general/general_controller.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -33,7 +34,6 @@ class MyApp extends StatelessWidget {
     GeneralCtr.LoadPrefsData(); // 설정값 불러오기
     BibleCtr.init();// 컨트롤러 초기화
     DiaryCtr.init();// 컨트롤러 초기화
-
 
     /* 파이어베이스 코어 로드 체크를 위해 빌더 생성 */
     return FutureBuilder(

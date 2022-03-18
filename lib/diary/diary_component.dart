@@ -1,6 +1,8 @@
 // 검색 글자수 모자람 경고창 띄우기
 import 'package:bible_in_us/bible/bible_component.dart';
 import 'package:bible_in_us/diary/diary_controller.dart';
+import 'package:bible_in_us/diary/diary_tab_page.dart';
+import 'package:bible_in_us/diary/diray_view_page.dart';
 import 'package:bible_in_us/general/general_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -119,7 +121,6 @@ Future<void> Delete_check_Dialog(context, Docid, index) async {
               onPressed: () {
                 // 1. 삭제 모듈 작동
                 DiaryCtr.DeleteAction(Docid, index);
-
                 // 2. 안내 메세지
                 PopToast("삭제 안료");
                 // 3. 팝업창 닫기
@@ -170,9 +171,10 @@ Future<void> Save_check_Dialog(context) async {
                 }else if(DiaryCtr.NewOrModify=="modify"){
                   DiaryCtr.diary_modify_save();
                 }
-
                 // 2. 팝업창 닫기
                 Navigator.pop(context);
+                // 3. 일기view 페이지로 돌아가기
+                Get.offAll(() => DiaryTabPage());
               },
             ),
             ElevatedButton(
@@ -312,6 +314,8 @@ Future<void> Date_picker_Dialog(context) async {
             width: 300,
             height: 250,
             child: SfDateRangePicker(
+
+              monthFormat: 'M월', // 월 표기 서식
               controller: DiaryCtr.datePickerController, // 컨트롤러 할당
               showActionButtons: false, //"확인", "취소"버튼 보이기
               cancelText: "취소",

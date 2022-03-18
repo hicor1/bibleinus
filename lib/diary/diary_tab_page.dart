@@ -56,8 +56,8 @@ class MainWidget extends StatelessWidget {
                           title: Text('일기', style: GeneralCtr.Style_title),
                           backgroundColor: Colors.white,
                           floating: true, // 최상단 앱바까지 감출지 여부
-                          pinned: true, // 탭까지 모두 감출지 여부
-                          snap: false, // 잠깐다시올릴때 앱바 보여주기
+                          pinned: false, // 탭까지 모두 감출지 여부
+                          snap: true, // 잠깐다시올릴때 앱바 보여주기
                           // 앱바 액숀 버튼
                           actions: [
                             /* 일기 달력으로 보여주기 */

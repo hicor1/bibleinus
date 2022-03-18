@@ -20,8 +20,8 @@ class TabPage extends StatefulWidget {
 
 class _TabPageState extends State<TabPage> {
   List pages = [
-    BibleTabPage(),
     DiaryTabPage(),
+    BibleTabPage(),
     HymnTabPage(),
     MyMainPage(),
   ];
@@ -61,9 +61,9 @@ class _TabPageState extends State<TabPage> {
                     //Tab 아이템 정의
                     items: const [
                       BottomNavigationBarItem(
-                          icon: Icon(FontAwesome5.bible, size: 25), label: '성경'),
-                      BottomNavigationBarItem(
                           icon: Icon(Elusive.pencil, size: 25), label: '일기'),
+                      BottomNavigationBarItem(
+                          icon: Icon(FontAwesome5.bible, size: 25), label: '성경'),
                       BottomNavigationBarItem(
                           icon: Icon(Elusive.music , size: 25), label: '찬송가'),
                       BottomNavigationBarItem(icon: Icon(FontAwesome5.user, size: 25), label:'MY'),

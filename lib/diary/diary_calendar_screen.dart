@@ -122,6 +122,7 @@ Widget MainWidget(context){
                     /* 달력보여주기 */
                     Flexible(
                       child: SfCalendar(
+
                         /*  아래 상세 내역을 클릭했을 때 이벤트 정의(https://help.syncfusion.com/flutter/calendar/appointments)/(https://www.syncfusion.com/kb/10999/how-to-get-appointment-details-from-the-ontap-event-of-the-flutter-calendar) */
                         onTap: (CalendarTapDetails details) {
                           /* 내역이 있을때만 반응한다 */
@@ -170,10 +171,8 @@ Widget MainWidget(context){
                 backgroundColor: GeneralCtr.MainColor,
                 onPressed: () {
                   /* 새 일기 쓰기 모듈 호출 */
-                  // 1. 선택된 날짜로 설정해주기
-                  DiaryCtr.SelectedDate_change_from_calendar();
-                  // 2. 일기 쓰기 페이지로 이동하기
-                  Get.to(() => DiaryWriteScreen());
+                  // 1. 선택된 날짜가 있는지 체크 + 일기쓰기 페이지로 이동
+                  DiaryCtr.SelectedDate_change_from_calendar(context);
                 },
               ),
             ),

@@ -177,18 +177,34 @@ class MainWidget extends StatelessWidget {
                                   "${DiaryCtr.dirary_screen_selectedDate.month}월 "
                                   "${DiaryCtr.dirary_screen_selectedDate.day}일 "
                                   "(${DiaryCtr.ConvertWeekday(DiaryCtr.dirary_screen_selectedDate.weekday)})",
-                                style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9, fontWeight: FontWeight.bold),
+                                style: TextStyle(fontSize: GeneralCtr.fontsize_normal*1.0, fontWeight: FontWeight.bold),
                               ),
                               Icon(FontAwesome.down_dir, size: GeneralCtr.fontsize_normal, color: Colors.grey)
                             ],
                           ),
                         ),
 
+                        /* 사회적 거리두기 */
+                        SizedBox(height: 5),
+
+                        /* 이 시간에 추천해요  */
+                        Time_Choice(context),
+
+                        /* 날씨 */
+                        Weather_Choice(context),
+
+                        /* 이미티콘 보여주는 위젯 */
+                        Emoticon_Choice(context),
+
                         /* 칼라코드 보여주기 */
                         Color_code_choice(),
 
+                        /* 사회적 거리두기 */
+                        SizedBox(height: 15),
+
                         /* 감정 이모티콘 선택하기(이모지(#emoji #이모티콘 선택하는 위젯) */
-                        Emoji_choice(),
+                        //Emoji_choice(),
+
 
                         /* 제목, 내용 등 텍스트 필드 */
                         Padding(
@@ -219,8 +235,8 @@ class MainWidget extends StatelessWidget {
                                     focusedBorder: OutlineInputBorder(
                                       borderSide: BorderSide(color: Colors.blueAccent, width: 1),
                                     ),
-                                    labelText: '성경일기 제목을 적어주세요', // 라벨
-                                    labelStyle: TextStyle(color: Colors.grey.withOpacity(0.7), fontSize: 13), // 라벨 스타일
+                                    labelText: '제목을 적어주세요', // 라벨
+                                    labelStyle: TextStyle(color: Colors.grey.withOpacity(0.7), fontSize: 20), // 라벨 스타일
                                     floatingLabelStyle: TextStyle(fontSize: 15), // 포커스된 라벨 스타일
                                   ),
                                   /* 제목 유효성 검사 */
@@ -243,7 +259,7 @@ class MainWidget extends StatelessWidget {
                                   padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(10),
-                                    color: Colors.grey.withOpacity(0.1),
+                                    color: GeneralCtr.GreenColor.withOpacity(0.05),
                                   ),
                                   child: TextFormField(
                                     /* 최대 입력가능한 글자 수 제한 */
@@ -251,7 +267,7 @@ class MainWidget extends StatelessWidget {
                                     //inputFormatters: [LengthLimitingTextInputFormatter(1500)],
                                     controller: DiaryCtr.ContentstextController,
                                     keyboardType: TextInputType.multiline, // 줄바꿈이 있는 키도드 보여주기
-                                    minLines: 10,
+                                    minLines: 5,
                                     maxLines: null,
                                     autofocus: false,
                                     autocorrect: true,
@@ -265,7 +281,7 @@ class MainWidget extends StatelessWidget {
                                     /* 스타일 정의 */
                                     decoration: InputDecoration(
                                       hintText: '내용을 적어주세요', // 라벨,
-                                      hintStyle: TextStyle(color: Colors.grey.withOpacity(0.7), fontSize: 13),
+                                      hintStyle: TextStyle(color: Colors.grey.withOpacity(0.7), fontSize: 20),
                                       // 언더라인 없애기
                                       enabledBorder: UnderlineInputBorder(
                                         borderSide: BorderSide(color: Colors.transparent),
@@ -295,61 +311,6 @@ class MainWidget extends StatelessWidget {
 
                         /* 해쉬태그 추가하는곳(#hashtag  #해시 # 태그) */
                         HashTag(context),
-
-                        /* 사회적 거리두기 */
-                        SizedBox(height: 25),
-
-                        /* 이 시간에 추천해요  */
-                        Container(
-                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                            width: MediaQuery.of(context).size.width,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text("이 시간에 추천해요", style: TextStyle(fontWeight: FontWeight.bold)),
-                                /* 추천 태그 보여주기 */
-                                Container(
-                                  padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
-                                  height : 50,
-                                  child: ListView.builder(
-                                    //physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
-                                      shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
-                                      scrollDirection: Axis.horizontal, // 수직(vertical)  수평(horizontal) 배열 선택
-                                      //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
-                                      itemCount: DiaryCtr.TimeTag.length,
-                                      itemBuilder: (context, index) {
-                                        var result = DiaryCtr.TimeTag[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
-                                        return Container(
-                                          margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                                          child: OutlinedButton(
-                                            onPressed: (){
-                                              /* 타임태그 선택 이벤트 */
-                                              DiaryCtr.update_dirary_screen_timetag_index(index);
-                                            },
-                                            /* 선택된 태그 강조해주기 */
-                                            child: Text("# ${result}",
-                                                style: TextStyle(
-                                                    color: index == DiaryCtr.dirary_screen_timetag_index ? Colors.black : Colors.grey,
-                                                    fontWeight: index == DiaryCtr.dirary_screen_timetag_index ? FontWeight.bold : null,
-                                                    fontSize: 13)
-                                            ),
-                                            style: OutlinedButton.styleFrom(
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(20.0),
-                                              ),
-                                              side: BorderSide(
-                                                  width: 1,
-                                                  color: index == DiaryCtr.dirary_screen_timetag_index ? Colors.black : Colors.grey,
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      }
-                                  ),
-                                ),
-                              ],
-                            )
-                        ),
 
                         /* 사회적 거리두기 */
                         SizedBox(height: 20),
@@ -442,7 +403,7 @@ class ViewVerses extends StatelessWidget {
       passiveIndicator: Colors.white,
       pagerSize: 7.0,// 이미지 하단 페이지 인디케이터 크기
       enableInfiniteScroll: false, // 무한스크롤
-      viewportFraction: 0.8, // 전.후 이미지 보여주기 ( 1.0이면 안보여줌 )
+      viewportFraction: 0.9, // 전.후 이미지 보여주기 ( 1.0이면 안보여줌 )
       aspectRatio: 20, // 사진 비율
       enlargeMainPage: true, // 자동 확대
       pagination: true, // 이미지 하단 페이지 인디케이터 표시여부
@@ -601,8 +562,8 @@ class AddVerses extends StatelessWidget {
 
               /* 옵션 버튼 _ 하위 메뉴 스타일 */
               itemBuilder: (context) => [
-                PopupMenuItem(child: Row(children: [Icon(Entypo.search, size: 20), Text(" 검색", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9))]), value: "검색"),
-                PopupMenuItem(child: Row(children: [Icon(FontAwesome.bookmark_empty, size: 20), Text(" 즐겨찾기", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9))]), value: "즐겨찾기"),
+                PopupMenuItem(child: Row(children: [Icon(Entypo.search, size: 20), Text(" 검색", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "검색"),
+                PopupMenuItem(child: Row(children: [Icon(FontAwesome.bookmark_empty, size: 20), Text(" 즐겨찾기", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "즐겨찾기"),
               ]
           )
         ],
@@ -685,13 +646,10 @@ Widget Color_code_choice(){
                   child: Stack(
                     alignment: Alignment.topLeft,
                     children: [
-                      Container(
-                        width: 30,
-                        height: 30,
-                        decoration: BoxDecoration(
-                          color: result,
-                          shape: BoxShape.circle,
-                        ),
+                      Icon(
+                        FontAwesome5.book_medical,
+                        color: result,
+                        size: 35,
                       ),
                       /* 선태된 색 강조 */
                       Icon(
@@ -701,7 +659,7 @@ Widget Color_code_choice(){
                     ],
                   ),
                 ),
-                SizedBox(width: 10)
+                SizedBox(width: 15)
               ],
             );
           }
@@ -735,7 +693,7 @@ Widget Emoji_choice(){
                     child: Stack(
                       alignment: Alignment.topLeft,
                       children: [
-                        Text("${result}", style: TextStyle(fontSize: 24)),
+                        Text("${result}", style: TextStyle(fontSize: 30)), // 이모지 크기
                         /* 선태된 이모지 강조 */
                         Icon(
                             index == DiaryCtr.dirary_screen_emoji_index ? WebSymbols.ok : null,
@@ -891,4 +849,144 @@ Widget HashTag(context){
           ],
         )
     );
+}
+
+//<서브위젯> 시간 선택 모듈
+Widget Time_Choice(context){
+  return
+    /* 이 시간에 추천해요  */
+    Container(
+        padding: const EdgeInsets.fromLTRB(20, 0, 0, 0),
+        width: MediaQuery.of(context).size.width,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            //Text("지금은", style: TextStyle(fontWeight: FontWeight.bold)),
+            /* 추천 태그 보여주기 */
+            Container(
+              padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
+              height : 50,
+              child: ListView.builder(
+                //physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
+                  shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
+                  scrollDirection: Axis.horizontal, // 수직(vertical)  수평(horizontal) 배열 선택
+                  //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
+                  itemCount: DiaryCtr.TimeTag.length,
+                  itemBuilder: (context, index) {
+                    var result = DiaryCtr.TimeTag[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
+                    return Container(
+                      margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                      child: OutlinedButton(
+                        onPressed: (){
+                          /* 타임태그 선택 이벤트 */
+                          DiaryCtr.update_dirary_screen_timetag_index(index);
+                        },
+                        /* 선택된 태그 강조해주기 */
+                        child: Text("# ${result}",
+                            style: TextStyle(
+                                color: index == DiaryCtr.dirary_screen_timetag_index ? Colors.black : Colors.grey.withOpacity(0.5),
+                                fontWeight: index == DiaryCtr.dirary_screen_timetag_index ? FontWeight.bold : null,
+                                fontSize: GeneralCtr.fontsize_normal*0.8)
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          side: BorderSide(
+                            width: 1,
+                            color: index == DiaryCtr.dirary_screen_timetag_index ? Colors.black : Colors.grey,
+                          ),
+                        ),
+                      ),
+                    );
+                  }
+              ),
+            ),
+          ],
+        )
+    );
+}
+
+//<서브위젯> 날씨 선택 모듈
+Widget Weather_Choice(context){
+  /* 오늘 날씨는  */
+  return Container(
+    padding: EdgeInsets.fromLTRB(15, 10, 0, 5),
+    height : 60,
+    child: ListView.builder(
+      //physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
+      //reverse: true,
+        shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
+        scrollDirection: Axis.horizontal, // 수직(vertical)  수평(horizontal) 배열 선택
+        //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
+        itemCount: DiaryCtr.WeatherName.length,
+        itemBuilder: (context, index) {
+          var result = DiaryCtr.WeatherName[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
+          return Row(
+            children: [
+              InkWell(
+                  onTap: (){
+                    /* 이모지 코드 선택 이벤트 */
+                    DiaryCtr.update_dirary_screen_weather_index(index);
+                  },
+                  /* 이모지 코드 보여주기 */
+                  child: Opacity(
+                    /* 선택된 아이콘 강조 해주기 */
+                    opacity: DiaryCtr.dirary_screen_weather_index == index? 1.0 : 0.3,
+                    child: Image.asset(
+                      "assets/img/icons/weather/$result.png",
+                      height: 40.0,
+                      width: 40.0,
+                    ),
+                  )//
+              ),
+              /* 아이콘 사회적 거리두기 */
+              SizedBox(width: 20)
+            ],
+          );
+        }
+    ),
+  );
+}
+
+//<서브위젯> 날씨 선택 모듈
+Widget Emoticon_Choice(context){
+  /* 오늘 날씨는  */
+  return Container(
+    padding: EdgeInsets.fromLTRB(15, 10, 0, 5),
+    height : 60,
+    child: ListView.builder(
+      //physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
+      //reverse: true,
+        shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
+        scrollDirection: Axis.horizontal, // 수직(vertical)  수평(horizontal) 배열 선택
+        //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
+        itemCount: DiaryCtr.EmoticonName.length,
+        itemBuilder: (context, index) {
+          var result = DiaryCtr.EmoticonName[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
+          return Row(
+            children: [
+              InkWell(
+                  onTap: (){
+                    /* 이모지 코드 선택 이벤트 */
+                    DiaryCtr.update_dirary_screen_emoticon_index(index);
+                  },
+                  /* 이모지 코드 보여주기 */
+                  child: Opacity(
+                    /* 선택된 아이콘 강조 해주기 */
+                    opacity: DiaryCtr.dirary_screen_emoticon_index == index? 1.0 : 0.3,
+                    child: Image.asset(
+                      "assets/img/icons/emoticon/$result.png",
+                      height: 35.0,
+                      width: 35.0,
+                    ),
+                  )//
+              ),
+              /* 아이콘 사회적 거리두기 */
+              SizedBox(width: 25)
+            ],
+          );
+        }
+    ),
+  );
 }

@@ -6,7 +6,9 @@ import 'package:bible_in_us/bible/bible_component.dart';
 import 'package:bible_in_us/bible/bible_controller.dart';
 import 'package:bible_in_us/bible/bible_repository.dart';
 import 'package:bible_in_us/diary/diary_component.dart';
+import 'package:bible_in_us/diary/diary_tab_page.dart';
 import 'package:bible_in_us/diary/diary_write_srceen.dart';
+import 'package:bible_in_us/diary/diray_view_page.dart';
 import 'package:bible_in_us/my/my_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -43,6 +45,8 @@ class DiaryController extends GetxController {
   var dirary_screen_address = ""; // 성경일기 작성 페이지 _ 선택된 주소
   var dirary_screen_color_index = 0; // 성경일기 작성 페이지 _ 선택된 색깔 인덱스
   var dirary_screen_emoji_index = 0; // 성경일기 작성 페이지 _ 선택된 색깔 인덱스
+  var dirary_screen_weather_index = 0; // 성경일기 작성 페이지 _ 선택된 색깔 인덱스
+  var dirary_screen_emoticon_index = 0; // 성경일기 작성 페이지 _ 선택된 색깔 인덱스
   var dirary_screen_timetag_index = 0; // 성경일기 작성 페이지 _ 선택된 시간태그 인덱스
   var dirary_screen_title = "";    //성경일기 작성 페이지 _ 일기 제목 ( title )
   var dirary_screen_contents = ""; //성경일기 작성 페이지 _ 일기 내용 ( contents )
@@ -112,6 +116,14 @@ class DiaryController extends GetxController {
     Color(0xFF808000).withOpacity(0.8),
     Color(0xFF008000).withOpacity(0.8),
     Color(0xFF008080).withOpacity(0.8),
+
+    Color(0xFFFF9AA2),
+    Color(0xFFFFB7B2),
+    Color(0xFFFFDAC1),
+    Color(0xFFE2F0CB),
+    Color(0xFFB5EAD7),
+    Color(0xFFC7CEEA),
+
   ];
 
   /* 이미티콘(이모지,emoji) 정의 */
@@ -158,6 +170,44 @@ class DiaryController extends GetxController {
     "\u{1f637}",
   ];
 
+  /* 날씨 아이콘 이름 정의 */
+  var WeatherName = [
+    "sunny",
+    "sunny-cloudy",
+    "cloudy",
+    "windy",
+    "wind",
+    "storm-rain",
+    "storm",
+    "snow-rain",
+    "snow",
+    "rainy",
+    "heavy-rain",
+    "blizzard",
+  ];
+
+  /* 이모티콘 이름 정의 */
+  var EmoticonName = [
+    "free-icon-in-love-983030",
+    "free-icon-happy-983007",
+    "free-icon-happy-983028",
+    "free-icon-laughing-982985",
+    "free-icon-happy-982984",
+    "free-icon-silent-983027",
+    "free-icon-sleeping-983004",
+    "free-icon-sad-982995",
+    "free-icon-embarrassed-982993",
+    "free-icon-disappointed-982991",
+    "free-icon-crying-982986",
+    "free-icon-injured-983025",
+    "free-icon-sick-983002",
+    "free-icon-angry-982987",
+    "free-icon-angry-983032",
+    "free-icon-shocked-983019",
+    "free-icon-angry-982989",
+    "free-icon-angry-983022",
+  ];
+
   /* 시간 추천 태크 정의 */
   var TimeTag = [
     "촉촉한 새벽","새로운 아침","나른한 낮 시간","빛나는 오후","설레는 퇴근","따뜻한 저녁","별 헤는 밤"
@@ -178,6 +228,18 @@ class DiaryController extends GetxController {
   //<함수> 성경일기 작성스크린 _ 이모지(이모티콘) 인덱스 선택
   void update_dirary_screen_emoji_index(int index){
     dirary_screen_emoji_index = index;
+    update();
+  }
+
+  //<함수> 성경일기 작성스크린 _ 날씨 인덱스 선택
+  void update_dirary_screen_weather_index(int index){
+    dirary_screen_weather_index = index;
+    update();
+  }
+
+  //<함수> 성경일기 작성스크린 _ 이모티콘 선택
+  void update_dirary_screen_emoticon_index(int index){
+    dirary_screen_emoticon_index = index;
     update();
   }
 
@@ -413,13 +475,15 @@ class DiaryController extends GetxController {
       "dirary_screen_selected_verses_id": dirary_screen_selected_verses_id, // 더미 데이터 삭제
       "dirary_screen_selectedDate": dirary_screen_selectedDate,
       "dirary_screen_color_index": dirary_screen_color_index,
-      "dirary_screen_emoji_index": dirary_screen_emoji_index,
       "dirary_screen_title": dirary_screen_title,
       "dirary_screen_contents":dirary_screen_contents,
       "choiced_image_file":ImgUrl,
       "dirary_screen_timetag_index":dirary_screen_timetag_index,
+      "dirary_screen_weather_index":dirary_screen_weather_index,
+      "dirary_screen_emoticon_index":dirary_screen_emoticon_index,
       "dirary_screen_address":dirary_screen_address,
       "dirary_screen_hashtag":get_hash_tag_list(),
+      //"dirary_screen_emoji_index": dirary_screen_emoji_index,
     }).then((value) => PopToast("일기가 등록되었어요!")
     );// 안내메세지
 
@@ -432,13 +496,12 @@ class DiaryController extends GetxController {
 
     // 일기 리스트 다시 불러오기
     LoadAction();
-
+    // 달력페이지 다시 불러오기
+    calendar_data_mapping();
     // 로딩화면 종료
     EasyLoading.dismiss();
     //안내 메세지
     PopToast("등록 안료");
-    // 이전 페이지로 돌아가기
-    Get.back();
   }
 
   /* <함수> 저장버튼 눌렀을 때 파이어베이스로 저장하기 */
@@ -462,7 +525,16 @@ class DiaryController extends GetxController {
     collection.doc(Docid).delete();
     /* 지우고 DB재조회 하지말고, 불러온 리스트에서만 수정하자 */
     diary_view_contents.removeAt(index);
-    update();
+    // 일기 리스트 다시 불러오기
+    LoadAction();
+    // 달력페이지 다시 불러오기
+    calendar_data_mapping();
+    // 일기view 페이지로 돌아가기
+    //Get.offAll(() => DiaryViewPage());
+
+    //Get.back();
+    Get.off(DiaryViewPage());
+    //Get.offNamedUntil('/DiaryTabPage', (route) => false);
   }
 
 
@@ -474,6 +546,7 @@ class DiaryController extends GetxController {
     /* 데이터 로드(조건) */
     collection
         .where("uid", isEqualTo: MyCtr.uid) // 본인이 작성한 글만 보이게
+        .orderBy("updated_at", descending:true) // 업데이트순서로 내림차순 정렬
         .orderBy("dirary_screen_selectedDate", descending:true) // 날짜로 내림차순 정렬
         /* ↓정상적으로 로드가 되었다면 아래 수행↓ */
         .get().then((QuerySnapshot ds) async {
@@ -551,8 +624,11 @@ class DiaryController extends GetxController {
     ContentstextController.text      = "";
     choiced_image_file               = [File(""),File(""),File("")];
     dirary_screen_timetag_index      = 0;
+    dirary_screen_weather_index      = 0;
+    dirary_screen_emoticon_index     = 0;
     dirary_screen_address            = "";
     HashTagController.text           = "";
+
     update();
   }
   /* <함수> 작성중인 내용이 있는지 확인하는 모듈 */
@@ -566,6 +642,8 @@ class DiaryController extends GetxController {
     if(TitletextController.text         != ""){check_score+=1;}
     if(ContentstextController.text      != ""){check_score+=1;}
     if(dirary_screen_timetag_index      != 0){check_score+=1;}
+    if(dirary_screen_weather_index      != 0){check_score+=1;}
+    if(dirary_screen_emoticon_index     != 0){check_score+=1;}
     if(dirary_screen_address            != ""){check_score+=1;}
     if(HashTagController.text           != ""){check_score+=1;}
     // 이상하게 계속 1점이 나온다,..??!!!!
@@ -598,11 +676,13 @@ class DiaryController extends GetxController {
     dirary_screen_selected_verses_id = diary_view_contents[index]['dirary_screen_selected_verses_id'].cast<int>();
     dirary_screen_selectedDate       = diary_view_contents[index]['dirary_screen_selectedDate'].toDate();
     dirary_screen_color_index        = diary_view_contents[index]['dirary_screen_color_index'];
-    dirary_screen_emoji_index        = diary_view_contents[index]['dirary_screen_emoji_index'];
     dirary_screen_title              = diary_view_contents[index]['dirary_screen_title'];
     dirary_screen_contents           = diary_view_contents[index]['dirary_screen_contents'];
     dirary_screen_timetag_index      = diary_view_contents[index]['dirary_screen_timetag_index'];
+    dirary_screen_weather_index      = diary_view_contents[index]['dirary_screen_weather_index'];
+    dirary_screen_emoticon_index     = diary_view_contents[index]['dirary_screen_emoticon_index'];
     dirary_screen_address            = diary_view_contents[index]['dirary_screen_address'];
+    //dirary_screen_emoji_index        = diary_view_contents[index]['dirary_screen_emoji_index'];
 
     /* 선택한 구절 DB 조회 */
     selected_contents_data = await BibleRepository.GetClickedVerses(dirary_screen_selected_verses_id, BibleCtr.Bible_choiced);
@@ -707,6 +787,8 @@ class DiaryController extends GetxController {
       "dirary_screen_contents":dirary_screen_contents,
       "choiced_image_file":ImgUrl,
       "dirary_screen_timetag_index":dirary_screen_timetag_index,
+      "dirary_screen_weather_index":dirary_screen_weather_index,
+      "dirary_screen_emoticon_index":dirary_screen_emoticon_index,
       "dirary_screen_address":dirary_screen_address,
       "dirary_screen_hashtag":get_hash_tag_list(),
     }).then((value) => PopToast("일기가 수정되었어요!")
@@ -714,14 +796,13 @@ class DiaryController extends GetxController {
 
     // 일기 리스트 다시 불러오기
     LoadAction();
-
+    // 일기 작성페이지 초기화
+    diray_write_screen_init();
     update();
     // 로딩화면 종료
     EasyLoading.dismiss();
     //안내 메세지
     PopToast("수정 안료");
-    // 이전 페이지로 돌아가기
-    Get.back();
 
   }
 
@@ -788,9 +869,19 @@ class DiaryController extends GetxController {
   }
 
   /* <함수> 성경작성(write)_페이지 _ 선택된 날짜로 변경 함수 */
-  void SelectedDate_change_from_calendar(){
+  void SelectedDate_change_from_calendar(context){
     /* 선택된 날짜로 업데이트 */
-    dirary_screen_selectedDate = calendarController.selectedDate!;
+
+    /* 1.선택된 날짜가 없는 경우, */
+    if(calendarController.selectedDate == null){
+      DiaryDialog(context, "날짜를 선택해주세요.");
+    }else{
+    /* 2.선택된 날짜가 있는 경우, */
+      // 선택된 날짜로 셋팅
+      dirary_screen_selectedDate = calendarController.selectedDate!;
+      // 일기 쓰기 페이지로 이동하기
+      Get.to(() => DiaryWriteScreen());
+    }
     update();
   }
 
@@ -877,6 +968,12 @@ class DiaryController extends GetxController {
     diary_view_contents_filtered = result;
     update();
   }
+
+
+
+
+
+
 
 } // 여기가 전체 클래스 끝 부분!!
 

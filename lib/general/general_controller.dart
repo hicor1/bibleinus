@@ -38,7 +38,7 @@ class GeneralController extends GetxController {
     var TextStyle_normal_disable = TextStyle(fontSize: 18, color: Colors.grey, fontWeight: FontWeight.w300); // 일반적인 텍스트 스타일 정의
 
     /*  메인에 보여지는 성경구절 스타일 */
-    var Textsize = 15.0; // 팝업창에서 설정할 전체 텍스트 사이즈
+    var Textsize = 20.0; // 팝업창에서 설정할 전체 텍스트 사이즈
     var Textheight = 2.0; // 팝업창에서 설정할 전체 텍스트 높이
 
     var selectedPageIndex = 0; // 현재 선택된 탭

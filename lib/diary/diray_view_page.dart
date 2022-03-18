@@ -158,7 +158,8 @@ Widget DiaryGridView() {
               var result = DiaryCtr.diary_view_contents_filtered[index];
               /* 날짜 데이터를 보기좋게 재구성 */
               var date_temp = result['dirary_screen_selectedDate'].toDate();
-              var date_format = "${date_temp.year}년${date_temp.month}월${date_temp.day}일."; //date로 형식 변환
+              var date_format = "${date_temp.year}.${date_temp.month}.${date_temp.day}"; //date로 형식 변환
+              var week_day = DiaryCtr.ConvertWeekday(date_temp.weekday);
 
               /* 아래부터 컨테이너 반복 */
               return AnimationConfiguration.staggeredGrid(
@@ -175,7 +176,7 @@ Widget DiaryGridView() {
                       child: Material(
                         color: DiaryCtr.ColorCode[result['dirary_screen_color_index']].withOpacity(0.3),
                         elevation: 0.0,
-                        borderRadius: BorderRadius.circular(3),
+                        borderRadius: BorderRadius.circular(10),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
@@ -184,14 +185,20 @@ Widget DiaryGridView() {
                             children: [
                               /* 이미지 + 경과시간 + 제목 + 내용 */
                               Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   /* 이미지 + 경과시간 */
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       Text(
-                                          "${DiaryCtr.diary_view_timediffer[index]}·${DiaryCtr.EmojiCode[result['dirary_screen_emoji_index']]}",
-                                          style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7, color: Colors.grey)
+                                          "${DiaryCtr.diary_view_timediffer[index]}",
+                                          style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.8, color: Colors.grey)
+                                      ),
+                                      Image.asset(
+                                        "assets/img/icons/emoticon/${DiaryCtr.EmoticonName[result['dirary_screen_emoticon_index']]}.png",
+                                        height: GeneralCtr.fontsize_normal*0.8,
+                                        width: GeneralCtr.fontsize_normal*0.8,
                                       ),
                                       SizedBox(width: 5),
                                     ],
@@ -217,19 +224,30 @@ Widget DiaryGridView() {
                                   Divider(height: 10),
                                   /* 내용 */
                                   Text(
-                                      "${result['dirary_screen_contents']}",
-                                      overflow: TextOverflow.ellipsis,
-                                      maxLines: 5,
-                                      softWrap: false,
-                                      style: TextStyle(fontSize: GeneralCtr.fontsize_normal)
+                                    "${result['dirary_screen_contents']}",
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 5,
+                                    softWrap: true,
+                                    style: TextStyle(fontSize: GeneralCtr.fontsize_normal),
                                   ),
                                 ],
                               ),
-                              /* 날짜 */
-                              Text(
-                                  "$date_format",
-                                  style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7, color: Colors.black87)
-                              ),
+                              /* 날짜 + 시간 + 장소 + 날씨*/
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  Text(
+                                      "$date_format($week_day) ${DiaryCtr.TimeTag[result['dirary_screen_timetag_index']]}",
+                                      style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7, color: Colors.black87)
+                                  ),
+                                  Image.asset(
+                                    "assets/img/icons/weather/${DiaryCtr.WeatherName[result['dirary_screen_weather_index']]}.png",
+                                    height: GeneralCtr.fontsize_normal*0.7,
+                                    width: GeneralCtr.fontsize_normal*0.7,
+                                  ),
+                                ],
+                              )
+
                             ],
                           ),
                         ),
@@ -348,8 +366,8 @@ Widget DiaryListView(){
                         ViewPhoto(result: result),
                         /* 사회적 거리두기 */
                         SizedBox(height: 10),
-                        /* 타임태그 */
-                        ViewTimeTag(result: result),
+                        /* 주소 */
+                        Text("${result['dirary_screen_address']}",style: TextStyle(color: Colors.grey, fontSize: GeneralCtr.fontsize_normal*0.7)),
                         /* 사회적 거리두기 */
                         SizedBox(height: 10),
                         /* 38도선 */
@@ -371,7 +389,8 @@ Widget DiaryListView(){
 Widget ContentsHeader(context, result, index){
   /* 날짜 데이터를 보기좋게 재구성 */
   var date_temp = result['dirary_screen_selectedDate'].toDate();
-  var date_format = "${date_temp.year}년${date_temp.month}월${date_temp.day}일."; //date로 형식 변환
+  var date_format = "${date_temp.year}.${date_temp.month}.${date_temp.day}"; //date로 형식 변환
+  var week_day = DiaryCtr.ConvertWeekday(date_temp.weekday);
 
   return
     Row(
@@ -403,8 +422,17 @@ Widget ContentsHeader(context, result, index){
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  /* 닉네임+이모지*/
-                  Text("${MyCtr.displayName}·${DiaryCtr.EmojiCode[result['dirary_screen_emoji_index']]}", style: TextStyle(fontSize: GeneralCtr.fontsize_normal)),
+                  /* 닉네임+이모티콘*/
+                  Row(
+                    children: [
+                      Text("${MyCtr.displayName}", style: TextStyle(fontSize: GeneralCtr.fontsize_normal)),
+                      Image.asset(
+                        "assets/img/icons/emoticon/${DiaryCtr.EmoticonName[result['dirary_screen_emoticon_index']]}.png",
+                        height: GeneralCtr.fontsize_normal*0.8,
+                        width: GeneralCtr.fontsize_normal*0.8,
+                      ),
+                    ],
+                  ),
                   /* 수정시간 + 수정버튼 */
                   Row(
                     children: [
@@ -441,8 +469,18 @@ Widget ContentsHeader(context, result, index){
                   ),
                 ],
               ),
-              /* 2층 : 지정날짜 / 주소 */
-              Text("$date_format ${result['dirary_screen_address']}", style: TextStyle(color: Colors.grey, fontSize: GeneralCtr.fontsize_normal*0.7)),
+              /* 2층 : 지정날짜 / 주소 / 날씨*/
+              Row(
+                children: [
+                  Text("$date_format($week_day) ${DiaryCtr.TimeTag[result['dirary_screen_timetag_index']]}", style: TextStyle(color: Colors.grey, fontSize: GeneralCtr.fontsize_normal*0.7)),
+                  Image.asset(
+                    "assets/img/icons/weather/${DiaryCtr.WeatherName[result['dirary_screen_weather_index']]}.png",
+                    height: GeneralCtr.fontsize_normal*0.7,
+                    width: GeneralCtr.fontsize_normal*0.7,
+                  ),
+                ],
+              )
+
             ],
           ),
         ),
