@@ -532,8 +532,8 @@ class DiaryController extends GetxController {
     // 일기view 페이지로 돌아가기
     //Get.offAll(() => DiaryViewPage());
 
-    //Get.back();
-    Get.off(DiaryViewPage());
+    Get.back();
+    //Get.off(DiaryViewPage());
     //Get.offNamedUntil('/DiaryTabPage', (route) => false);
   }
 

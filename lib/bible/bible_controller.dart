@@ -96,7 +96,7 @@ class BibleController extends GetxController {
 
   var ChapterList_filtered    = []; // 권에 맞는 챕터 리스트 불러오기
   var Chapter_choiced         = 1; //"구약" or "신약" 선택 인덱스
-  var Bible_list              = ['개역개정', '개역한글판_국한문','쉬운성경','현대어성경', '현대인의성경', 'KJV', 'NIV', 'ASV'];
+  var Bible_list              = ['개역개정', '현대어성경', 'KJV', 'NIV'];
   var Bible_choiced           = '개역개정';
   var ContentsList_filtered   = []; // 선택된 구절
   var ContentsIdList_clicked  = []; // 사람이 클릭한 구절 담기
@@ -416,7 +416,13 @@ class BibleController extends GetxController {
     /* 선택된 챕터(cnum)번호 가장 위에 있는 챕터번호로 초기화 */
     FreeSearchSelected_cnum = FreeSearchResultCount_cnum[0]['cnum'];
 
-    /* 컨텐츠 스크롤 초기화 */
+    /* 가장 위에 있는 챕터(cnum)번호 클릭 */
+    FreeSearch_cnum_choice(FreeSearchSelected_cnum);
+
+    /* 챕터 & 컨텐츠 스크롤 초기화 */
+    if(BookCountScroller.hasClients){
+      BookCountScroller.jumpTo(0);
+    }
     if(ContentsScroller.hasClients){
       ContentsScroller.jumpTo(0);
     }
