@@ -1,6 +1,7 @@
 
 import 'package:bible_in_us/bible/bible_controller.dart';
 import 'package:bible_in_us/bible/bible_favorite_screen.dart';
+import 'package:bible_in_us/bible/bible_recommend_screen.dart';
 import 'package:bible_in_us/bible/bible_search_screen.dart';
 import 'package:bible_in_us/diary/diary_component.dart';
 import 'package:bible_in_us/diary/diary_controller.dart';
@@ -557,6 +558,8 @@ class AddVerses extends StatelessWidget {
                   case"검색" : Get.to(() => BibleSearchScreen());  break;
                 /* 즐겨찾기 페이지로 이동 */
                   case"즐겨찾기" : Get.to(() => BibleFavoriteScreen()); break;
+                /* 즐겨찾기 페이지로 이동 */
+                  case"추천" : Get.to(() => BibleRecommendScreen()); break;
                 }
               },
 
@@ -564,6 +567,7 @@ class AddVerses extends StatelessWidget {
               itemBuilder: (context) => [
                 PopupMenuItem(child: Row(children: [Icon(Entypo.search, size: 20), Text(" 검색", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "검색"),
                 PopupMenuItem(child: Row(children: [Icon(FontAwesome.bookmark_empty, size: 20), Text(" 즐겨찾기", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "즐겨찾기"),
+                PopupMenuItem(child: Row(children: [Icon(Typicons.tags, size: 20), Text(" 추천", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "추천"),
               ]
           )
         ],

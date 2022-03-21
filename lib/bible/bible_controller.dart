@@ -2,6 +2,7 @@ import 'package:bible_in_us/bible/bible_component.dart';
 import 'package:bible_in_us/bible/bible_repository.dart';
 import 'package:bible_in_us/diary/diary_controller.dart';
 import 'package:bible_in_us/general/general_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fab_circular_menu/fab_circular_menu.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,6 +27,7 @@ class BibleController extends GetxController {
     Get_color_count(); // 색깔별 즐겨찾기 몇개인지 쿼리
     GetFavorite_list();// 색깔별 즐겨찾기 쿼리
     GetFreeSearchList();// 자유검색 _ 초반 전체 검색 한바퀴 돌려놓기
+    LoadRecommendedVerse(); // 성경 추천 태그 정보 불러오기
   }
 
   /* SharedPrefs 저장하기(save) */
@@ -114,6 +116,13 @@ class BibleController extends GetxController {
   List<String> FreeSearch_history_bible  = []; // 최근검색 성경이름
   List<String> FreeSearch_history_query  = []; // 최근검색 쿼리문
 
+  var recommended_result  = {}; // 추천 태그 _ 파이어스토어에서 불러온 결과
+  var recommended_verses_id_list  = []; // 추천 태그 _ 파이어스토어에서 불러온 결과에서 구절 아이디만 추리기
+  var recommended_tag_list  = []; // 추천 태그 클릭하면 결과 담아두는 공간
+  var recommendedList_clicked = []; // 추천 태그 정보로 DB에서 정보 조회
+  var recommendedList_clicked_filteted = []; // 추천 태그 정보로 DB에서 정보 조회한놈들중, 선택된 태그에 맞는놈만 추리기
+  
+  
   var from_which_app = ""; // 어떤 앱(app)에서 호출했는지 분류하기위한 변수
 
   var FAB_opacity = 0.0; // 메인페이지 플로팅액션버튼 투명도
@@ -716,6 +725,92 @@ class BibleController extends GetxController {
     from_which_app = appname;
     update();
   }
+
+  /* <함수> 주제별 추천 구절 정보 로드하기 */
+  Future<void> LoadRecommendedVerse()  async {
+    // 로딩화면 띄우기
+    EasyLoading.show(status: 'loading...');
+
+    /* 파이어스토어에서 추천 구절 정보 받아오기 */
+    var result = await FirebaseFirestore.instance
+        .collection('verse_tag') //
+        .doc("verses_tag") // chapter_code
+        .get()
+        .then((doc) {
+
+          /* 검색결과 변수에 할당해주기 ex: {슬픔: [17432, 18847], 외로움: [9690, 14100]}  */
+          recommended_result = doc['verses_tag_map'];
+
+          /* 검색결과에서 구절 ID 정보만 모으기 */
+          recommended_verses_id_list = []; // 초기화
+          recommended_result.forEach((k,v) =>
+              recommended_verses_id_list.addAll(v)
+          );
+
+          /* 중복검사 */
+          recommended_verses_id_list = recommended_verses_id_list.toSet().toList();
+
+          /* 구절ID 리스트 내림차순 정렬해주기 */
+          recommended_verses_id_list.sort();
+
+    });
+
+    /* DB에서 정보 받아오기 */
+    recommendedList_clicked = await BibleRepository.GetClickedVerses(recommended_verses_id_list, Bible_choiced);
+    
+    update();
+    // 로딩화면 종료
+    EasyLoading.dismiss();
+  }
+
+  /* <함수> 구철 추천 태그 클릭 함수 */
+  void Update_recommend_tag(tag){
+    /* 1. 클릭한 추천 태그가 있는지 확인하고 있으면 제외, 없으면 추가 해준다. */
+    if (recommended_tag_list.contains(tag)){
+      recommended_tag_list.remove(tag);//1-1. 이미 클릭한 태그인 경우, 리스트에서 제외
+    }else{
+      recommended_tag_list.add(tag);//1-2. 클릭하지 않은 태그인 경우, 리스트에 삽입
+    }
+
+    /* 2. 선택한 태그에 맞는 구절 ID 추리기 */
+    var Selected_verses_id_list = [];
+    for(int i = 0; i < recommended_tag_list.length; i++){
+      /* 선택된 태그에 맞는 구절 아이디 리스트 저장 */
+      var verses_id_list = recommended_result[recommended_tag_list[i]];
+      /* 최종 배열에 담아두기 */
+      Selected_verses_id_list.addAll(verses_id_list);
+    }
+
+    /* 태그DB 조회한 전체 데이터에서 해당 구절에 맞는 db 만 추리기 */
+    recommendedList_clicked_filteted = recommendedList_clicked.where((u) => Selected_verses_id_list.contains(u['_id'])).toList();
+
+    /* DB 조회 결과에 태그 붙여주기 위해 데이터 형식 변경 ==> 예) [{"외로움" : 1020}, {"외로움" : 9999}]   */
+    var style_changed_result = {}; // 초기화
+    recommended_result.forEach((k,v) {
+      for(int i = 0; i < v.length; i++){
+        style_changed_result[v[i]] = k;
+      }
+    }
+    );
+
+    /* DB object는 수정이 안되므로(read-only), JSON 객체로 복제해서 수정하고 재할당한다 ㄱㄱ */
+    var clone_DB_result = json.decode(json.encode(recommendedList_clicked_filteted));
+
+    /* DB 하나씩 돌면서 해당하는 태그 데이터 집어 넣어주기 */
+    for(int i = 0; i < clone_DB_result.length; i++){
+      //1. 해당 구절 아이디에 맞는 태그 찾기
+      var tag = style_changed_result[clone_DB_result[i]["_id"]];
+      //2. Map 데이터에 {"tag" : "믿음"} 과 같이 데이터 넣어주기
+      clone_DB_result[i]['tag'] = tag;
+    }
+
+    /* 본 데이터에 덮어 씌워주기 */
+    recommendedList_clicked_filteted = clone_DB_result;
+
+    update();
+  }
+
+
 
 
 }

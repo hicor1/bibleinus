@@ -121,6 +121,7 @@ flutter:
     - assets/img/icons/ # 일반아이콘
     - assets/img/icons/weather/ # 날씨 아이콘
     - assets/img/icons/emoticon/ # 이모티콘
+    - assets/img/icons/tag/ # 태그 이모티콘
     - assets/img/logo/  # 로고관련 이미지
 
   # An image asset can refer to one or more resolution-specific "variants", see

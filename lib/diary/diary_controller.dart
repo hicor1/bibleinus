@@ -31,8 +31,10 @@ final MyCtr = Get.put(MyController());
 
 /* 파이어스토어 객체 생성 */
 FirebaseFirestore firestore    = FirebaseFirestore.instance;
-/* 콜렉션 선택 */
+/* diary 콜렉션 선택 */
 CollectionReference collection = firestore.collection('diary'); // diary 콜렉션 사용
+/* recommended_verse 콜렉션 선택 */
+CollectionReference recommended_verse_collection = firestore.collection('verse_tag'); // recommended_verse 콜렉션 사용
 
 class DiaryController extends GetxController {
 
@@ -968,7 +970,6 @@ class DiaryController extends GetxController {
     diary_view_contents_filtered = result;
     update();
   }
-
 
 
 

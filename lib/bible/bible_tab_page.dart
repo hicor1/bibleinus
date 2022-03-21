@@ -3,6 +3,7 @@ import 'package:bible_in_us/bible/bible_controller.dart';
 import 'package:bible_in_us/bible/bible_favorite_page.dart';
 import 'package:bible_in_us/bible/bible_main_page.dart';
 import 'package:bible_in_us/bible/bible_memo_page.dart';
+import 'package:bible_in_us/bible/bible_recommend_screen.dart';
 import 'package:bible_in_us/bible/bible_search_screen.dart';
 import 'package:bible_in_us/diary/diary_controller.dart';
 import 'package:bible_in_us/general/general_controller.dart';
@@ -97,6 +98,17 @@ class Mainwidget extends StatelessWidget {
                           Get.to(() => BibleSearchScreen());
                         },
                         icon: Icon(Octicons.search, size: 23.0, color: GeneralCtr.MainColor),
+                      ),
+                    ),
+                    /* 추천 버튼 */
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                      child: IconButton(
+                        onPressed: (){
+                          // 추천 스크린으로 이동
+                          Get.to(() => BibleRecommendScreen());
+                        },
+                        icon: Icon(Typicons.tags, size: 20.0, color: GeneralCtr.MainColor),
                       ),
                     ),
                     /* 셋팅 버튼 */
