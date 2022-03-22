@@ -407,7 +407,7 @@ class ViewVerses extends StatelessWidget {
       viewportFraction: 0.9, // 전.후 이미지 보여주기 ( 1.0이면 안보여줌 )
       aspectRatio: 20, // 사진 비율
       enlargeMainPage: true, // 자동 확대
-      pagination: true, // 이미지 하단 페이지 인디케이터 표시여부
+      hasPagination: true, // 이미지 하단 페이지 인디케이터 표시여부
       autoPlayInterval: Duration(milliseconds: 5000), // 자동 넘기기 주기(시간)
       autoPlay: true, // 자동 넘기기 on/off
       pauseAutoPlayOnTouch: Duration(milliseconds: 5000), // 클릭하면 자동넘기기 일시 정지

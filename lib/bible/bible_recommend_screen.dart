@@ -139,9 +139,21 @@ Widget View_verses_list(){
               padding: EdgeInsets.fromLTRB(5,5,5,5),
               margin: EdgeInsets.fromLTRB(15,5,15,5),
               decoration: BoxDecoration(
-                color: GeneralCtr.MainColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                  width: 3.5,
+                  color: Colors.grey.withOpacity(0.25),
+                ),
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(7),
+                boxShadow: [
+                  BoxShadow(
+                    color: GeneralCtr.MainColor.withOpacity(0.2),
+                    blurRadius: 4,
+                    offset: Offset(4, 4), // Shadow position
+                  ),
+                ],
               ),
+
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -158,20 +170,22 @@ Widget View_verses_list(){
                           width  : 40.0,
                         ),
                         /* 2층 태그*/
-                        Text("#${result['tag']}", style: TextStyle(fontSize: GeneralCtr.fontsize_normal))
+                        Text("#${result['tag']}", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.8))
                       ],
                     ),
                   ),
                   /* 가운데 : 38도선 */
                   VerticalDivider(),
                   /* 우 : 성경구절 */
-                  Flexible(
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width-135,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         /* 1층 구절 내용 */
                         WordBreakText(
                           "${result[BibleCtr.Bible_choiced]}",
+                          wrapAlignment: WrapAlignment.center,// 텍스트 가운데 정렬
                           style: TextStyle(fontSize: GeneralCtr.fontsize_normal),
                           textAlign: TextAlign.center,
                         ),
@@ -182,7 +196,6 @@ Widget View_verses_list(){
                           "${result['국문']}(${result['영문']}):${result['cnum']}장 ${result['vnum']}절",
                           style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.8),
                         )
-
                       ],
                     ),
                   )

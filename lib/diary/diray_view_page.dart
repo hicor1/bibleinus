@@ -647,7 +647,7 @@ class ViewVerses extends StatelessWidget {
       viewportFraction: 1.0, // 전.후 이미지 보여주기 ( 1.0이면 안보여줌 )
       aspectRatio: 0, // 사진 비율
       enlargeMainPage: true, // 자동 확대
-      pagination: true, // 이미지 하단 페이지 인디케이터 표시여부
+      hasPagination: true, // 이미지 하단 페이지 인디케이터 표시여부
       autoPlayInterval: Duration(milliseconds: 5000), // 자동 넘기기 주기(시간)
       autoPlay: false, // 자동 넘기기 on/off
       pauseAutoPlayOnTouch: Duration(milliseconds: 5000), // 클릭하면 자동넘기기 일시 정지
@@ -725,7 +725,7 @@ class ViewPhoto extends StatelessWidget {
     if (result['choiced_image_file'].length>0) {
       return GFCarousel(
         height: 330, // 고정사이즈 적용, 아래 페이저가 보이도록
-        pagination: true,
+        hasPagination: true,
         enableInfiniteScroll: false,
         activeIndicator: GeneralCtr.MainColor,
         passiveIndicator: Colors.grey.withOpacity(0.5),
