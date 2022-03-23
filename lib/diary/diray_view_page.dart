@@ -64,6 +64,10 @@ class MainWidget extends StatelessWidget {
                       ViewMode_select(),
                     ],
                   ),
+                  /* 사회적 거리두기 */
+                  SizedBox(height: 10),
+                  /* 날짜 선택 위젯 */
+                  Date_select(context),
                   /*  작성한 일기기 하나도 없는 경우 */
                   if (DiaryCtr.diary_view_contents_filtered.length == 0)
                     TextButton(
@@ -79,7 +83,6 @@ class MainWidget extends StatelessWidget {
                     )
                   /*  ↓작성한 일기가 있는 경우↓ */
                   else
-
                   /* 사회적 거리두기 */
                   SizedBox(height: 10),
                   /* 뷰 선택에 따라 보여줄 뷰 변경(그리드뷰 or 리스트뷰) */
@@ -145,7 +148,7 @@ Widget DiaryGridView() {
         child: GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, //1 개의 행에 보여줄 item 개수
-              childAspectRatio: 0.9 / 1, //item 의 가로 1, 세로 2 의 비율
+              childAspectRatio: 1.3 / 1, //item 의 가로 1, 세로 2 의 비율
               mainAxisSpacing: 8, //수평 Padding
               crossAxisSpacing: 8, //수직 Padding
             ),
@@ -226,7 +229,7 @@ Widget DiaryGridView() {
                                   Text(
                                     "${result['dirary_screen_contents']}",
                                     overflow: TextOverflow.ellipsis,
-                                    maxLines: 5,
+                                    maxLines: 3,
                                     softWrap: true,
                                     style: TextStyle(fontSize: GeneralCtr.fontsize_normal),
                                   ),
@@ -843,6 +846,27 @@ Widget SearchWidget(){
     );
 }
 
-
+//<서브위젯> 날짜 선택 위젯
+Widget Date_select(context){
+  return
+    /* 날짜 선택 */
+    InkWell(
+      onTap: (){
+        /* 날짜 선택 팝업 띄우기 */
+        Date_picker_Dialog_For_View_page(context);
+      },
+      /* 선택된 날짜 보여주기 */
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "${DiaryCtr.diary_view_selected_year}년 ${DiaryCtr.diary_view_selected_month}월",
+            style: TextStyle(fontSize: GeneralCtr.fontsize_normal*1.2, fontWeight: FontWeight.bold),
+          ),
+          Icon(FontAwesome.down_dir, size: GeneralCtr.fontsize_normal, color: Colors.grey)
+        ],
+      ),
+    );
+}
 
 

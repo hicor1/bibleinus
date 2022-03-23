@@ -41,6 +41,7 @@ class DiaryController extends GetxController {
   //<함수> 초기화
   void init(){
     LoadAction(); // 일기 데이터 로드
+    ViewPage_Date_Select_Init();/* <함수> 성경 뷰페이지 _ 년도 & 월 현재 날짜 기준으로 초기화 */
   }
 
   /* <변수>정의 */
@@ -85,6 +86,10 @@ class DiaryController extends GetxController {
   var statistics_year_percent = 0.0; // 성경 달력 스크린 _ 기본 통계 _ 년 퍼센트
   var statistics_this_year = 0; //성경 달력 스크린 _ 기본 통계 _ 올해 년도
 
+  var diary_view_selected_year       = 2022; // 성경 뷰페이지 _ 선택된 년도
+  var diary_view_selected_year_temp  = 2022; // 성경 뷰페이지 _ 선택된 년도
+  var diary_view_selected_month      = 1; // 성경 뷰페이지 _ 선택된 월
+  var diary_view_selected_month_temp = 1; // 성경 뷰페이지 _ 선택된 월
 
   /* 텍스트컨트롤러 정의 */
   var TitletextController      = TextEditingController(); // 성경일기 작성 페이지 _ 일기 제목 ( title ) 컨트롤러
@@ -541,15 +546,19 @@ class DiaryController extends GetxController {
 
 
   /* <함수> 개인별 일기 데이터 로드하기 */
-  Future<void> LoadAction()  async {
+  Future<void> LoadAction() async {
     // 로딩화면 띄우기
     EasyLoading.show(status: 'loading...');
 
     /* 데이터 로드(조건) */
     collection
         .where("uid", isEqualTo: MyCtr.uid) // 본인이 작성한 글만 보이게
+        /* 설정된 년 & 월 범위에서만 일기 검색한다 */
+        //.where("dirary_screen_selectedDate", isGreaterThanOrEqualTo: DateTime(diary_view_selected_year,diary_view_selected_month)) // 선택된 날짜에 맞는 일기만 보여주기
+        //.where("dirary_screen_selectedDate", isLessThan: DateTime(diary_view_selected_year,diary_view_selected_month+1)) // 선택된 날짜에 맞는 일기만 보여주기
         .orderBy("updated_at", descending:true) // 업데이트순서로 내림차순 정렬
         .orderBy("dirary_screen_selectedDate", descending:true) // 날짜로 내림차순 정렬
+
         /* ↓정상적으로 로드가 되었다면 아래 수행↓ */
         .get().then((QuerySnapshot ds) async {
           /*  불러온 데이터 할당 */
@@ -962,12 +971,53 @@ class DiaryController extends GetxController {
     // 1. 결과 저장용 임시공간
     var result = [];
     // 2. 각 결과 순환하면서 조건에 맞는 값 가져오기
+    // 2-1. 쿼리("Query")문 + 날짜 필터
     diary_view_contents.forEach((u) {
-      if(u['dirary_screen_title'].contains(query) | u['dirary_screen_contents'].contains(query))
+      var selectedDate = u['dirary_screen_selectedDate'].toDate(); // DB에서 불러온 날짜 Timestamp ==> Date로 변환
+      //DateTime(diary_view_selected_year,diary_view_selected_month)
+      if((u['dirary_screen_title'].contains(query) | u['dirary_screen_contents'].contains(query))
+      &(DateTime(selectedDate.year,selectedDate.month)==DateTime(diary_view_selected_year,diary_view_selected_month))
+      ){
         result.add(u);
+      }
     });
     // 3. 결과 씌워주기
     diary_view_contents_filtered = result;
+    update();
+  }
+
+  /* <함수> 성경 뷰페이지 _ 년도 선택(보여지는부분) */
+  void ViewPage_Select_Year_Temp(int year){
+    diary_view_selected_year_temp = year;
+    update();
+  }
+  /* <함수> 성경 뷰페이지 _ 월 선택(보여지는부분) */
+  void ViewPage_Select_Month_Temp(int month){
+    diary_view_selected_month_temp = month;
+    update();
+  }
+  /* <함수> 성경 뷰페이지 _ 년도 & 월 최종 선택 */
+  void ViewPage_Date_Select_Confirm(){
+    /* 유저가 선택한 날짜 값이 변했는지 확인 */
+    if((diary_view_selected_month != diary_view_selected_month_temp)
+    | (diary_view_selected_year != diary_view_selected_year_temp)
+    ){
+      /* 값이 변한게 맞는 경우에, */
+      /* 1. 유저가 선택한 날짜로 최종 입력 */
+      diary_view_selected_month = diary_view_selected_month_temp;
+      diary_view_selected_year = diary_view_selected_year_temp;
+      /* 2. 선택된 날짜정보에 맞게 일기 재조회 */
+      result_filtering("");
+      /* 3. 상태값 업데이트 */
+      update();
+    }
+  }
+  /* <함수> 성경 뷰페이지 _ 년도 & 월 현재 날짜 기준으로 초기화 */
+  void ViewPage_Date_Select_Init(){
+    diary_view_selected_month      = DateTime.now().month;
+    diary_view_selected_month_temp = DateTime.now().month;
+    diary_view_selected_year       = DateTime.now().year;
+    diary_view_selected_year_temp  = DateTime.now().year;
     update();
   }
 

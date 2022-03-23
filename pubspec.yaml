@@ -79,6 +79,7 @@ dependencies:
   flutter_staggered_animations: ^1.0.0 # Listview 애니메이션
   syncfusion_flutter_datepicker: ^19.4.54 # 달력에서 날짜 선택 ( #데이트 피커 # date picker )
   percent_indicator: ^4.0.0 # 프로그레스바
+  numberpicker: ^2.1.1 # 넘버피커 ( 달력에서 숫자로 된 날짜 픽하는 기능 )
 
 
 dev_dependencies:

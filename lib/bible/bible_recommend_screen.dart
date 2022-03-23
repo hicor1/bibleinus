@@ -35,7 +35,7 @@ Widget MainWidget(){
                 iconTheme: IconThemeData(
                   color: GeneralCtr.MainColor
               ),
-                title: Text("추천 성경",
+                title: Text("성경구절 모음",
                     style: GeneralCtr.Style_title
                 ),
                 backgroundColor: Colors.transparent,
@@ -135,72 +135,84 @@ Widget View_verses_list(){
             /* 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능 */
             var result = BibleCtr.recommendedList_clicked_filteted[index];
 
-            return Container(
-              padding: EdgeInsets.fromLTRB(5,5,5,5),
-              margin: EdgeInsets.fromLTRB(15,5,15,5),
-              decoration: BoxDecoration(
-                border: Border.all(
-                  width: 3.5,
-                  color: Colors.grey.withOpacity(0.25),
+            return InkWell(
+              /* 컨테이너를 눌렀을 때 해당 페이지로 이동할지 물어보자 ㄱㄱ */
+              onTap: (){
+                /* 해당 기능을 호출한 앱(app)에 따라 다른 액션 적용 */
+                switch (BibleCtr.from_which_app) {
+                  case "bible" : // 1. bible앱 에서 호출한 경우
+                    IsMoveDialog(context, result, index); break;
+                  case "diary" : // 2. diary앱 에서 호출한 경우
+                    IsMoveDialog_from_diary(context, result, index); break;
+                }
+              },
+              child: Container(
+                padding: EdgeInsets.fromLTRB(5,5,5,5),
+                margin: EdgeInsets.fromLTRB(15,5,15,5),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    width: 3.5,
+                    color: Colors.grey.withOpacity(0.25),
+                  ),
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(7),
+                  boxShadow: [
+                    BoxShadow(
+                      color: GeneralCtr.MainColor.withOpacity(0.2),
+                      blurRadius: 4,
+                      offset: Offset(4, 4), // Shadow position
+                    ),
+                  ],
                 ),
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(7),
-                boxShadow: [
-                  BoxShadow(
-                    color: GeneralCtr.MainColor.withOpacity(0.2),
-                    blurRadius: 4,
-                    offset: Offset(4, 4), // Shadow position
-                  ),
-                ],
-              ),
 
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  /* 좌 : 태그 + 아이콘 */
-                  SizedBox(
-                    width: 70,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        /* 1층 아이콘*/
-                        Image.asset(
-                          "assets/img/icons/tag/${result['tag']}.png",
-                          height : 40.0,
-                          width  : 40.0,
-                        ),
-                        /* 2층 태그*/
-                        Text("#${result['tag']}", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.8))
-                      ],
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    /* 좌 : 태그 + 아이콘 */
+                    SizedBox(
+                      width: 70,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          /* 1층 아이콘*/
+                          Image.asset(
+                            "assets/img/icons/tag/${result['tag']}.png",
+                            height : 40.0,
+                            width  : 40.0,
+                          ),
+                          /* 2층 태그*/
+                          Text("#${result['tag']}", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.8))
+                        ],
+                      ),
                     ),
-                  ),
-                  /* 가운데 : 38도선 */
-                  VerticalDivider(),
-                  /* 우 : 성경구절 */
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width-135,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        /* 1층 구절 내용 */
-                        WordBreakText(
-                          "${result[BibleCtr.Bible_choiced]}",
-                          wrapAlignment: WrapAlignment.center,// 텍스트 가운데 정렬
-                          style: TextStyle(fontSize: GeneralCtr.fontsize_normal),
-                          textAlign: TextAlign.center,
-                        ),
-                        /* 사회적 거리두기 */
-                        SizedBox(height: 10),
-                        /* 2층 구절 기본정보 */
-                        Text(
-                          "${result['국문']}(${result['영문']}):${result['cnum']}장 ${result['vnum']}절",
-                          style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.8),
-                        )
-                      ],
-                    ),
-                  )
+                    /* 가운데 : 38도선 */
+                    VerticalDivider(),
+                    /* 우 : 성경구절 */
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width-135,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          /* 1층 구절 내용 */
+                          WordBreakText(
+                            "${result[BibleCtr.Bible_choiced]}",
+                            wrapAlignment: WrapAlignment.center,// 텍스트 가운데 정렬
+                            style: TextStyle(fontSize: GeneralCtr.fontsize_normal),
+                            textAlign: TextAlign.center,
+                          ),
+                          /* 사회적 거리두기 */
+                          SizedBox(height: 10),
+                          /* 2층 구절 기본정보 */
+                          Text(
+                            "${result['국문']}(${result['영문']}):${result['cnum']}장 ${result['vnum']}절",
+                            style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.8),
+                          )
+                        ],
+                      ),
+                    )
 
-                ],
+                  ],
+                ),
               ),
             );
           }

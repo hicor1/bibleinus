@@ -164,26 +164,7 @@ class MainWidget extends StatelessWidget {
                         SizedBox(height: 10),
 
                         /* 날짜 선택 */
-                        InkWell(
-                          onTap: (){
-                            /* 날짜 선택 팝업 띄우기 */
-                            Date_picker_Dialog(context);
-                          },
-                          /* 선택된 날짜 보여주기 */
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                  "${DiaryCtr.dirary_screen_selectedDate.year}년 "
-                                  "${DiaryCtr.dirary_screen_selectedDate.month}월 "
-                                  "${DiaryCtr.dirary_screen_selectedDate.day}일 "
-                                  "(${DiaryCtr.ConvertWeekday(DiaryCtr.dirary_screen_selectedDate.weekday)})",
-                                style: TextStyle(fontSize: GeneralCtr.fontsize_normal*1.0, fontWeight: FontWeight.bold),
-                              ),
-                              Icon(FontAwesome.down_dir, size: GeneralCtr.fontsize_normal, color: Colors.grey)
-                            ],
-                          ),
-                        ),
+                        Date_select(context),
 
                         /* 사회적 거리두기 */
                         SizedBox(height: 5),
@@ -559,7 +540,7 @@ class AddVerses extends StatelessWidget {
                 /* 즐겨찾기 페이지로 이동 */
                   case"즐겨찾기" : Get.to(() => BibleFavoriteScreen()); break;
                 /* 즐겨찾기 페이지로 이동 */
-                  case"추천" : Get.to(() => BibleRecommendScreen()); break;
+                  case"성경구절 모음" : Get.to(() => BibleRecommendScreen()); break;
                 }
               },
 
@@ -567,7 +548,7 @@ class AddVerses extends StatelessWidget {
               itemBuilder: (context) => [
                 PopupMenuItem(child: Row(children: [Icon(Entypo.search, size: 20), Text(" 검색", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "검색"),
                 PopupMenuItem(child: Row(children: [Icon(FontAwesome.bookmark_empty, size: 20), Text(" 즐겨찾기", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "즐겨찾기"),
-                PopupMenuItem(child: Row(children: [Icon(Typicons.tags, size: 20), Text(" 추천", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "추천"),
+                PopupMenuItem(child: Row(children: [Icon(Typicons.tags, size: 20), Text(" 성경구절 모음", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "성경구절 모음"),
               ]
           )
         ],
@@ -993,4 +974,30 @@ Widget Emoticon_Choice(context){
         }
     ),
   );
+}
+
+//<서브위젯> 날짜 선택 위젯
+Widget Date_select(context){
+  return
+    /* 날짜 선택 */
+    InkWell(
+      onTap: (){
+        /* 날짜 선택 팝업 띄우기 */
+        Date_picker_Dialog(context);
+      },
+      /* 선택된 날짜 보여주기 */
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            "${DiaryCtr.dirary_screen_selectedDate.year}년 "
+                "${DiaryCtr.dirary_screen_selectedDate.month}월 "
+                "${DiaryCtr.dirary_screen_selectedDate.day}일 "
+                "(${DiaryCtr.ConvertWeekday(DiaryCtr.dirary_screen_selectedDate.weekday)})",
+            style: TextStyle(fontSize: GeneralCtr.fontsize_normal*1.0, fontWeight: FontWeight.bold),
+          ),
+          Icon(FontAwesome.down_dir, size: GeneralCtr.fontsize_normal, color: Colors.grey)
+        ],
+      ),
+    );
 }

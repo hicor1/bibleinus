@@ -330,7 +330,6 @@ class FreeSearchResult extends StatelessWidget {
                                           case "diary" : // 2. diary앱 에서 호출한 경우
                                             IsMoveDialog_from_diary(context, result, index); break;
                                         }
-
                                       },
                                       child: Container(
                                         margin: EdgeInsets.fromLTRB(0, 0, 10, 5),
