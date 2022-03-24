@@ -920,8 +920,8 @@ Widget Weather_Choice(context){
                     opacity: DiaryCtr.dirary_screen_weather_index == index? 1.0 : 0.3,
                     child: Image.asset(
                       "assets/img/icons/weather/$result.png",
-                      height: 40.0,
-                      width: 40.0,
+                      height: 50.0,
+                      width: 50.0,
                     ),
                   )//
               ),
@@ -934,7 +934,7 @@ Widget Weather_Choice(context){
   );
 }
 
-//<서브위젯> 날씨 선택 모듈
+//<서브위젯> 이모티콘 선택 모듈
 Widget Emoticon_Choice(context){
   /* 오늘 날씨는  */
   return Container(
@@ -962,8 +962,8 @@ Widget Emoticon_Choice(context){
                     opacity: DiaryCtr.dirary_screen_emoticon_index == index? 1.0 : 0.3,
                     child: Image.asset(
                       "assets/img/icons/emoticon/$result.png",
-                      height: 35.0,
-                      width: 35.0,
+                      height: 40.0,
+                      width: 40.0,
                     ),
                   )//
               ),

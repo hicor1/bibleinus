@@ -105,6 +105,8 @@ class Mainwidget extends StatelessWidget {
                       padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
                       child: IconButton(
                         onPressed: (){
+                          /* "bible"앱에서 호출했음을 확인, 입력 */
+                          BibleCtr.update_from_which_app("bible");
                           // 추천 스크린으로 이동
                           Get.to(() => BibleRecommendScreen());
                         },
