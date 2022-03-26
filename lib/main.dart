@@ -32,9 +32,9 @@ class MyApp extends StatelessWidget {
     /* 컨트롤러 초기화 및 설정값 로드 */
     BibleCtr.LoadPrefsData(); // 설정값 불러오기
     GeneralCtr.LoadPrefsData(); // 설정값 불러오기
+    DiaryCtr.LoadPrefsData(); // 설정값 불러오기
     BibleCtr.init();// 컨트롤러 초기화
     DiaryCtr.init();// 컨트롤러 초기화
-
     /* 파이어베이스 코어 로드 체크를 위해 빌더 생성 */
     return FutureBuilder(
       future: Firebase.initializeApp(),

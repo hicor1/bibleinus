@@ -7,6 +7,8 @@ import 'package:bible_in_us/diary/diary_view_detail_screen.dart';
 import 'package:bible_in_us/diary/diary_write_srceen.dart';
 import 'package:bible_in_us/general/general_controller.dart';
 import 'package:bible_in_us/my/my_controller.dart';
+import 'package:bubble/bubble.dart';
+import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
@@ -85,8 +87,14 @@ class MainWidget extends StatelessWidget {
                   else
                   /* 사회적 거리두기 */
                   SizedBox(height: 10),
+                  /* 오늘작성한 일기가 없을 경우, 바로 일기작성할 수 있는 버튼 보여주기 */
+                  DiaryCtr.diary_view_today_diary_count == 0 ? Add_Today_diary() : SizedBox(width: 0),
+                  /* 사회적 거리두기 */
+                  SizedBox(height: 10),
                   /* 뷰 선택에 따라 보여줄 뷰 변경(그리드뷰 or 리스트뷰) */
-                  DiaryCtr.diary_view_ViewMode == "list" ? DiaryListView2() : DiaryGridView()
+                  DiaryCtr.diary_view_ViewMode == "list" ? DiaryListView2() : DiaryGridView(),
+                  /* 사회적 거리두기 */
+                  SizedBox(height: 100),
                 ],
               )
             ),
@@ -148,7 +156,7 @@ Widget DiaryGridView() {
         child: GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, //1 개의 행에 보여줄 item 개수
-              childAspectRatio: 1.1 / 1, //item 의 가로 1, 세로 2 의 비율
+              childAspectRatio: 1.0 / 1, //item 의 가로 1, 세로 2 의 비율
               mainAxisSpacing: 8, //수평 Padding
               crossAxisSpacing: 8, //수직 Padding
             ),
@@ -183,75 +191,74 @@ Widget DiaryGridView() {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              /* 이미지 + 경과시간 + 제목 + 내용 */
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                              /* 날짜 + 경과시간 + 이모티콘 + 날씨*/
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  /* 이미지 + 경과시간 + 날씨*/
+                                  /* 수정 경과시간 */
+                                  // Text(
+                                  //     "${DiaryCtr.diary_view_timediffer[index]} ",
+                                  //     style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.8, color: Colors.grey)
+                                  // ),
+                                  /* 왼쪽 : 이모티콘+날씨티콘 */
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
-                                      Text(
-                                          "${DiaryCtr.diary_view_timediffer[index]} ",
-                                          style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.8, color: Colors.grey)
-                                      ),
+                                      /* 이모티콘 */
                                       Image.asset(
                                         "assets/img/icons/emoticon/${DiaryCtr.EmoticonName[result['dirary_screen_emoticon_index']]}.png",
-                                        height: GeneralCtr.fontsize_normal*1.1,
-                                        width: GeneralCtr.fontsize_normal*1.1,
+                                        height: GeneralCtr.fontsize_normal*1.3,
+                                        width: GeneralCtr.fontsize_normal*1.3,
                                       ),
                                       SizedBox(width: 5),
+                                      /* 날씨티콘 */
                                       Image.asset(
                                         "assets/img/icons/weather/${DiaryCtr.WeatherName[result['dirary_screen_weather_index']]}.png",
-                                        height: GeneralCtr.fontsize_normal*1.2,
-                                        width: GeneralCtr.fontsize_normal*1.2,
+                                        height: GeneralCtr.fontsize_normal*1.4,
+                                        width: GeneralCtr.fontsize_normal*1.4,
                                       ),
-                                      SizedBox(width: 5),
                                     ],
                                   ),
-                                  /* 제목 */
+                                  /* 오른쪽 : 날짜 */
                                   Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
-                                      Flexible(
-                                        child: Text(
-                                            "${result['dirary_screen_title']}",
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                              //color: DiaryCtr.ColorCode[result['dirary_screen_color_index']],
-                                                color: Colors.black,
-                                                fontSize: GeneralCtr.fontsize_normal*1.1,
-                                                fontWeight: FontWeight.bold)
-                                        ),
+                                      /* 날짜 */
+                                      Text(
+                                          "$date_format($week_day)",
+                                          style: TextStyle(fontSize: GeneralCtr.fontsize_normal*1.0, color: Colors.black87, fontWeight: FontWeight.normal)
                                       ),
                                     ],
-                                  ),
-                                  /* 38도선 */
-                                  Divider(height: 10),
-                                  /* 내용 */
-                                  Text(
-                                    "${result['dirary_screen_contents']}",
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 2,
-                                    softWrap: true,
-                                    style: TextStyle(fontSize: GeneralCtr.fontsize_normal),
                                   ),
                                 ],
                               ),
-                              /* 날짜 + 시간 + 장소 */
+                              /* 제목 */
                               Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Text(
-                                      "$date_format($week_day) ${DiaryCtr.TimeTag[result['dirary_screen_timetag_index']]} ",
-                                      style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7, color: Colors.black87)
+                                  Flexible(
+                                    child: Text(
+                                        "${result['dirary_screen_title']}",
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          //color: DiaryCtr.ColorCode[result['dirary_screen_color_index']],
+                                            color: Colors.black,
+                                            fontSize: GeneralCtr.fontsize_normal*1.1,
+                                            fontWeight: FontWeight.bold)
+                                    ),
                                   ),
                                 ],
-                              )
-
+                              ),
+                              /* 38도선 */
+                              Divider(height: 10),
+                              /* 내용 */
+                              Text(
+                                "${result['dirary_screen_contents']}",
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 3,
+                                softWrap: true,
+                                style: TextStyle(fontSize: GeneralCtr.fontsize_normal),
+                              ),
                             ],
                           ),
                         ),
@@ -432,29 +439,37 @@ Widget DiaryListView2(){
                     child: Column(
                       children: [
                         Material(
-                          color: DiaryCtr.ColorCode[result['dirary_screen_color_index']].withOpacity(0.2),
+                          color: Colors.transparent,
                           elevation: 0.0,
                           borderRadius: BorderRadius.circular(5),
                           child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(2.0),
                               child: Row(
                                 children: [
                                   /* 오른쪽 : 이모티콘 + 날짜 */
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      /* 이모티콘 */
-                                      Image.asset(
-                                        "assets/img/icons/emoticon/${DiaryCtr.EmoticonName[result['dirary_screen_emoticon_index']]}.png",
-                                        height: GeneralCtr.fontsize_normal*1.4,
-                                        width: GeneralCtr.fontsize_normal*1.4,
-                                      ),
-                                      /* 날짜 */
-                                      Text(
-                                          "$date_format($week_day)",
-                                          style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7, color: Colors.black87)
-                                      ),
-                                    ],
+                                  Container(
+                                    width: 60,
+                                    height: 60,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(15),
+                                      color: DiaryCtr.ColorCode[result['dirary_screen_color_index']].withOpacity(0.2),
+                                    ),
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        /* 이모티콘 */
+                                        Image.asset(
+                                          "assets/img/icons/emoticon/${DiaryCtr.EmoticonName[result['dirary_screen_emoticon_index']]}.png",
+                                          height: GeneralCtr.fontsize_normal*1.4,
+                                          width: GeneralCtr.fontsize_normal*1.4,
+                                        ),
+                                        /* 날짜 */
+                                        Text(
+                                            "$date_format($week_day)",
+                                            style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7, color: Colors.black87)
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                   /* 사회적 거리두기 */
                                   SizedBox(width: 20),
@@ -479,13 +494,12 @@ Widget DiaryListView2(){
                                         Text(
                                           "${result['dirary_screen_contents']}",
                                           overflow: TextOverflow.ellipsis,
-                                          maxLines: 3,
+                                          maxLines: 2,
                                           style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9),
                                         ),
                                       ],
                                     ),
                                   )
-
                                 ],
                               )
                           ),
@@ -494,7 +508,6 @@ Widget DiaryListView2(){
                         SizedBox(height: 5)
                       ],
                     )
-
                   ),
                 ),
               ),
@@ -722,7 +735,6 @@ Widget ContentsHeader(context, result, index){
                   ),
                 ],
               )
-
             ],
           ),
         ),
@@ -933,7 +945,7 @@ Widget SearchWidget(){
       child: TextField(
         onChanged: (keyword){
           /* 검색어를 입력 했을 때 액션 정의 */
-          DiaryCtr.result_filtering(keyword);
+          DiaryCtr.result_filtering();
         },
         controller: DiaryCtr.DiarySearchController, // 텍스트값을 가져오기 위해 컨트롤러 할당
         autofocus: false, // 자동으로 클릭할것인가
@@ -980,4 +992,70 @@ Widget Date_select(context){
     );
 }
 
-
+//<서브위젯> 오늘 일기 바로 추가 위젯
+Widget Add_Today_diary(){
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+       Text("오늘은 어떤 하루였나요?", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9)),
+       SizedBox(height: 5),
+       Bubble(
+         nip: BubbleNip.leftTop,
+         stick: true,
+         nipWidth: 20,
+         nipHeight: 20,
+         color: Color.fromRGBO(225, 255, 199, 1.0),
+         child: DottedBorder(
+             dashPattern: [8, 4],
+             strokeWidth: 1,
+             color: Colors.grey.withOpacity(0.7),
+             strokeCap: StrokeCap.round,
+             borderType: BorderType.RRect,
+             radius: Radius.circular(10),
+             padding: EdgeInsets.all(1),
+             child: Container(
+               padding: EdgeInsets.fromLTRB(10, 5, 0, 5),
+               height : 60,
+               child: ListView.builder(
+                 //physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
+                 //reverse: true,
+                   shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
+                   scrollDirection: Axis.horizontal, // 수직(vertical)  수평(horizontal) 배열 선택
+                   //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
+                   itemCount: DiaryCtr.EmoticonName.length,
+                   itemBuilder: (context, index) {
+                     var result = DiaryCtr.EmoticonName[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
+                     return Row(
+                       children: [
+                         InkWell(
+                             onTap: (){
+                               /* "신규(new)모드로 전환" */
+                               DiaryCtr.select_NewOrModify("new");
+                               /* 페이지 이동 */
+                               Get.to(() => DiaryWriteScreen());
+                               /* 이모지 코드 선택 이벤트 */
+                               DiaryCtr.update_dirary_screen_emoticon_index(index);
+                             },
+                             /* 이모지 코드 보여주기 */
+                             child: Opacity(
+                               /* 선택된 아이콘 강조 해주기 */
+                               opacity: DiaryCtr.dirary_screen_emoticon_index == index? 1.0 : 1.0,
+                               child: Image.asset(
+                                 "assets/img/icons/emoticon/$result.png",
+                                 height: 40.0,
+                                 width: 40.0,
+                               ),
+                             )//
+                         ),
+                         /* 아이콘 사회적 거리두기 */
+                         SizedBox(width: 20)
+                       ],
+                     );
+                   }
+               ),
+             ),
+         ),
+       ),
+   ],
+  );
+}

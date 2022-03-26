@@ -89,7 +89,7 @@ class MainWidget extends StatelessWidget {
                   child: Icon(MfgLabs.left, size: 20)
                 ),
               ),
-              title: Text(DiaryCtr.NewOrModify == "new" ? "일기 쓰기" : "일기 수정하기",
+              title: Text(DiaryCtr.NewOrModify == "new" ? "새로운 일기" : "일기 수정하기",
                   style: GeneralCtr.Style_title
               ),
               backgroundColor: Colors.transparent,
@@ -172,11 +172,11 @@ class MainWidget extends StatelessWidget {
                         /* 이 시간에 추천해요  */
                         Time_Choice(context),
 
+                        /* 이미티콘 보여주는 위젯 */
+                        Emoticon_Choice(),
+
                         /* 날씨 */
                         Weather_Choice(context),
-
-                        /* 이미티콘 보여주는 위젯 */
-                        Emoticon_Choice(context),
 
                         /* 칼라코드 보여주기 */
                         Color_code_choice(),
@@ -935,8 +935,8 @@ Widget Weather_Choice(context){
 }
 
 //<서브위젯> 이모티콘 선택 모듈
-Widget Emoticon_Choice(context){
-  /* 오늘 날씨는  */
+Widget Emoticon_Choice(){
+  /* 이모티콘  */
   return Container(
     padding: EdgeInsets.fromLTRB(15, 10, 0, 5),
     height : 60,

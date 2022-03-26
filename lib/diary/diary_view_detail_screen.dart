@@ -34,7 +34,7 @@ Widget MainWidget(context, int index){
         init: DiaryController(),
         builder: (_){
           /* 선택한 결과 불러오기 */
-          var result = DiaryCtr.diary_view_contents[index];
+          var result = DiaryCtr.diary_view_contents_filtered[index];
           /* 위젯 시작 */
           return Scaffold(
             appBar: AppBar(
@@ -54,6 +54,8 @@ Widget MainWidget(context, int index){
                   children: [
                     /* 헤더정보 */
                     ContentsHeader(context, result, index),
+                    /* 해시태그 삽입 */
+                    HashTagView(result),
                     /* 사회적 거리두기 */
                     SizedBox(height: 10),
                     /* 제목*/

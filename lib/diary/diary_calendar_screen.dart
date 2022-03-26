@@ -146,6 +146,12 @@ Widget MainWidget(context){
                         monthViewSettings: MonthViewSettings(
                           //appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
                           showAgenda: true, // 클릭하면 아래 상세정보 표시하기
+                          agendaItemHeight: 40, // 아래 보이는 이벤트 내용 높이 조정
+                          agendaStyle: AgendaStyle(
+                            appointmentTextStyle: TextStyle(
+                              fontSize: GeneralCtr.fontsize_normal*0.9 // 아래 보이는 이벤트 텍스트 크기 조정
+                            )
+                          )
                         ),
                         scheduleViewSettings: ScheduleViewSettings(
                           hideEmptyScheduleWeek: true,
