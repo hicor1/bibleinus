@@ -15,26 +15,35 @@ final BibleCtr     = Get.put(BibleController());
 final MyCtr        = Get.put(MyController());
 
 class DiaryViewDetailScreen extends StatelessWidget {
-  const DiaryViewDetailScreen({Key? key, this.index}) : super(key: key);
+  const DiaryViewDetailScreen({Key? key, this.index, this.IsFilteredData}) : super(key: key);
 
   final index;
+  /* 일반적으로 필터링된 데이터를 사용하지만, 캘린더의 경우 필터링 되지 않은 전체데이터를 활용하므로 구분 짓는다 */
+  final IsFilteredData;
 
   @override
   Widget build(BuildContext context) {
     /* 메인위젯 뿌려주기 with 선택한 일기 index */
-    return MainWidget(context, index);
+    return MainWidget(context, index, IsFilteredData);
   }
 }
 
 /*<서브위젯> 메인위젯 정의 */
-Widget MainWidget(context, int index){
+Widget MainWidget(context, int index, bool IsFilteredData){
   return
   /* 컨트롤러 불러오기 */
     GetBuilder<DiaryController>(
         init: DiaryController(),
         builder: (_){
           /* 선택한 결과 불러오기 */
-          var result = DiaryCtr.diary_view_contents_filtered[index];
+          var result;
+          /* 일반적으로 필터링된 데이터를 사용하지만, 캘린더의 경우 필터링 되지 않은 전체데이터를 활용하므로 구분 짓는다 */
+          if(IsFilteredData == true){
+            result = DiaryCtr.diary_view_contents_filtered[index];
+          }else{
+            result = DiaryCtr.diary_view_contents[index];
+          }
+
           /* 위젯 시작 */
           return Scaffold(
             appBar: AppBar(

@@ -182,7 +182,7 @@ Widget DiaryGridView() {
                     child: InkWell(
                       onTap: (){
                         /* 일기 컨테이너 클릭 시, 상세페이지로 이동 */
-                        Get.to(() => DiaryViewDetailScreen(index: index));
+                        Get.to(() => DiaryViewDetailScreen(index: index, IsFilteredData: true));
                       },
                       child: Material(
                         color: DiaryCtr.ColorCode[result['dirary_screen_color_index']].withOpacity(0.2),
@@ -310,7 +310,7 @@ Widget DiaryListView(){
                     child: InkWell(
                       onTap: (){
                         /* 일기 컨테이너 클릭 시, 상세페이지로 이동 */
-                        Get.to(() => DiaryViewDetailScreen(index: index));
+                        Get.to(() => DiaryViewDetailScreen(index: index, IsFilteredData: true));
                       },
                       child: Material(
                         color: DiaryCtr.ColorCode[result['dirary_screen_color_index']].withOpacity(0.3),
@@ -434,7 +434,7 @@ Widget DiaryListView2(){
                   child: InkWell(
                     onTap: (){
                       /* 일기 컨테이너 클릭 시, 상세페이지로 이동 */
-                      Get.to(() => DiaryViewDetailScreen(index: index));
+                      Get.to(() => DiaryViewDetailScreen(index: index, IsFilteredData: true));
                     },
                     child: Column(
                       children: [
@@ -994,68 +994,83 @@ Widget Date_select(context){
 
 //<서브위젯> 오늘 일기 바로 추가 위젯
 Widget Add_Today_diary(){
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-       Text("오늘은 어떤 하루였나요?", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9)),
-       SizedBox(height: 5),
-       Bubble(
-         nip: BubbleNip.leftTop,
-         stick: true,
-         nipWidth: 20,
-         nipHeight: 20,
-         color: Color.fromRGBO(225, 255, 199, 1.0),
-         child: DottedBorder(
-             dashPattern: [8, 4],
-             strokeWidth: 1,
-             color: Colors.grey.withOpacity(0.7),
-             strokeCap: StrokeCap.round,
-             borderType: BorderType.RRect,
-             radius: Radius.circular(10),
-             padding: EdgeInsets.all(1),
-             child: Container(
-               padding: EdgeInsets.fromLTRB(10, 5, 0, 5),
-               height : 60,
-               child: ListView.builder(
-                 //physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
-                 //reverse: true,
-                   shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
-                   scrollDirection: Axis.horizontal, // 수직(vertical)  수평(horizontal) 배열 선택
-                   //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
-                   itemCount: DiaryCtr.EmoticonName.length,
-                   itemBuilder: (context, index) {
-                     var result = DiaryCtr.EmoticonName[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
-                     return Row(
-                       children: [
-                         InkWell(
-                             onTap: (){
-                               /* "신규(new)모드로 전환" */
-                               DiaryCtr.select_NewOrModify("new");
-                               /* 페이지 이동 */
-                               Get.to(() => DiaryWriteScreen());
-                               /* 이모지 코드 선택 이벤트 */
-                               DiaryCtr.update_dirary_screen_emoticon_index(index);
-                             },
-                             /* 이모지 코드 보여주기 */
-                             child: Opacity(
-                               /* 선택된 아이콘 강조 해주기 */
-                               opacity: DiaryCtr.dirary_screen_emoticon_index == index? 1.0 : 1.0,
-                               child: Image.asset(
-                                 "assets/img/icons/emoticon/$result.png",
-                                 height: 40.0,
-                                 width: 40.0,
-                               ),
-                             )//
-                         ),
-                         /* 아이콘 사회적 거리두기 */
-                         SizedBox(width: 20)
-                       ],
-                     );
-                   }
+  /* 일기 추가 위젯 전체를 감싸는 회색 테두리?!! */
+  return Container(
+    padding: EdgeInsets.all(10),
+    decoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 3,
+            offset: Offset(2, 3), // changes position of shadow
+          ),
+        ],
+      color: GeneralCtr.BlueColor.withOpacity(1.0)
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Bubble(
+            nip: BubbleNip.leftTop,
+            stick: true,
+            nipWidth: 15,
+            color: Colors.white,
+            child: Text("오늘은 어떤 하루였나요?", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9)
+            )
+        ),
+         SizedBox(height: 5),
+         Container(
+           padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+           child: DottedBorder(
+               dashPattern: [10, 4],
+               strokeWidth: 1.5,
+               color: Colors.white,
+               strokeCap: StrokeCap.round,
+               borderType: BorderType.RRect,
+               radius: Radius.circular(10),
+               child: Container(
+                 padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                 height : 55,
+                 child: ListView.builder(
+                     shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
+                     scrollDirection: Axis.horizontal, // 수직(vertical)  수평(horizontal) 배열 선택
+                     itemCount: DiaryCtr.EmoticonName.length,
+                     itemBuilder: (context, index) {
+                       var result = DiaryCtr.EmoticonName[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
+                       return Row(
+                         children: [
+                           InkWell(
+                               onTap: (){
+                                 /* "신규(new)모드로 전환" */
+                                 DiaryCtr.select_NewOrModify("new");
+                                 /* 페이지 이동 */
+                                 Get.to(() => DiaryWriteScreen());
+                                 /* 이모지 코드 선택 이벤트 */
+                                 DiaryCtr.update_dirary_screen_emoticon_index(index);
+                               },
+                               /* 이모지 코드 보여주기 */
+                               child: Opacity(
+                                 /* 선택된 아이콘 강조 해주기 */
+                                 opacity: DiaryCtr.dirary_screen_emoticon_index == index? 1.0 : 1.0,
+                                 child: Image.asset(
+                                   "assets/img/icons/emoticon/$result.png",
+                                   height: 40.0,
+                                   width: 40.0,
+                                 ),
+                               )//
+                           ),
+                           /* 아이콘 사회적 거리두기 */
+                           SizedBox(width: 15)
+                         ],
+                       );
+                     }
+                 ),
                ),
-             ),
+           ),
          ),
-       ),
-   ],
+     ],
+    ),
   );
 }

@@ -509,24 +509,27 @@ class DiaryController extends GetxController {
       "dirary_screen_address":dirary_screen_address,
       "dirary_screen_hashtag":get_hash_tag_list(),
       //"dirary_screen_emoji_index": dirary_screen_emoji_index,
-    }).then((value) => PopToast("일기가 등록되었어요!")
-    );// 안내메세지
+    }).then((value) {
+      /* 일기 등록이 완료 된 후에, */
+      PopToast("일기가 등록되었어요!");
+
+      /* 더미데이터(99999) 추가 */
+      dirary_screen_selected_verses_id.add(99999);
+
+      // 일기 작성페이지 초기화
+      diray_write_screen_init();
+
+      // 일기 리스트 다시 불러오기
+      LoadAction();
+
+      // 로딩화면 종료
+      EasyLoading.dismiss();
+      //안내 메세지
+      PopToast("등록 안료");
+      });// 안내메세지
 
 
-    /* 더미데이터(99999) 추가 */
-    dirary_screen_selected_verses_id.add(99999);
 
-    // 일기 작성페이지 초기화
-    diray_write_screen_init();
-
-    // 일기 리스트 다시 불러오기
-    LoadAction();
-    // 달력페이지 다시 불러오기
-    calendar_data_mapping();
-    // 로딩화면 종료
-    EasyLoading.dismiss();
-    //안내 메세지
-    PopToast("등록 안료");
   }
 
   /* <함수> 저장버튼 눌렀을 때 파이어베이스로 저장하기 */
@@ -607,6 +610,9 @@ class DiaryController extends GetxController {
 
           /* 쿼리 + 날짜 필터 결과 적용 */
           result_filtering();
+
+          // 달력페이지 다시 불러오기
+          calendar_data_mapping();
 
         }
     );// 필드명에 단어 포함
@@ -812,8 +818,6 @@ class DiaryController extends GetxController {
         }
       }
     }
-
-
     /* 더미데이터(99999) 제거(임시) */
     dirary_screen_selected_verses_id.remove(99999);
 
@@ -832,18 +836,19 @@ class DiaryController extends GetxController {
       "dirary_screen_emoticon_index":dirary_screen_emoticon_index,
       "dirary_screen_address":dirary_screen_address,
       "dirary_screen_hashtag":get_hash_tag_list(),
-    }).then((value) => PopToast("일기가 수정되었어요!")
-    );
-
-    // 일기 리스트 다시 불러오기
-    LoadAction();
-    // 일기 작성페이지 초기화
-    diray_write_screen_init();
-    update();
-    // 로딩화면 종료
-    EasyLoading.dismiss();
-    //안내 메세지
-    PopToast("수정 안료");
+    }).then((value) {
+      /* 저장이 완료된 후에,, */
+      PopToast("일기가 수정되었어요!");
+      // 일기 리스트 다시 불러오기
+      LoadAction();
+      // 일기 작성페이지 초기화
+      diray_write_screen_init();
+      update();
+      // 로딩화면 종료
+      EasyLoading.dismiss();
+      //안내 메세지
+      PopToast("수정 안료");
+      });
 
   }
 

@@ -131,7 +131,7 @@ Widget MainWidget(context){
                             /* "Meeting"인스턴스에서 해당 일기 인덱스만 가져온다 */
                             var diary_index = details.appointments![0].get_index;
                             /* 해당 일기 상세 페이지로 이동 */
-                            Get.to(() => DiaryViewDetailScreen(index: diary_index));
+                            Get.to(() => DiaryViewDetailScreen(index: diary_index, IsFilteredData: false));
                           }
                         },
                         controller: DiaryCtr.calendarController, // 선택된 날짜 불러오기를 위해 컨트롤러 할당
