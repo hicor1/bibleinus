@@ -4,8 +4,10 @@ import 'package:bible_in_us/general/general_controller.dart';
 import 'package:bible_in_us/hymn/hymn_tab_page.dart';
 import 'package:bible_in_us/my/my_main_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttericon/elusive_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 
 // Gex컨트롤러 객체 초기화
@@ -19,6 +21,10 @@ class TabPage extends StatefulWidget {
 }
 
 class _TabPageState extends State<TabPage> {
+  /* WillPopScope 함수 변수 정의 */
+  late DateTime backbuttonpressedTime;
+
+  /* Tab페이지 정의 */
   List pages = [
     DiaryTabPage(),
     BibleTabPage(),
@@ -34,7 +40,11 @@ class _TabPageState extends State<TabPage> {
           init: GeneralController(), // GetX초기화
           builder: (_){
             return Scaffold(
-              body: Center(child: pages[GeneralCtr.selectedPageIndex]),
+              /* 뒤로가기버튼으로 App이 종료되는것을 방지하기 위해 "WillPopScope"으로 감싸준다.(https://dkswnkk.tistory.com/43) */
+              body: WillPopScope(
+                  onWillPop: _onWillPop,
+                  child: Center(child: pages[GeneralCtr.selectedPageIndex])
+              ),
               bottomNavigationBar: Container(
                   height: 60, // 네비바 높이
                   decoration: const BoxDecoration(
@@ -74,4 +84,29 @@ class _TabPageState extends State<TabPage> {
           }
       );
   }
+
+
+  /*<함수> 앱을 종료하시겠습니까? */
+  Future<bool> _onWillPop() async {
+    return (await showDialog(
+      context: context,
+      builder: (context) => new AlertDialog(
+        title: new Text('앱 종료', style: TextStyle(fontSize: GeneralCtr.fontsize_normal, fontWeight: FontWeight.bold)),
+        content: new Text('앱을 종료하시겠습니까?', style: TextStyle(fontSize: GeneralCtr.fontsize_normal)),
+        actions: <Widget>[
+          new OutlinedButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: new Text('아니요!', style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9)),
+          ),
+          new OutlinedButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: new Text('네', style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9)),
+          ),
+        ],
+      ),
+    )) ?? false;
+  }
+
 }
+
+

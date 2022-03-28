@@ -610,7 +610,7 @@ Widget Color_code_choice(){
   return
     Container(
       padding: EdgeInsets.fromLTRB(15, 20, 0, 5),
-      height : 60,
+      height : 65,
       child: ListView.builder(
         //physics: const NeverScrollableScrollPhysics(), // 빌더 내부에서 별도로 스크롤 관리할지, 이게 활성화 된경우 전체 스크롤보다 해당 스크롤이 우선되므로 일단은 비활성화가 좋다
         //reverse: true,
@@ -634,7 +634,7 @@ Widget Color_code_choice(){
                       Icon(
                         FontAwesome5.book_medical,
                         color: result,
-                        size: 35,
+                        size: 40,
                       ),
                       /* 선태된 색 강조 */
                       Icon(

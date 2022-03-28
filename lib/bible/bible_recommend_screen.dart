@@ -75,6 +75,7 @@ Widget TagListWidget(){
           children: [
             TagButton("외로움"),
             TagButton("슬픔"),
+            TagButton("믿음"),
           ],
         ),
         /* 2층 태그 */
@@ -84,8 +85,19 @@ Widget TagListWidget(){
             TagButton("미움"),
             TagButton("용기"),
             TagButton("공부"),
+            TagButton("기도"),
           ],
-        )
+        ),
+        /* 3층 태그 */
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TagButton("사랑"),
+            TagButton("일상"),
+            TagButton("전도"),
+            TagButton("유혹"),
+          ],
+        ),
       ],
     );
 }
@@ -180,6 +192,8 @@ Widget View_verses_list(){
                             height : 40.0,
                             width  : 40.0,
                           ),
+                          /* 사회적 거리두기 */
+                          SizedBox(height: 5),
                           /* 2층 태그*/
                           Text("#${result['tag']}", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.8))
                         ],
