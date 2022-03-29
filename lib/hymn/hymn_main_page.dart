@@ -85,7 +85,7 @@ class HymnMainWidget extends StatelessWidget {
                                       HymnCtr.Get_Hymn_list(HymnCtr.searchtextController.text);
                                     },
                                     child: Container(
-                                      padding: EdgeInsets.fromLTRB(5, 2, 5, 3),
+                                      padding: EdgeInsets.fromLTRB(5, 8, 5, 8),
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         children: [

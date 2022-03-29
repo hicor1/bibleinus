@@ -71,7 +71,7 @@ class MainWidget extends StatelessWidget {
                   /* 날짜 선택 위젯 */
                   Date_select(context),
                   /*  작성한 일기기 하나도 없는 경우 */
-                  if (DiaryCtr.diary_view_contents_filtered.length == 0)
+                  if (DiaryCtr.diary_view_contents.length == 0)
                     TextButton(
                       child: Text("새로운 일기를 작성해보세요 !",
                         style: TextStyle(
@@ -164,13 +164,14 @@ Widget DiaryGridView() {
             shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
             scrollDirection: Axis.vertical, // 수직(vertical)  수평(horizontal) 배열 선택
             //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
-            itemCount: DiaryCtr.diary_view_contents_filtered.length,
+            itemCount: DiaryCtr.diary_view_contents_filtered_index.length,
             itemBuilder: (context, index) {
-              var result = DiaryCtr.diary_view_contents_filtered[index];
+              var dataIndex = DiaryCtr.diary_view_contents_filtered_index[index];
+              var result = DiaryCtr.diary_view_contents[dataIndex];
               /* 날짜 데이터를 보기좋게 재구성 */
-              var date_temp = result['dirary_screen_selectedDate'].toDate();
+              var date_temp   = result['dirary_screen_selectedDate'].toDate();
               var date_format = "${date_temp.month}.${date_temp.day}"; //date로 형식 변환
-              var week_day = DiaryCtr.ConvertWeekday(date_temp.weekday);
+              var week_day    = DiaryCtr.ConvertWeekday(date_temp.weekday);
 
               /* 아래부터 컨테이너 반복 */
               return AnimationConfiguration.staggeredGrid(
@@ -182,7 +183,7 @@ Widget DiaryGridView() {
                     child: InkWell(
                       onTap: (){
                         /* 일기 컨테이너 클릭 시, 상세페이지로 이동 */
-                        Get.to(() => DiaryViewDetailScreen(index: index, IsFilteredData: true));
+                        Get.to(() => DiaryViewDetailScreen(index: dataIndex));
                       },
                       child: Material(
                         color: DiaryCtr.ColorCode[result['dirary_screen_color_index']].withOpacity(0.2),
@@ -292,9 +293,10 @@ Widget DiaryListView(){
             shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
             scrollDirection: Axis.vertical, // 수직(vertical)  수평(horizontal) 배열 선택
             //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
-            itemCount: DiaryCtr.diary_view_contents_filtered.length,
+            itemCount: DiaryCtr.diary_view_contents_filtered_index.length,
             itemBuilder: (context, index) {
-              var result = DiaryCtr.diary_view_contents_filtered[index];
+              var dataIndex = DiaryCtr.diary_view_contents_filtered_index[index];
+              var result = DiaryCtr.diary_view_contents[dataIndex];
               /* 날짜 데이터를 보기좋게 재구성 */
               var date_temp = result['dirary_screen_selectedDate'].toDate();
               var date_format = "${date_temp.month}.${date_temp.day}"; //date로 형식 변환
@@ -310,7 +312,7 @@ Widget DiaryListView(){
                     child: InkWell(
                       onTap: (){
                         /* 일기 컨테이너 클릭 시, 상세페이지로 이동 */
-                        Get.to(() => DiaryViewDetailScreen(index: index, IsFilteredData: true));
+                        Get.to(() => DiaryViewDetailScreen(index: dataIndex));
                       },
                       child: Material(
                         color: DiaryCtr.ColorCode[result['dirary_screen_color_index']].withOpacity(0.3),
@@ -416,9 +418,10 @@ Widget DiaryListView2(){
           shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
           scrollDirection: Axis.vertical, // 수직(vertical)  수평(horizontal) 배열 선택
           //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
-          itemCount: DiaryCtr.diary_view_contents_filtered.length,
+          itemCount: DiaryCtr.diary_view_contents_filtered_index.length,
           itemBuilder: (context, index) {
-            var result = DiaryCtr.diary_view_contents_filtered[index];
+            var dataIndex = DiaryCtr.diary_view_contents_filtered_index[index];
+            var result = DiaryCtr.diary_view_contents[dataIndex];
             /* 날짜 데이터를 보기좋게 재구성 */
             var date_temp = result['dirary_screen_selectedDate'].toDate();
             var date_format = "${date_temp.month}.${date_temp.day}"; //date로 형식 변환
@@ -434,7 +437,7 @@ Widget DiaryListView2(){
                   child: InkWell(
                     onTap: (){
                       /* 일기 컨테이너 클릭 시, 상세페이지로 이동 */
-                      Get.to(() => DiaryViewDetailScreen(index: index, IsFilteredData: true));
+                      Get.to(() => DiaryViewDetailScreen(index: dataIndex));
                     },
                     child: Column(
                       children: [
@@ -528,9 +531,10 @@ Widget DiaryListDetailView(){
           shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
           scrollDirection: Axis.vertical, // 수직(vertical)  수평(horizontal) 배열 선택
           //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
-          itemCount: DiaryCtr.diary_view_contents_filtered.length,
+          itemCount: DiaryCtr.diary_view_contents_filtered_index.length,
           itemBuilder: (context, index) {
-            var result = DiaryCtr.diary_view_contents_filtered[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
+            var dataIndex = DiaryCtr.diary_view_contents_filtered_index[index];
+            var result = DiaryCtr.diary_view_contents[dataIndex];
             /* 아래부터 컨테이너 반복 */
             return AnimationConfiguration.staggeredList(
               position: index,
@@ -544,7 +548,7 @@ Widget DiaryListDetailView(){
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         /* 컨테이너 상단 식별 정보 */
-                        ContentsHeader(context, result, index),
+                        ContentsHeader(context, result, dataIndex),
 
                         /* 해시태그 삽입 */
                         HashTagView(result),
@@ -607,7 +611,7 @@ Widget DiaryListDetailView(){
                                         /* 사회적 거리두기 */
                                         SizedBox(height: 10),
                                         /* 성경구절 보여주는 위젯 */
-                                        ViewVerses(index: index),
+                                        ViewVerses(result: result),
                                       ],
                                     )
 
@@ -646,6 +650,7 @@ Widget ContentsHeader(context, result, index){
   //var date_format = "${date_temp.year}.${date_temp.month}.${date_temp.day}"; //date로 형식 변환
   var date_format = "${date_temp.month}.${date_temp.day}"; //date로 형식 변환
   var week_day = DiaryCtr.ConvertWeekday(date_temp.weekday);
+  var time_differ = DiaryCtr.cal_time_differ(result["updated_at"]);
 
   return
     Row(
@@ -691,7 +696,7 @@ Widget ContentsHeader(context, result, index){
                   /* 수정시간 + 수정버튼 */
                   Row(
                     children: [
-                      Text("${DiaryCtr.diary_view_timediffer[index]} 수정", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7, color: Colors.grey)),
+                      Text("$time_differ 수정", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7, color: Colors.grey)),
                       PopupMenuButton(
                           child: Container(
                             height: 30,
@@ -752,10 +757,10 @@ Widget ContentsHeader(context, result, index){
 //<서브위젯> 성경 카드 위젯
 /* 아래부터 선택한 성경 카드로 보여주기 *///https://docs.getwidget.dev/gf-carousel/
 class ViewVerses extends StatelessWidget {
-  const ViewVerses({Key? key, this.index}) : super(key: key);
+  const ViewVerses({Key? key, this.result}) : super(key: key);
 
   /* 일기 인덱스 받아오기 */
-  final index;
+  final result;
 
   @override
   Widget build(BuildContext context) {
@@ -774,12 +779,12 @@ class ViewVerses extends StatelessWidget {
       pauseAutoPlayOnTouch: Duration(milliseconds: 5000), // 클릭하면 자동넘기기 일시 정지
 
       /* 선택된 구절 갯수만큼 카드 만들어주기 */
-      items: DiaryCtr.diary_view_contents_filtered[index]['dirary_screen_selected_verses_id'].map<Widget>(
+      items: result['dirary_screen_selected_verses_id'].map<Widget>(
             (id) {
 
           /* 필터링으로 구절정보 하나씩 가져오기 */
           var contents_data = DiaryCtr.diary_view_selected_contents_data.where((f)=>f["_id"]==id).toList();
-          var diary_data = DiaryCtr.diary_view_contents_filtered[index];
+          var diary_data = result;
 
           /* 성경 구절 카드에 담아서 보여주기 */
           /* 1. 정보가 "null"이 아니면, 구절 정보 담아서 보여준다 */
@@ -999,15 +1004,7 @@ Widget Add_Today_diary(){
     padding: EdgeInsets.all(10),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(10),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 3,
-            offset: Offset(2, 3), // changes position of shadow
-          ),
-        ],
-      color: GeneralCtr.BlueColor.withOpacity(1.0)
+      color: GeneralCtr.BlueColor.withOpacity(0.6)
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,

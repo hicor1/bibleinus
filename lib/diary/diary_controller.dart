@@ -85,7 +85,7 @@ class DiaryController extends GetxController {
 
   var diary_view_ViewMode = "grid"; // 성경일기 뷰 페이지 _ "그리드뷰(grid view) 또는 리스트뷰(list view)선택"
   var diary_view_contents = []; // 성경일기 뷰 페이지 _ 데이터 로드
-  var diary_view_contents_filtered = []; // 성경일기 뷰 페이지 _ 필터된 데이터
+  var diary_view_contents_filtered_index = []; // 성경일기 뷰 페이지 _ 필터된 데이터의 인덱스만 가져온다
   var diary_view_timediffer = []; // 성경일기 뷰 페이지 _ 시간경과 산출데이터 저장
   var diary_view_today_diary_count = 0; // 성경일기 뷰 페이지 _ 오늘 작성한 일기가 몇개인지 카운트
   var diary_view_selected_contents_data = []; // 성경일기 뷰 페이지 _ 보여줄 성경 구절 데이터 DB에서 받아와서 저장하기
@@ -377,9 +377,9 @@ class DiaryController extends GetxController {
     File? croppedFile = await ImageCropper().cropImage(
         sourcePath: image!.path,
         // 저장효율을 위해 이미지 크기 밎 퀄리티 제한
-        maxWidth: 600, // 4:3 맞추자
-        maxHeight: 450, // 4:3 맞추자
-        compressQuality: 50,
+        maxWidth: 1200, // 4:3 맞추자
+        maxHeight: 900, // 4:3 맞추자
+        compressQuality: 70,
         /* 1. 안드로이드인 경우 */
         aspectRatioPresets: Platform.isAndroid
             ? [
@@ -552,7 +552,7 @@ class DiaryController extends GetxController {
     /* 파이어스토어에서 삭제 */
     collection.doc(Docid).delete();
     /* 지우고 DB재조회 하지말고, 불러온 리스트에서만 수정하자 */
-    diary_view_contents_filtered.removeAt(index);
+    diary_view_contents.removeAt(index);
     // 일기 리스트 다시 불러오기
     LoadAction();
     // 달력페이지 다시 불러오기
@@ -584,7 +584,6 @@ class DiaryController extends GetxController {
         .get().then((QuerySnapshot ds) async {
           /*  불러온 데이터 할당 */
           diary_view_contents          = ds.docs;
-          diary_view_contents_filtered = ds.docs; // 필터된 결과값 초기값도 필터안된것과 동일하게 할당
 
           /* 오늘작성한 일기 있는지 체크 */
           diary_view_today_diary_count = 0; // 오늘 작성한 일기가 몇개인지 카운트
@@ -614,6 +613,9 @@ class DiaryController extends GetxController {
           // 달력페이지 다시 불러오기
           calendar_data_mapping();
 
+          // 로딩화면 종료
+          EasyLoading.dismiss();
+
         }
     );// 필드명에 단어 포함
 
@@ -621,12 +623,8 @@ class DiaryController extends GetxController {
     /* 데이터 로드(단순) _ 이거는 필요없는데, 이걸 넣어줘야 오류가 안남??...ㅜ 이유는 몰겠음..*/
     var documentSnapshot = await collection.doc("diary").get();
 
-
-
-
     update();
-    // 로딩화면 종료
-    EasyLoading.dismiss();
+
   }
 
   /* <함수> 설정에서 성경이 변경되었을 경우, 리로드 하는 모듈 */
@@ -717,18 +715,18 @@ class DiaryController extends GetxController {
     /* 모드선택 ( 신규(new) 또는 수정(modify) ) */
     select_NewOrModify("modify");
     /* 선택한 파이어스토어 문서 번호_아이디(documentID) 저장 */
-    selected_document_id = diary_view_contents_filtered[index].id;
+    selected_document_id = diary_view_contents[index].id;
 
     /* 데이터 입혀주기 */
-    dirary_screen_selected_verses_id = diary_view_contents_filtered[index]['dirary_screen_selected_verses_id'].cast<int>();
-    dirary_screen_selectedDate       = diary_view_contents_filtered[index]['dirary_screen_selectedDate'].toDate();
-    dirary_screen_color_index        = diary_view_contents_filtered[index]['dirary_screen_color_index'];
-    dirary_screen_title              = diary_view_contents_filtered[index]['dirary_screen_title'];
-    dirary_screen_contents           = diary_view_contents_filtered[index]['dirary_screen_contents'];
-    dirary_screen_timetag_index      = diary_view_contents_filtered[index]['dirary_screen_timetag_index'];
-    dirary_screen_weather_index      = diary_view_contents_filtered[index]['dirary_screen_weather_index'];
-    dirary_screen_emoticon_index     = diary_view_contents_filtered[index]['dirary_screen_emoticon_index'];
-    dirary_screen_address            = diary_view_contents_filtered[index]['dirary_screen_address'];
+    dirary_screen_selected_verses_id = diary_view_contents[index]['dirary_screen_selected_verses_id'].cast<int>();
+    dirary_screen_selectedDate       = diary_view_contents[index]['dirary_screen_selectedDate'].toDate();
+    dirary_screen_color_index        = diary_view_contents[index]['dirary_screen_color_index'];
+    dirary_screen_title              = diary_view_contents[index]['dirary_screen_title'];
+    dirary_screen_contents           = diary_view_contents[index]['dirary_screen_contents'];
+    dirary_screen_timetag_index      = diary_view_contents[index]['dirary_screen_timetag_index'];
+    dirary_screen_weather_index      = diary_view_contents[index]['dirary_screen_weather_index'];
+    dirary_screen_emoticon_index     = diary_view_contents[index]['dirary_screen_emoticon_index'];
+    dirary_screen_address            = diary_view_contents[index]['dirary_screen_address'];
     //dirary_screen_emoji_index        = diary_view_contents[index]['dirary_screen_emoji_index'];
 
     /* 선택한 구절 DB 조회 */
@@ -737,14 +735,14 @@ class DiaryController extends GetxController {
     dirary_screen_selected_verses_id.add(99999);
 
     /* 제목 & 내용 삽입 */
-    TitletextController.text     = diary_view_contents_filtered[index]['dirary_screen_title'];
-    ContentstextController.text  = diary_view_contents_filtered[index]['dirary_screen_contents'];
+    TitletextController.text     = diary_view_contents[index]['dirary_screen_title'];
+    ContentstextController.text  = diary_view_contents[index]['dirary_screen_contents'];
 
     /* 해시태그 입혀주기 */
 
     var temp = ""; /* 태그 텍스트 저장공간(임시) */
 
-    var target = diary_view_contents_filtered[index]['dirary_screen_hashtag']; /* 태그만으로 구성된 리스트 가져오기 */
+    var target = diary_view_contents[index]['dirary_screen_hashtag']; /* 태그만으로 구성된 리스트 가져오기 */
     /* 태그 텍스트로 변경 */
     for(int i = 0; i < target.length; i++){
       temp = temp + " " + target[i];}
@@ -759,7 +757,7 @@ class DiaryController extends GetxController {
     //1. 리스트 초기화
     choiced_image_file = ["","",""];
     //2. 리스트 입히기
-    var temp_image_list = diary_view_contents_filtered[index]['choiced_image_file'];
+    var temp_image_list = diary_view_contents[index]['choiced_image_file'];
     for(int i = 0; i < temp_image_list.length; i++){
       choiced_image_file[i] = temp_image_list[i];
     }
@@ -1007,28 +1005,27 @@ class DiaryController extends GetxController {
   /* 검색결과 필터링 *///diary_view_selected_contents_data
   void result_filtering(){
     // 1. 결과 저장용 임시공간
-    var result = [];
     var QueryString = DiarySearchController.text;
+    diary_view_contents_filtered_index = []; // 필터링 결과 초기화
     // 2. 각 결과 순환하면서 조건에 맞는 값 가져오기
     // 2-1. 쿼리("Query")문 + 날짜 필터
-    diary_view_contents.forEach((u) {
+    for(int i = 0; i < diary_view_contents.length; i++){
+      var u = diary_view_contents[i];
       var selectedDate = u['dirary_screen_selectedDate'].toDate(); // DB에서 불러온 날짜 Timestamp ==> Date로 변환
-      //DateTime(diary_view_selected_year,diary_view_selected_month)
       /* "검색"필터 + "날짜"필터 적용 */
       if((u['dirary_screen_title'].contains(QueryString) | u['dirary_screen_contents'].contains(QueryString))
       &(DateTime(selectedDate.year,selectedDate.month)==DateTime(diary_view_selected_year,diary_view_selected_month))
       ){
-        result.add(u);
+        // 3. 결과 쌓아주기(인덱스번호만)
+        diary_view_contents_filtered_index.add(i);
       }
-    });
-    // 3. 결과 씌워주기
-    diary_view_contents_filtered = result;
+    }
 
     // 4. 경과 시간 재산출하기
     diary_view_timediffer = []; // 시간 경과 저장 리스트 초기화
-    for(int i = 0; i < diary_view_contents_filtered.length; i++){
+    for(int i = 0; i < diary_view_contents.length; i++){
       /* 1. 시간경과 산출(마지막으로 수정된 시간기준) */
-      diary_view_timediffer.add(cal_time_differ(diary_view_contents_filtered[i]["updated_at"]));
+      diary_view_timediffer.add(cal_time_differ(diary_view_contents[i]["updated_at"]));
     }
     update();
   }

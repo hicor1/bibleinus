@@ -91,8 +91,8 @@ class _TabPageState extends State<TabPage> {
     return (await showDialog(
       context: context,
       builder: (context) => new AlertDialog(
-        title: new Text('앱 종료', style: TextStyle(fontSize: GeneralCtr.fontsize_normal, fontWeight: FontWeight.bold)),
-        content: new Text('앱을 종료하시겠습니까?', style: TextStyle(fontSize: GeneralCtr.fontsize_normal)),
+        title: new Text('종료', style: TextStyle(fontSize: GeneralCtr.fontsize_normal, fontWeight: FontWeight.bold)),
+        content: new Text('종료하시겠습니까?', style: TextStyle(fontSize: GeneralCtr.fontsize_normal)),
         actions: <Widget>[
           new OutlinedButton(
             onPressed: () => Navigator.of(context).pop(false),
