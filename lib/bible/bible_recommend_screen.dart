@@ -224,7 +224,6 @@ Widget View_verses_list(){
                         ],
                       ),
                     )
-
                   ],
                 ),
               ),

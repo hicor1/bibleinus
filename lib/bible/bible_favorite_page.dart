@@ -82,8 +82,25 @@ class MainWidget extends StatelessWidget {
                                   },
                                   child: Container(
                                     width: MediaQuery.of(context).size.width, // 요건 필수
-                                    padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                                    padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
                                     margin: EdgeInsets.fromLTRB(5, 0, 5, 5),
+
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        width: 1,
+                                        color: BibleCtr.ColorCode[result['highlight_color_index']].withOpacity(0.25),
+                                      ),
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(5),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: GeneralCtr.MainColor.withOpacity(0.2),
+                                          blurRadius: 4,
+                                          offset: Offset(4, 4), // Shadow position
+                                        ),
+                                      ],
+                                    ),
+
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
@@ -150,9 +167,6 @@ class MainWidget extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                              //사회적 거리두기
-                              Divider(),
-                              SizedBox(height: 5)
                             ],
                           );
                         }
@@ -162,7 +176,7 @@ class MainWidget extends StatelessWidget {
 
                 /* 칼라코드 보여주기 */
                 Container(
-                    height: 55,
+                    height: 65,
                     width: MediaQuery.of(context).size.width,
                     margin: EdgeInsets.all(10),
                     child: Center(
@@ -201,12 +215,12 @@ class MainWidget extends StatelessWidget {
                                         /* 색깔 아이콘 */
                                         Icon(
                                             index != 0 ? FontAwesome5.star : Entypo.cancel,
-                                            color: BibleCtr.ColorCode[index], size: 25
+                                            color: BibleCtr.ColorCode[index], size: 35
                                         ),
                                         /* 색깔 선택 아이콘 */
                                         Icon(
                                           BibleCtr.Favorite_choiced_color_list.contains(index) ? WebSymbols.ok : null,
-                                            color: Colors.deepOrangeAccent, size: 15
+                                            color: Colors.deepOrangeAccent, size: 25
                                         ),
                                       ]
                                     ),

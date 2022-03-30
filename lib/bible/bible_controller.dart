@@ -128,7 +128,7 @@ class BibleController extends GetxController {
   var FAB_opacity = 0.0; // 메인페이지 플로팅액션버튼 투명도
 
   var ColorCode = [Color(0xFFBFBFBF), // 젤 처음은 흑백 칼라
-    Color(0xFFffd700).withOpacity(0.8),
+    Color(0xFFFFD700).withOpacity(0.8),
     Color(0xFF00bfff).withOpacity(0.8),
     Color(0xFF32cd32).withOpacity(0.8),
     Color(0xff9966ff).withOpacity(0.8),
@@ -490,6 +490,7 @@ class BibleController extends GetxController {
     GetFavorite_list(); // 즐겨찾기 업데이트
     Memo_DB_load(); // 메모 업데이트
     DiaryCtr.Bilbe_reload();// 성경 일기 페이지 바뀐 성경으로 리로드
+    LoadRecommendedVerse();// 추천 성경 구절 다시불러오기
     update();
   }
 
@@ -809,8 +810,6 @@ class BibleController extends GetxController {
 
     update();
   }
-
-
-
+  
 
 }

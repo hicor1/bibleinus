@@ -5,6 +5,7 @@ import 'package:bible_in_us/hymn/hymn_tab_page.dart';
 import 'package:bible_in_us/my/my_main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:fluttericon/elusive_icons.dart';
 import 'package:fluttericon/font_awesome5_icons.dart';
 import 'package:fluttertoast/fluttertoast.dart';
