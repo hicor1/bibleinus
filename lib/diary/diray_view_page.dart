@@ -56,6 +56,7 @@ class MainWidget extends StatelessWidget {
               child: Column(
                 children: [
                   SizedBox(height: 5),
+
                   /* 검색창 + 그리드뷰 or 리스트뷰 선택 위젯 배치 */
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -765,9 +766,9 @@ class ViewVerses extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GFCarousel(
-      height: 190,
+      height: 170,
       activeIndicator: GeneralCtr.MainColor,
-      passiveIndicator: Colors.white,
+      passiveIndicator: Colors.grey.withOpacity(0.4),
       pagerSize: 7.0,// 이미지 하단 페이지 인디케이터 크기
       enableInfiniteScroll: false, // 무한스크롤
       viewportFraction: 1.0, // 전.후 이미지 보여주기 ( 1.0이면 안보여줌 )
@@ -788,53 +789,68 @@ class ViewVerses extends StatelessWidget {
 
           /* 성경 구절 카드에 담아서 보여주기 */
           /* 1. 정보가 "null"이 아니면, 구절 정보 담아서 보여준다 */
-          return Container(
-            decoration: BoxDecoration(
-              color: DiaryCtr.ColorCode[diary_data['dirary_screen_color_index']].withOpacity(0.4), // 카드 색깔
-              borderRadius: BorderRadius.circular(5),
-            ),
-            margin: EdgeInsets.fromLTRB(2, 0, 2, 0), // 좌우 카드끼리 간격 띄우기
-            child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    /* 사회적 거리두기 */
-                    SizedBox(height: 20),
-                    /* 구절정보 보여주기 */
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+          return SingleChildScrollView(
+            /* 최대 높이를 지정하기 위해 "ConstrainedBox" 위젯으로 감싸준다. */
+              child: ConstrainedBox(
+                constraints: new BoxConstraints(
+                  /* 최대 및 최소 높이 정의 */
+                  minHeight: 110.0,
+                  maxHeight: 150.0,
+                ),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.fromLTRB(0, 5, 0, 5), // 하얀카드 안쪽 텍스트 패딩
+                  margin: EdgeInsets.fromLTRB(5, 5, 5, 5), // 컨테이너 자체 마진
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      width: 1.3,
+                      color: DiaryCtr.ColorCode[diary_data['dirary_screen_color_index']].withOpacity(0.4), // 카드 색깔
+                    ),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(3),
+                    boxShadow: [
+                      BoxShadow(
+                        color: DiaryCtr.ColorCode[diary_data['dirary_screen_color_index']].withOpacity(0.3),
+                        blurRadius: 2,
+                        offset: Offset(2, 2), // Shadow position
+                      ),
+                    ],
+                  ),
+
+                  /* 구절 */
+                  child: SingleChildScrollView(
+                    child: Column(
                       children: [
-                        /* 구절 정보 */
-                        SelectableText("  [${contents_data[0]['국문']}(${contents_data[0]['영문']}) ${contents_data[0]['cnum']}장 ${contents_data[0]['vnum']}절]",style:TextStyle(height: 1.5, fontSize: GeneralCtr.fontsize_normal*0.9)),
+                        /* 구절정보 */
+                        SelectableText(
+                          '[${contents_data[0]['국문']}(${contents_data[0]['영문']}) ${contents_data[0]['cnum']}장 ${contents_data[0]['vnum']}절]' ,
+                          style:TextStyle(
+                              fontSize: GeneralCtr.fontsize_normal*0.8,
+                              color: DiaryCtr.ColorCode[diary_data['dirary_screen_color_index']],
+                              fontWeight: FontWeight.w600
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 5),
+                        /* 내용 */
+                        WordBreakText(
+                          '${contents_data[0][BibleCtr.Bible_choiced]}',
+                          style:TextStyle(height: 1.5, fontSize: GeneralCtr.fontsize_normal*0.9),
+                          wrapAlignment: WrapAlignment.center,// 텍스트 가운데 정렬
+                        ),
                       ],
                     ),
-                    /* 사회적 거리두기 */
-                    SizedBox(height: 5),
+                  ),
 
-                    /* 성경 구절 메인 보여주기 */
-                    ClipRRect(
-                      //borderRadius: BorderRadius.all(Radius.circular(0.0)),
-                      /* 성경 구절 담기 */
-                      child: GFCard(
-                        padding: EdgeInsets.fromLTRB(5, 5, 5, 5), // 하얀카드 안쪽 텍스트 패딩
-                        margin: EdgeInsets.fromLTRB(0, 0, 0, 25), // 컨테이너 자체 마진
-                        boxFit: BoxFit.fitHeight,
-                        /* 구절 내용 */
-                        content: SizedBox(
-                            height: 95,
-                            child: SelectableText('${contents_data[0][BibleCtr.Bible_choiced]}' ,style:TextStyle(height: 1.5, fontSize: GeneralCtr.fontsize_normal*0.9))),
-
-                        ),
-
-                    ),
-                  ],
-                )
-            ),
+                ),
+              ),
           );
         },
       ).toList(),
       onPageChanged: (index) {
+
         /* 카드 넘어갈때 이벤트 */
+        ///// 현재 미정 //////
       },
     );
   }
@@ -1004,7 +1020,7 @@ Widget Add_Today_diary(){
     padding: EdgeInsets.all(10),
     decoration: BoxDecoration(
       borderRadius: BorderRadius.circular(10),
-      color: GeneralCtr.BlueColor.withOpacity(0.6)
+      color: GeneralCtr.BlueColor.withOpacity(0.4)
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,

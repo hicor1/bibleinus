@@ -94,9 +94,9 @@ class MainWidget extends StatelessWidget {
                                       borderRadius: BorderRadius.circular(5),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: GeneralCtr.MainColor.withOpacity(0.2),
-                                          blurRadius: 4,
-                                          offset: Offset(4, 4), // Shadow position
+                                          color: BibleCtr.ColorCode[result['highlight_color_index']].withOpacity(0.2),
+                                          blurRadius: 1,
+                                          offset: Offset(2, 2), // Shadow position
                                         ),
                                       ],
                                     ),

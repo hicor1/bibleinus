@@ -128,7 +128,7 @@ class BibleController extends GetxController {
   var FAB_opacity = 0.0; // 메인페이지 플로팅액션버튼 투명도
 
   var ColorCode = [Color(0xFFBFBFBF), // 젤 처음은 흑백 칼라
-    Color(0xFFFFD700).withOpacity(0.8),
+    Colors.amberAccent,
     Color(0xFF00bfff).withOpacity(0.8),
     Color(0xFF32cd32).withOpacity(0.8),
     Color(0xff9966ff).withOpacity(0.8),
