@@ -71,8 +71,8 @@ class MainWidget extends StatelessWidget {
                   SizedBox(height: 10),
                   /* 날짜 선택 위젯 */
                   Date_select(context),
-                  /*  작성한 일기기 하나도 없는 경우 */
-                  if (DiaryCtr.diary_view_contents.length == 0)
+                  /*  작성한 일기가 하나도 없는 경우 */
+                  if (DiaryCtr.diary_view_contents_filtered_index.length == 0)
                     TextButton(
                       child: Text("새로운 일기를 작성해보세요 !",
                         style: TextStyle(
@@ -794,7 +794,7 @@ class ViewVerses extends StatelessWidget {
               child: ConstrainedBox(
                 constraints: new BoxConstraints(
                   /* 최대 및 최소 높이 정의 */
-                  minHeight: 110.0,
+                  minHeight: 150.0,
                   maxHeight: 150.0,
                 ),
                 child: Container(
@@ -820,6 +820,7 @@ class ViewVerses extends StatelessWidget {
                   /* 구절 */
                   child: SingleChildScrollView(
                     child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         /* 구절정보 */
                         SelectableText(
@@ -1037,8 +1038,8 @@ Widget Add_Today_diary(){
          Container(
            padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
            child: DottedBorder(
-               dashPattern: [10, 4],
-               strokeWidth: 1.5,
+               dashPattern: [10, 9],
+               strokeWidth: 2.5,
                color: Colors.white,
                strokeCap: StrokeCap.round,
                borderType: BorderType.RRect,

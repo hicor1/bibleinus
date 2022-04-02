@@ -23,6 +23,7 @@ import 'package:getwidget/getwidget.dart';
 import 'package:kpostal/kpostal.dart';
 import 'package:hashtager/hashtager.dart';
 import 'package:hashtager/widgets/hashtag_text_field.dart';
+import 'package:word_break_text/word_break_text.dart';
 
 
 
@@ -42,7 +43,8 @@ class DiaryWriteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+    /* 이모티콘/날씨/색깔 스크롤러 횟수 수정 */
+    DiaryCtr.Recording_Scrolling_count(1);
     return MainWidget();
   }
 }
@@ -59,7 +61,7 @@ class MainWidget extends StatelessWidget {
         init: DiaryController(),
         builder: (_){
           return Scaffold(
-            backgroundColor: GeneralCtr.MainColor.withOpacity(0.1),
+            backgroundColor: GeneralCtr.MainColor.withOpacity(0.03),
             appBar: AppBar(
               iconTheme: IconThemeData(
                 color: GeneralCtr.MainColor
@@ -139,7 +141,7 @@ class MainWidget extends StatelessWidget {
                   SizedBox(height: 30),
 
                   /* 아래부터 선택한 성경 카드로 보여주기 *///https://docs.getwidget.dev/gf-carousel/
-                  ViewVerses(),
+                  ViewVerses2(),
 
                   /* 사회적 거리두기 */
                   SizedBox(height: 30),
@@ -497,6 +499,109 @@ class ViewVerses extends StatelessWidget {
 }
 
 
+//<서브위젯> 성경 카드 뿌려주기 ( + 업그레이드 버전!! )
+/* 아래부터 선택한 성경 카드로 보여주기 *///https://docs.getwidget.dev/gf-carousel/
+class ViewVerses2 extends StatelessWidget {
+  const ViewVerses2({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GFCarousel(
+      height: 180,
+      activeIndicator: GeneralCtr.MainColor,
+      passiveIndicator: Colors.grey,
+      pagerSize: 7.0,// 이미지 하단 페이지 인디케이터 크기
+      enableInfiniteScroll: false, // 무한스크롤
+      viewportFraction: 0.93, // 전.후 이미지 보여주기 ( 1.0이면 안보여줌 )
+      aspectRatio: 20, // 사진 비율
+      enlargeMainPage: true, // 자동 확대
+      hasPagination: true, // 이미지 하단 페이지 인디케이터 표시여부
+      autoPlayInterval: Duration(milliseconds: 5000), // 자동 넘기기 주기(시간)
+      autoPlay: true, // 자동 넘기기 on/off
+      pauseAutoPlayOnTouch: Duration(milliseconds: 5000), // 클릭하면 자동넘기기 일시 정지
+
+      /* 선택된 구절 갯수만큼 카드 만들어주기 */
+      items: DiaryCtr.dirary_screen_selected_verses_id.map(
+            (id) {
+          /* 필터링으로 구절정보 하나씩 가져오기 */
+          var result = DiaryCtr.selected_contents_data.where((f)=>f["_id"]==id).toList();
+
+          /* 성경 구절 카드에 담아서 보여주기 */
+          /* 1. 정보가 "null"이 아니면, 구절 정보 담아서 보여준다 */
+          if (id != 99999) {
+            return SingleChildScrollView(
+              /* 최대 높이를 지정하기 위해 "ConstrainedBox" 위젯으로 감싸준다. */
+              child: ConstrainedBox(
+                constraints: new BoxConstraints(
+                  /* 최대 및 최소 높이 정의 */
+                  minHeight: 150.0,
+                  maxHeight: 150.0,
+                ),
+                child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.fromLTRB(0, 5, 0, 5), // 하얀카드 안쪽 텍스트 패딩
+                  margin: EdgeInsets.fromLTRB(5, 5, 5, 5), // 컨테이너 자체 마진
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      width: 1.3,
+                      color: DiaryCtr.ColorCode[DiaryCtr.dirary_screen_color_index].withOpacity(0.4), // 카드 색깔
+
+                    ),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(3),
+                    boxShadow: [
+                      BoxShadow(
+                        color: DiaryCtr.ColorCode[DiaryCtr.dirary_screen_color_index].withOpacity(0.3), // 카드 색깔
+                        blurRadius: 2,
+                        offset: Offset(2, 2), // Shadow position
+                      ),
+                    ],
+                  ),
+
+                  /* 구절 */
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        /* 구절정보 */
+                        SelectableText(
+                          '[${result[0]['국문']}(${result[0]['영문']}) ${result[0]['cnum']}장 ${result[0]['vnum']}절]' ,
+                          style:TextStyle(
+                              fontSize: GeneralCtr.fontsize_normal*0.8,
+                              color: DiaryCtr.ColorCode[DiaryCtr.dirary_screen_color_index],
+                              fontWeight: FontWeight.w600
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        SizedBox(height: 5),
+                        /* 내용 */
+                        WordBreakText(
+                          '${result[0][BibleCtr.Bible_choiced]}',
+                          style:TextStyle(height: 1.5, fontSize: GeneralCtr.fontsize_normal*0.9),
+                          wrapAlignment: WrapAlignment.center,// 텍스트 가운데 정렬
+                        ),
+                      ],
+                    ),
+                  ),
+
+                ),
+              ),
+            );
+
+            /* 2. 정보가 "null"이면, 검색 버튼을 보여준다 */
+          } else {
+            return AddVerses(id: id);
+          }
+        },
+      ).toList(),
+      onPageChanged: (index) {
+        /* 카드 넘어갈때 이벤트 */
+      },
+    );
+  }
+}
+
+
+
 
 
 
@@ -616,7 +721,7 @@ Widget Color_code_choice(){
         //reverse: true,
           shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
           scrollDirection: Axis.horizontal, // 수직(vertical)  수평(horizontal) 배열 선택
-          //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
+          controller: DiaryCtr.ColorScroller,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
           itemCount: DiaryCtr.ColorCode.length,
           itemBuilder: (context, index) {
             var result = DiaryCtr.ColorCode[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
@@ -644,7 +749,7 @@ Widget Color_code_choice(){
                     ],
                   ),
                 ),
-                SizedBox(width: 15)
+                SizedBox(width: 25)
               ],
             );
           }
@@ -903,7 +1008,7 @@ Widget Weather_Choice(context){
       //reverse: true,
         shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
         scrollDirection: Axis.horizontal, // 수직(vertical)  수평(horizontal) 배열 선택
-        //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
+        controller: DiaryCtr.WeatherScroller,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
         itemCount: DiaryCtr.WeatherName.length,
         itemBuilder: (context, index) {
           var result = DiaryCtr.WeatherName[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
@@ -920,13 +1025,13 @@ Widget Weather_Choice(context){
                     opacity: DiaryCtr.dirary_screen_weather_index == index? 1.0 : 0.3,
                     child: Image.asset(
                       "assets/img/icons/weather/$result.png",
-                      height: 50.0,
-                      width: 50.0,
+                      height: 40.0,
+                      width: 40.0,
                     ),
                   )//
               ),
               /* 아이콘 사회적 거리두기 */
-              SizedBox(width: 20)
+              SizedBox(width: 25)
             ],
           );
         }
@@ -936,6 +1041,11 @@ Widget Weather_Choice(context){
 
 //<서브위젯> 이모티콘 선택 모듈
 Widget Emoticon_Choice(){
+
+  /* <함수>스크롤 포지션 변경은 위젯 빌드가 끝난후에 이루어지므로 콜백함수 설정 */
+  /* 스크롤 이동은 "신규"가 아닌, "수정"일 때만 수행 + 딱 한번만 수행 ! */
+  WidgetsBinding.instance?.addPostFrameCallback((_) => DiaryCtr.update_dirary_screen_builder_offet());
+
   /* 이모티콘  */
   return Container(
     padding: EdgeInsets.fromLTRB(15, 10, 0, 5),
@@ -945,7 +1055,7 @@ Widget Emoticon_Choice(){
       //reverse: true,
         shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
         scrollDirection: Axis.horizontal, // 수직(vertical)  수평(horizontal) 배열 선택
-        //controller: ,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
+        controller: DiaryCtr.EmoticonScroller,// 스크롤 조작이 필요하다면 할당 ㄱㄱ
         itemCount: DiaryCtr.EmoticonName.length,
         itemBuilder: (context, index) {
           var result = DiaryCtr.EmoticonName[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능

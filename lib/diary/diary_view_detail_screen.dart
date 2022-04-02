@@ -27,6 +27,7 @@ class DiaryViewDetailScreen extends StatelessWidget {
 
 /*<서브위젯> 메인위젯 정의 */
 Widget MainWidget(context, int index){
+
   return
   /* 컨트롤러 불러오기 */
     GetBuilder<DiaryController>(

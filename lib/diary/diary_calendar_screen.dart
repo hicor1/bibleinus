@@ -151,7 +151,15 @@ Widget MainWidget(context){
                             appointmentTextStyle: TextStyle(
                               fontSize: GeneralCtr.fontsize_normal*0.9 // 아래 보이는 이벤트 텍스트 크기 조정
                             )
+                          ),
+                          monthCellStyle: MonthCellStyle(
+                            trailingDatesBackgroundColor: Colors.white, // 지난달 백그라운드 색깔
+                            backgroundColor: GeneralCtr.MainColor.withOpacity(0.10), // 이번달 백그라운드 색깔
+                            todayBackgroundColor: GeneralCtr.MainColor.withOpacity(0.30), // 오늘 백그라운드 색깔
+                            leadingDatesBackgroundColor: Colors.white, // 다음달 백그라운드 색깔
+
                           )
+
                         ),
                         scheduleViewSettings: ScheduleViewSettings(
                           hideEmptyScheduleWeek: true,

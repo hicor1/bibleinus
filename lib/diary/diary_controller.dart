@@ -122,10 +122,18 @@ class DiaryController extends GetxController {
   /* 달력 컨트롤러 정의의(https://www.syncfusion.com/kb/12115/how-to-programmatically-select-the-dates-in-the-flutter-calendar) */
   final CalendarController calendarController= CalendarController();
 
+  /* 리스트빌더 컨트롤러 정의 */
+  final ScrollController ColorScroller     = ScrollController(keepScrollOffset: false); // 일기 작성페이지 _  색상 스크롤 컨트롤러
+  final ScrollController EmoticonScroller  = ScrollController(keepScrollOffset: false); // 일기 작성페이지 _ 이모티콘 스크롤 컨트롤러
+  final ScrollController WeatherScroller   = ScrollController(keepScrollOffset: false); // 일기 작성페이지 _ 날씨티콘 스크롤 컨트롤러
+
+  var Scrolling_count = 0; // 일기 작성페이지 _ 이모티콘+날씨티콘 스크롤 동작 횟수 관리용
+
 
   /* 칼라코드 정의 */
-  var ColorCode = [Color(0xFFBFBFBF), // 젤 처음은 흑백 칼라
-    Color(0xff0c0c0d).withOpacity(0.8),
+  var ColorCode = [
+    // Color(0xFFBFBFBF), // 젤 처음은 흑백 칼라
+    Color(0xff0c0c0d).withOpacity(0.8), // 회색은 제외
     Color(0xFF00bfff).withOpacity(0.8),
     Color(0xFF32cd32).withOpacity(0.8),
     Color(0xff9966ff).withOpacity(0.8),
@@ -134,20 +142,20 @@ class DiaryController extends GetxController {
     Color(0xFFFFBF00).withOpacity(0.8),
     Color(0xFF6495ED).withOpacity(0.8),
     Color(0xFF9FE2BF).withOpacity(0.8),
-    Color(0xFFE9967A).withOpacity(0.8),
+    //Color(0xFFE9967A).withOpacity(0.8),
     Color(0xFFFFA07A).withOpacity(0.8),
-    Color(0xFFE9967A).withOpacity(0.8),
+    //Color(0xFFE9967A).withOpacity(0.8),
 
     Color(0xFF808000).withOpacity(0.8),
     Color(0xFF008000).withOpacity(0.8),
     Color(0xFF008080).withOpacity(0.8),
-
-    Color(0xFFFF9AA2),
-    Color(0xFFFFB7B2),
-    Color(0xFFFFDAC1),
-    Color(0xFFE2F0CB),
-    Color(0xFFB5EAD7),
-    Color(0xFFC7CEEA),
+    //
+    // Color(0xFFFF9AA2),
+    // Color(0xFFFFB7B2),
+    // Color(0xFFFFDAC1),
+    // Color(0xFFE2F0CB),
+    // Color(0xFFB5EAD7),
+    // Color(0xFFC7CEEA),
 
   ];
 
@@ -264,8 +272,47 @@ class DiaryController extends GetxController {
 
   //<함수> 성경일기 작성스크린 _ 이모티콘 선택
   void update_dirary_screen_emoticon_index(int index){
+    /* 이모티콘 인덱스 저장 */
     dirary_screen_emoticon_index = index;
     update();
+  }
+
+  //<함수> 성경일기 작성스크린 _ 색상&이모티콘&날씨 컨트롤러 offset 설정
+  void update_dirary_screen_builder_offet(){
+    if(Scrolling_count==1){
+      /* 1. 이모티콘 컨트롤러 offset 산출(이모티콘 크기 + 거리로 부터 스크롤 포지션 예측) */
+      var icon_width    = 40.0;
+      var icon_distance = 25.0;
+      var color_offset = (icon_width+icon_distance)*(dirary_screen_color_index) - 5;
+      var emoticon_offset = (icon_width+icon_distance)*(dirary_screen_emoticon_index) - 5;
+      var weather_offset = (icon_width+icon_distance)*(dirary_screen_weather_index) - 5;
+
+      /* 2-1. 이모티콘 컨트롤러 이동 */
+      ColorScroller.animateTo(
+        color_offset,
+        duration: Duration(milliseconds: 1500),
+        curve: Curves.fastOutSlowIn,
+      );
+      /* 2-2. 이모티콘 컨트롤러 이동 */
+      EmoticonScroller.animateTo(
+        emoticon_offset,
+        duration: Duration(milliseconds: 1500),
+        curve: Curves.fastOutSlowIn,
+      );
+      /* 2-3. 날씨티콘 컨트롤러 이동 */
+      WeatherScroller.animateTo(
+        weather_offset,
+        duration: Duration(milliseconds: 1500),
+        curve: Curves.fastOutSlowIn,
+      );
+      /* 3. 스크롤 카운터 증가 */
+      Scrolling_count += 1;
+    }
+  }
+
+  //<함수> 성경일기 작성스크린 _ 스크롤링 몇번했는지 카운트 기록
+  void Recording_Scrolling_count(int count){
+    Scrolling_count = count;
   }
 
   //<함수> 성경일기 작성스크린 _ 타임태그 인덱스 선택
