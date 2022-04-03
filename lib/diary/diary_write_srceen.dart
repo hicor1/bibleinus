@@ -61,7 +61,8 @@ class MainWidget extends StatelessWidget {
         init: DiaryController(),
         builder: (_){
           return Scaffold(
-            backgroundColor: GeneralCtr.MainColor.withOpacity(0.03),
+            //backgroundColor: GeneralCtr.MainColor.withOpacity(0.03),
+            backgroundColor: DiaryCtr.ColorCode[DiaryCtr.dirary_screen_color_index].withOpacity(0.03),
             appBar: AppBar(
               iconTheme: IconThemeData(
                 color: GeneralCtr.MainColor
@@ -561,15 +562,64 @@ class ViewVerses2 extends StatelessWidget {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        /* 구절정보 */
-                        SelectableText(
-                          '[${result[0]['국문']}(${result[0]['영문']}) ${result[0]['cnum']}장 ${result[0]['vnum']}절]' ,
-                          style:TextStyle(
-                              fontSize: GeneralCtr.fontsize_normal*0.8,
-                              color: DiaryCtr.ColorCode[DiaryCtr.dirary_screen_color_index],
-                              fontWeight: FontWeight.w600
-                          ),
-                          textAlign: TextAlign.center,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            /* 아이콘 크기만큼 공백을 주어 구절명이 가운데로 올 수 있게 한다. */
+                            SizedBox(width: GeneralCtr.Textsize*1.2),
+                            /* 구절정보 */
+                            Flexible(
+                              child: SelectableText(
+                                '[${result[0]['국문']}(${result[0]['영문']}) ${result[0]['cnum']}장 ${result[0]['vnum']}절]' ,
+                                style:TextStyle(
+                                    fontSize: GeneralCtr.fontsize_normal*0.8,
+                                    color: DiaryCtr.ColorCode[DiaryCtr.dirary_screen_color_index],
+                                    //fontWeight: FontWeight.w600
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            /* 옵션 버튼 */
+                            PopupMenuButton(
+                                icon: Icon(Icons.more_vert_sharp, size: GeneralCtr.Textsize*1.2, color: Colors.black54), // pop메뉴 아이콘
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5)),
+                                padding: EdgeInsets.zero,
+                                tooltip: "추가기능",
+                                color: Colors.white, // pop메뉴 배경색
+                                elevation: 10,// pop메뉴 그림자
+                                onSelected: (value) {
+                                  /* 자유검색 상태값 변경해주기 ( diary app에서 호출했음을 알리기 위해 ) */
+                                  BibleCtr.update_from_which_app("diary");
+                                  /* 수정모드 입력 */
+                                  DiaryCtr.update_mode_select("replace", id);
+                                  var temp = "";
+                                  /* 경우의 수에 맞게 이벤트 정의 */
+                                  switch(value){
+                                  /* 해당 구절 삭제 이동 */
+                                    case"삭제" :
+                                      DiaryCtr.remove_verses_id(id);  break;
+                                  /* 자유검색 페이지 선택값으로 !수정! */
+                                    case"검색" :
+                                      Get.to(() => BibleSearchScreen());  break;
+                                  /* 즐겨찾기 페이지 선택값으로 !수정! */
+                                    case"즐겨찾기" :
+                                      Get.to(() => BibleFavoriteScreen()); break;
+                                  }
+                                },
+
+                                /* 옵션 버튼 _ 하위 메뉴 스타일 */
+                                itemBuilder: (context) => [
+                                  /*검색*/
+                                  PopupMenuItem(child: Row(children: [Icon(Entypo.search, size: GeneralCtr.fontsize_normal*0.7), Text(" 검색", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "검색"),
+                                  /*즐겨찾기*/
+                                  PopupMenuItem(child: Row(children: [Icon(Typicons.star, size: GeneralCtr.fontsize_normal*0.7), Text(" 즐겨찾기", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "즐겨찾기"),
+                                  /*삭제*/
+                                  PopupMenuItem(child: Row(children: [Icon(FontAwesome.trash_empty, size: GeneralCtr.fontsize_normal*0.7), Text(" 삭제", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.7))]), value: "삭제"),
+
+                                ]
+                            )
+                          ],
                         ),
                         SizedBox(height: 5),
                         /* 내용 */
@@ -735,10 +785,16 @@ Widget Color_code_choice(){
                   child: Stack(
                     alignment: Alignment.topLeft,
                     children: [
-                      Icon(
-                        FontAwesome5.book_medical,
+                      // Icon(
+                      //   FontAwesome5.book_medical,
+                      //   color: result,
+                      //   size: 40,
+                      // ),
+                      Image.asset(
+                        "assets/img/icons/tag/전도.png",
+                        height : 40.0,
+                        width  : 40.0,
                         color: result,
-                        size: 40,
                       ),
                       /* 선태된 색 강조 */
                       Icon(

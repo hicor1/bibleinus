@@ -6,7 +6,6 @@
        android:icon="@mipmap/ic_launcher"
        android:usesCleartextTraffic="true"> <!--카카오 주소찾기 때매 추가-->
 
-
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -54,10 +53,29 @@
            android:screenOrientation="portrait"
            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
 
+       <!-- 알림 기능 추가(scheduled notifications 화면에 출력할려면 추가) -->
+       <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationReceiver" />
+       <!--재부팅시,업데이트시,재시작시 -->
+       <receiver android:name="com.dexterous.flutterlocalnotifications.ScheduledNotificationBootReceiver">
+           <intent-filter>
+               <action android:name="android.intent.action.BOOT_COMPLETED"/>
+               <action android:name="android.intent.action.MY_PACKAGE_REPLACED"/>
+               <action android:name="android.intent.action.QUICKBOOT_POWERON" />
+               <action android:name="com.htc.intent.action.QUICKBOOT_POWERON"/>
+           </intent-filter>
+       </receiver>
+
 
     </application>
     <!-- 페이스북 로그인 요소 추가 -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <!-- 알림 기능 추가( 예약 알림, 진동, 알림 발생 시 화면 켜지게 하는 기능) -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
+
 
 </manifest>

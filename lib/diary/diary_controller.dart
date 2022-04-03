@@ -622,7 +622,7 @@ class DiaryController extends GetxController {
         //.where("dirary_screen_selectedDate", isGreaterThanOrEqualTo: DateTime(diary_view_selected_year,diary_view_selected_month)) // 선택된 날짜에 맞는 일기만 보여주기
         //.where("dirary_screen_selectedDate", isLessThan: DateTime(diary_view_selected_year,diary_view_selected_month+1)) // 선택된 날짜에 맞는 일기만 보여주기
         .orderBy("dirary_screen_selectedDate", descending:true) // 날짜로 내림차순 정렬
-        .orderBy("updated_at", descending:true) // 업데이트순서로 내림차순 정렬
+        //.orderBy("updated_at", descending:true) // 업데이트순서로 내림차순 정렬
 
         /* ↓정상적으로 로드가 되었다면 아래 수행↓ */
         .get().then((QuerySnapshot ds) async {

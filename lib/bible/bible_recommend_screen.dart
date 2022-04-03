@@ -171,8 +171,8 @@ Widget View_verses_list(){
                   boxShadow: [
                     BoxShadow(
                       color: GeneralCtr.MainColor.withOpacity(0.2),
-                      blurRadius: 4,
-                      offset: Offset(4, 4), // Shadow position
+                      blurRadius: 2,
+                      offset: Offset(2, 2), // Shadow position
                     ),
                   ],
                 ),

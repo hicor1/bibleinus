@@ -828,7 +828,7 @@ class ViewVerses extends StatelessWidget {
                           style:TextStyle(
                               fontSize: GeneralCtr.fontsize_normal*0.8,
                               color: DiaryCtr.ColorCode[diary_data['dirary_screen_color_index']],
-                              fontWeight: FontWeight.w600
+                              //fontWeight: FontWeight.w600
                           ),
                           textAlign: TextAlign.center,
                         ),
@@ -1017,74 +1017,82 @@ Widget Date_select(context){
 //<서브위젯> 오늘 일기 바로 추가 위젯
 Widget Add_Today_diary(){
   /* 일기 추가 위젯 전체를 감싸는 회색 테두리?!! */
-  return Container(
-    padding: EdgeInsets.all(10),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(10),
-      color: GeneralCtr.BlueColor.withOpacity(0.4)
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Bubble(
-            nip: BubbleNip.leftTop,
-            stick: true,
-            nipWidth: 15,
-            color: Colors.white,
-            child: Text("오늘은 어떤 하루였나요?", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9)
-            )
-        ),
-         SizedBox(height: 5),
-         Container(
-           padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-           child: DottedBorder(
-               dashPattern: [10, 9],
-               strokeWidth: 2.5,
-               color: Colors.white,
-               strokeCap: StrokeCap.round,
-               borderType: BorderType.RRect,
-               radius: Radius.circular(10),
-               child: Container(
-                 padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
-                 height : 55,
-                 child: ListView.builder(
-                     shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
-                     scrollDirection: Axis.horizontal, // 수직(vertical)  수평(horizontal) 배열 선택
-                     itemCount: DiaryCtr.EmoticonName.length,
-                     itemBuilder: (context, index) {
-                       var result = DiaryCtr.EmoticonName[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
-                       return Row(
-                         children: [
-                           InkWell(
-                               onTap: (){
-                                 /* "신규(new)모드로 전환" */
-                                 DiaryCtr.select_NewOrModify("new");
-                                 /* 페이지 이동 */
-                                 Get.to(() => DiaryWriteScreen());
-                                 /* 이모지 코드 선택 이벤트 */
-                                 DiaryCtr.update_dirary_screen_emoticon_index(index);
-                               },
-                               /* 이모지 코드 보여주기 */
-                               child: Opacity(
-                                 /* 선택된 아이콘 강조 해주기 */
-                                 opacity: DiaryCtr.dirary_screen_emoticon_index == index? 1.0 : 1.0,
-                                 child: Image.asset(
-                                   "assets/img/icons/emoticon/$result.png",
-                                   height: 40.0,
-                                   width: 40.0,
-                                 ),
-                               )//
-                           ),
-                           /* 아이콘 사회적 거리두기 */
-                           SizedBox(width: 15)
-                         ],
-                       );
-                     }
-                 ),
+  return DottedBorder(
+    dashPattern: [7, 3],
+    strokeWidth: 1.0,
+    color: Colors.white,
+    strokeCap: StrokeCap.round,
+    borderType: BorderType.RRect,
+    radius: Radius.circular(5),
+    child: Container(
+      padding: EdgeInsets.fromLTRB(10,10,0,0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(5),
+        boxShadow: [
+          BoxShadow(
+            color: GeneralCtr.MainColor.withOpacity(0.2),
+            blurRadius: 2,
+            offset: Offset(2, 2), // Shadow position
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Bubble(
+            elevation: 3,
+              nip: BubbleNip.leftTop,
+              stick: true,
+              nipWidth: 15,
+              color: Colors.white,
+              child: Text("오늘은 어떤 하루였나요?", style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9)
+              )
+          ),
+           SizedBox(height: 5),
+           Container(
+             padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+             child: Container(
+               padding: EdgeInsets.fromLTRB(0, 0, 0, 0),
+               height : 55,
+               child: ListView.builder(
+                   shrinkWrap: true, //"hassize" 같은 ㅈ같은 오류 방지
+                   scrollDirection: Axis.horizontal, // 수직(vertical)  수평(horizontal) 배열 선택
+                   itemCount: DiaryCtr.EmoticonName.length,
+                   itemBuilder: (context, index) {
+                     var result = DiaryCtr.EmoticonName[index]; // 결과 할당, 이런식으로 변수 선언 가능, 아래 위젯에서 활용 가능
+                     return Row(
+                       children: [
+                         InkWell(
+                             onTap: (){
+                               /* "신규(new)모드로 전환" */
+                               DiaryCtr.select_NewOrModify("new");
+                               /* 페이지 이동 */
+                               Get.to(() => DiaryWriteScreen());
+                               /* 이모지 코드 선택 이벤트 */
+                               DiaryCtr.update_dirary_screen_emoticon_index(index);
+                             },
+                             /* 이모지 코드 보여주기 */
+                             child: Opacity(
+                               /* 선택된 아이콘 강조 해주기 */
+                               opacity: DiaryCtr.dirary_screen_emoticon_index == index? 1.0 : 1.0,
+                               child: Image.asset(
+                                 "assets/img/icons/emoticon/$result.png",
+                                 height: 40.0,
+                                 width: 40.0,
+                               ),
+                             )//
+                         ),
+                         /* 아이콘 사회적 거리두기 */
+                         SizedBox(width: 15)
+                       ],
+                     );
+                   }
                ),
+             ),
            ),
-         ),
-     ],
+       ],
+      ),
     ),
   );
 }

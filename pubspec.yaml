@@ -81,6 +81,7 @@ dependencies:
   percent_indicator: ^4.0.0 # 프로그레스바
   numberpicker: ^2.1.1 # 넘버피커 ( 달력에서 숫자로 된 날짜 픽하는 기능 )
   bubble: ^1.2.1 # 말풍선 ( 채팅 버블 )
+  flutter_local_notifications: ^9.4.0 # 알림 구현
 
 
 

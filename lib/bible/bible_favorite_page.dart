@@ -83,7 +83,7 @@ class MainWidget extends StatelessWidget {
                                   child: Container(
                                     width: MediaQuery.of(context).size.width, // 요건 필수
                                     padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                                    margin: EdgeInsets.fromLTRB(5, 0, 5, 10),
+                                    margin: EdgeInsets.fromLTRB(5, 0, 5, 15),
 
                                     decoration: BoxDecoration(
                                       // border: Border.all(
@@ -138,7 +138,7 @@ class MainWidget extends StatelessWidget {
                                                   Container(
                                                     color: checker ? BibleCtr.ColorCode[result['highlight_color_index']] : Colors.transparent,
                                                     child: Text("${result['국문']} (${result['영문']}): ${result['cnum']}장 ${result['vnum']}절 ",
-                                                        style: TextStyle(fontSize: GeneralCtr.fontsize_normal,
+                                                        style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.8,
                                                             color: checker ? Colors.white :BibleCtr.ColorCode[result['highlight_color_index']],
                                                             fontWeight: FontWeight.w500)
                                                     ),
@@ -161,7 +161,7 @@ class MainWidget extends StatelessWidget {
 
                                         /* 본문 */
                                         WordBreakText("${result[BibleCtr.Bible_choiced]}",
-                                          style: TextStyle(fontSize: GeneralCtr.Textsize, height: GeneralCtr.Textheight),),
+                                          style: TextStyle(fontSize: GeneralCtr.Textsize*0.9, height: GeneralCtr.Textheight),),
                                       ],
                                     ),
                                   ),

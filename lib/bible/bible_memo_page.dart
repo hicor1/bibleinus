@@ -139,14 +139,13 @@ class MainWidget extends StatelessWidget {
                                             /* 구절 정보 */
                                             Row(
                                               children: [
-
                                                 SelectableText("${verse['국문']} (${verse['영문']}): ${verse['cnum']}장 ${verse['vnum']}절 ",
-                                                    style: TextStyle(fontSize: GeneralCtr.fontsize_normal, color: Colors.grey, fontWeight: FontWeight.bold)),
+                                                    style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9, color: Colors.grey)),
                                               ],
                                             ),
                                             /* 구절 내용 */
                                             SelectableText("${verse[BibleCtr.Bible_choiced]}",
-                                                style: TextStyle(letterSpacing: 1.0,fontSize: GeneralCtr.Textsize*0.9, height: GeneralCtr.Textheight))
+                                                style: TextStyle(letterSpacing: 1.0,fontSize: GeneralCtr.Textsize, height: GeneralCtr.Textheight))
                                           ],
                                         ),
                                       );
