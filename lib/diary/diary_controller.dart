@@ -42,7 +42,6 @@ class DiaryController extends GetxController {
   //<함수> 초기화
   void init(){
     LoadAction(); // 일기 데이터 로드
-    ViewPage_Date_Select_Init();/* <함수> 성경 뷰페이지 _ 년도 & 월 현재 날짜 기준으로 초기화 */
   }
 
   /* (설정값) SharedPrefs 저장하기(save) */
@@ -104,10 +103,8 @@ class DiaryController extends GetxController {
   var statistics_year_percent = 0.0; // 성경 달력 스크린 _ 기본 통계 _ 년 퍼센트
   var statistics_this_year = 0; //성경 달력 스크린 _ 기본 통계 _ 올해 년도
 
-  var diary_view_selected_year       = 2022; // 성경 뷰페이지 _ 선택된 년도
-  var diary_view_selected_year_temp  = 2022; // 성경 뷰페이지 _ 선택된 년도
-  var diary_view_selected_month      = 1; // 성경 뷰페이지 _ 선택된 월
-  var diary_view_selected_month_temp = 1; // 성경 뷰페이지 _ 선택된 월
+  var diary_view_selected_year       = DateTime.now().year; // 성경 뷰페이지 _ 선택된 년도
+  var diary_view_selected_month      = DateTime.now().month; // 성경 뷰페이지 _ 선택된 월
 
   /* 텍스트컨트롤러 정의 */
   var TitletextController      = TextEditingController(); // 성경일기 작성 페이지 _ 일기 제목 ( title ) 컨트롤러
@@ -1077,44 +1074,22 @@ class DiaryController extends GetxController {
     update();
   }
 
-  /* <함수> 성경 뷰페이지 _ 년도 선택(보여지는부분) */
-  void ViewPage_Select_Year_Temp(int year){
-    diary_view_selected_year_temp = year;
-    update();
-  }
-  /* <함수> 성경 뷰페이지 _ 월 선택(보여지는부분) */
-  void ViewPage_Select_Month_Temp(int month){
-    diary_view_selected_month_temp = month;
-    update();
-  }
   /* <함수> 성경 뷰페이지 _ 년도 & 월 최종 선택 */
-  void ViewPage_Date_Select_Confirm(){
+  void ViewPage_Date_Select_Confirm(int year, int month){
     /* 유저가 선택한 날짜 값이 변했는지 확인 */
-    if((diary_view_selected_month != diary_view_selected_month_temp)
-    | (diary_view_selected_year != diary_view_selected_year_temp)
+    if((diary_view_selected_year != year)
+    | (diary_view_selected_month != month)
     ){
       /* 값이 변한게 맞는 경우에, */
       /* 1. 유저가 선택한 날짜로 최종 입력 */
-      diary_view_selected_month = diary_view_selected_month_temp;
-      diary_view_selected_year = diary_view_selected_year_temp;
+      diary_view_selected_year = year;
+      diary_view_selected_month = month;
       /* 2. 선택된 날짜정보에 맞게 일기 재조회 */
       result_filtering();
       /* 3. 상태값 업데이트 */
       update();
     }
   }
-  /* <함수> 성경 뷰페이지 _ 년도 & 월 현재 날짜 기준으로 초기화 */
-  void ViewPage_Date_Select_Init(){
-    diary_view_selected_month      = DateTime.now().month;
-    diary_view_selected_month_temp = DateTime.now().month;
-    diary_view_selected_year       = DateTime.now().year;
-    diary_view_selected_year_temp  = DateTime.now().year;
-    update();
-  }
-
-
-
-
 
 
 } // 여기가 전체 클래스 끝 부분!!

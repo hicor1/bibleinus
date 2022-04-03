@@ -358,85 +358,116 @@ Future<void> Date_picker_Dialog_For_View_page(context) async {
       //barrierDismissible - Dialog를 제외한 다른 화면 터치 x
       barrierDismissible: false,
       builder: (BuildContext context) {
-        return AlertDialog(
-          // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5.0)),
-          //Dialog Main Title
-          title: Column(
-            children: <Widget>[
-              new Text(
-                "언제로 이동할까요?",
-                style: TextStyle(fontSize: GeneralCtr.fontsize_normal, fontWeight: FontWeight.bold),
-              ),
-            ],
-          ),
-          content:
-          /* 날짜 선택 위젯 띄우기 */
-          GetBuilder<DiaryController>(
-              init: DiaryController(),
-              builder: (_){
-                return
-                  Container(
-                    width: 300,
-                    height: 150,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        /* 년도(Year) 선택하는 부분 */
-                        NumberPicker(
-                            infiniteLoop: true,
-                            itemCount: 3, // 한번에 보여질 숫자 갯수
-                            haptics: false, //??????
-                            textMapper: (s){
-                              return "$s년";
-                            },
-                            textStyle: TextStyle(color: Colors.grey),
-                            selectedTextStyle: TextStyle(color: GeneralCtr.MainColor, fontSize: GeneralCtr.fontsize_normal, fontWeight: FontWeight.bold),
-                            value: DiaryCtr.diary_view_selected_year_temp,
-                            minValue: 2001,
-                            maxValue: 2100,
-                            onChanged: (value) {DiaryCtr.ViewPage_Select_Year_Temp(value);}
-                        ),
-                        /* 월(Month) 선택하는 부분 */
-                        NumberPicker(
-                            infiniteLoop: true,
-                            itemCount: 3, // 한번에 보여질 숫자 갯수
-                            haptics: false, //??????
-                            textMapper: (s){
-                              return "$s월";
-                            },
-                            textStyle: TextStyle(color: Colors.grey),
-                            selectedTextStyle: TextStyle(color: GeneralCtr.MainColor, fontSize: GeneralCtr.fontsize_normal, fontWeight: FontWeight.bold),
-                            value: DiaryCtr.diary_view_selected_month_temp,
-                            minValue: 1,
-                            maxValue: 12,
-                            onChanged: (value) {DiaryCtr.ViewPage_Select_Month_Temp(value);}
-                        ),
-                      ],
-                    )
-
-                  ); //return은 필수
-              }
-          ),
-          actions: <Widget>[
-            OutlinedButton(
-              child: new Text("확인"),
-              onPressed: () {
-                /* 1. 선택된 년, 월 로 설정 */
-                DiaryCtr.ViewPage_Date_Select_Confirm();
-                // 2. 팝업창 닫기
-                Navigator.pop(context);
-              },
-            ),
-            ElevatedButton(
-              child: new Text("취소"),
-              onPressed: () {
-                // "취소"인 경우, 바로 액션없이 팝업창 내리기
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
-      });
+        return Date_Dialog();
+      }
+      );
 }
+
+
+// 일기 뷰(view)페이지에서 "날짜선택(년, 월 까지만 )"  안내창 _ 내부 컨테이너
+class Date_Dialog extends StatefulWidget {
+  const Date_Dialog({Key? key}) : super(key: key);
+
+  @override
+  State<Date_Dialog> createState() => _Date_DialogState();
+}
+
+class _Date_DialogState extends State<Date_Dialog> {
+  /*  년도 & 월 변수할당 및 초기값 지정 */
+  int year  = DiaryCtr.diary_view_selected_year;
+  int month = DiaryCtr.diary_view_selected_month;
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      // RoundedRectangleBorder - Dialog 화면 모서리 둥글게 조절
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5.0)),
+      //Dialog Main Title
+      title: Column(
+        children: <Widget>[
+          new Text(
+            "언제로 이동할까요?",
+            style: TextStyle(fontSize: GeneralCtr.fontsize_normal, fontWeight: FontWeight.bold),
+          ),
+        ],
+      ),
+      content:
+      /* 날짜 선택 위젯 띄우기 */
+      GetBuilder<DiaryController>(
+          init: DiaryController(),
+          builder: (_){
+            return
+              Container(
+                  width: 300,
+                  height: 150,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      /* 년도(Year) 선택하는 부분 */
+                      NumberPicker(
+                          infiniteLoop: true,
+                          itemCount: 3, // 한번에 보여질 숫자 갯수
+                          haptics: false, //??????
+                          textMapper: (s){
+                            return "$s년";
+                          },
+                          textStyle: TextStyle(color: Colors.grey),
+                          selectedTextStyle: TextStyle(color: GeneralCtr.MainColor, fontSize: GeneralCtr.fontsize_normal, fontWeight: FontWeight.bold),
+                          value: year,//DiaryCtr.diary_view_selected_year_temp,
+                          minValue: 2001,
+                          maxValue: 2100,
+                          onChanged: (value) {
+                            /* 선택된 날짜(년도) 강조 */
+                            setState(() {
+                              year = value;
+                            });
+                          }
+                      ),
+                      /* 월(Month) 선택하는 부분 */
+                      NumberPicker(
+                          infiniteLoop: true,
+                          itemCount: 3, // 한번에 보여질 숫자 갯수
+                          haptics: false, //??????
+                          textMapper: (s){
+                            return "$s월";
+                          },
+                          textStyle: TextStyle(color: Colors.grey),
+                          selectedTextStyle: TextStyle(color: GeneralCtr.MainColor, fontSize: GeneralCtr.fontsize_normal, fontWeight: FontWeight.bold),
+                          value: month,//DiaryCtr.diary_view_selected_month_temp,
+                          minValue: 1,
+                          maxValue: 12,
+                          onChanged: (value) {
+                            /* 선택된 날짜(월) 강조 */
+                            setState(() {
+                              month = value;
+                            });
+                          }
+                      ),
+                    ],
+                  )
+              );
+          }
+      ),
+      actions: <Widget>[
+        OutlinedButton(
+          child: new Text("확인"),
+          onPressed: () {
+            /* 1. 선택된 년, 월 로 설정 */
+            DiaryCtr.ViewPage_Date_Select_Confirm(year, month);
+            // 2. 팝업창 닫기
+            Navigator.pop(context);
+          },
+        ),
+        ElevatedButton(
+          child: new Text("취소"),
+          onPressed: () {
+            // "취소"인 경우, 바로 액션없이 팝업창 내리기
+            Navigator.pop(context);
+          },
+        ),
+      ],
+    );
+  }
+}
+

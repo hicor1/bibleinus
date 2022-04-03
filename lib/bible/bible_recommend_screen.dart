@@ -162,12 +162,12 @@ Widget View_verses_list(){
                 padding: EdgeInsets.fromLTRB(5,5,5,5),
                 margin: EdgeInsets.fromLTRB(15,5,15,5),
                 decoration: BoxDecoration(
-                  border: Border.all(
-                    width: 3.5,
-                    color: Colors.grey.withOpacity(0.25),
-                  ),
+                  // border: Border.all(
+                  //   width: 2,
+                  //   color: Colors.grey.withOpacity(0.25),
+                  // ),
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(7),
+                  borderRadius: BorderRadius.circular(5),
                   boxShadow: [
                     BoxShadow(
                       color: GeneralCtr.MainColor.withOpacity(0.2),

@@ -802,10 +802,10 @@ class ViewVerses extends StatelessWidget {
                   padding: EdgeInsets.fromLTRB(0, 5, 0, 5), // 하얀카드 안쪽 텍스트 패딩
                   margin: EdgeInsets.fromLTRB(5, 5, 5, 5), // 컨테이너 자체 마진
                   decoration: BoxDecoration(
-                    border: Border.all(
-                      width: 1.3,
-                      color: DiaryCtr.ColorCode[diary_data['dirary_screen_color_index']].withOpacity(0.4), // 카드 색깔
-                    ),
+                    // border: Border.all(
+                    //   width: 1.5,
+                    //   color: DiaryCtr.ColorCode[diary_data['dirary_screen_color_index']].withOpacity(0.4), // 카드 색깔
+                    // ),
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(3),
                     boxShadow: [

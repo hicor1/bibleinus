@@ -83,13 +83,13 @@ class MainWidget extends StatelessWidget {
                                   child: Container(
                                     width: MediaQuery.of(context).size.width, // 요건 필수
                                     padding: EdgeInsets.fromLTRB(5, 5, 5, 5),
-                                    margin: EdgeInsets.fromLTRB(5, 0, 5, 5),
+                                    margin: EdgeInsets.fromLTRB(5, 0, 5, 10),
 
                                     decoration: BoxDecoration(
-                                      border: Border.all(
-                                        width: 1,
-                                        color: BibleCtr.ColorCode[result['highlight_color_index']].withOpacity(0.25),
-                                      ),
+                                      // border: Border.all(
+                                      //   width: 1,
+                                      //   color: BibleCtr.ColorCode[result['highlight_color_index']].withOpacity(0.25),
+                                      // ),
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(5),
                                       boxShadow: [

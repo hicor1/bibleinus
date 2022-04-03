@@ -95,7 +95,7 @@ class _TabPageState extends State<TabPage> {
         title: new Text('종료', style: TextStyle(fontSize: GeneralCtr.fontsize_normal, fontWeight: FontWeight.bold)),
         content: new Text('종료하시겠습니까?', style: TextStyle(fontSize: GeneralCtr.fontsize_normal)),
         actions: <Widget>[
-          new OutlinedButton(
+          new ElevatedButton(
             onPressed: () => Navigator.of(context).pop(false),
             child: new Text('아니요!', style: TextStyle(fontSize: GeneralCtr.fontsize_normal*0.9)),
           ),

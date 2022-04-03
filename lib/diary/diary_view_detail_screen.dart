@@ -61,16 +61,14 @@ Widget MainWidget(context, int index){
                     SizedBox(height: 10),
                     /* 제목*/
                     SelectableText("${result['dirary_screen_title']}", style: TextStyle(fontWeight: FontWeight.bold, fontSize: GeneralCtr.fontsize_normal*1.1)),
+                    /* 성경 구절 보여주기 카드 */
+                    ViewVerses(result: result),
                     /* 사회적 거리두기 */
                     SizedBox(height: 10),
                     /* 내용 */
                     SelectableText("${result['dirary_screen_contents']}",  style: TextStyle(fontSize:GeneralCtr.fontsize_normal)),
                     /* 사회적 거리두기 */
-                    SizedBox(height: 0),
-                    /* 사회적 거리두기 */
                     SizedBox(height: 10),
-                    /* 성경 구절 보여주기 카드 */
-                    ViewVerses(result: result),
                     /* 사진보여주기 */
                     ViewPhoto(result: result),
                     /* 사회적 거리두기 */
