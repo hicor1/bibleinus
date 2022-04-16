@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:timezone/data/latest_all.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 
 final DiaryCtr = Get.put(DiaryController());
@@ -12,6 +14,7 @@ class GeneralController extends GetxController {
 
     /* <함수> 초기화 함수 */
     void init (){
+        tz.initializeTimeZones();// 타임존 모듈 초기화
         AppLocalNotificator_init(); // 앱 알림 플러그인 초기화
         dailyAtTimeNotification(); // 정기적인 앱 알림 등록
     }
@@ -158,14 +161,38 @@ class GeneralController extends GetxController {
             android: android,
             iOS: ios);
 
-        await _flutterLocalNotificationsPlugin.showDailyAtTime(
+        //시간 만들어주는 함수 정의 ( https://velog.io/@gwd0311/Flutter-%ED%91%B8%EC%8B%9C%EC%95%8C%EB%A6%BC-%EA%B5%AC%ED%98%84 )
+        makeDate(hour, min, sec){
+            var now = tz.TZDateTime.now(tz.local);
+            print(now);
+            var when = tz.TZDateTime(tz.local, now.year, now.month, now.day, hour, min, sec);
+            if (when.isBefore(now)) {
+                return when.add(Duration(days: 1));
+            } else {
+                return when;
+            }
+        }
+
+        _flutterLocalNotificationsPlugin.zonedSchedule(
             0, // 알림 id ??
             '일기쓸 시간이에요', // 제목
             '오늘 하루는 어땠나요?', // 내용
-            time,
-            detail,
-            payload: '성경 일기',// 부가정보
+            makeDate(22,0,0), // 주기적인 알림이 필요한 시간 표기 ( 시간, 분, 초 )
+            NotificationDetails(android: android, iOS: ios),
+            androidAllowWhileIdle: true,
+            uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+            matchDateTimeComponents: DateTimeComponents.time //주기적으로 알림 띄우기
         );
+
+        // await _flutterLocalNotificationsPlugin.showDailyAtTime(
+        //     0, // 알림 id ??
+        //     '일기쓸 시간이에요', // 제목
+        //     '오늘 하루는 어땠나요?', // 내용
+        //     time,
+        //     detail,
+        //     payload: '성경 일기',// 부가정보
+        // );
     }
 
 }
